@@ -14,6 +14,7 @@
         "zendframework/zendframework": "2.*@stable",
         "leafo/scssphp": "0.*@stable",
         "neilime/lessphp": "0.*@stable",
-        "mrclay/minify": "2.*@stable"
+        "mrclay/minify": "2.*@stable",
+        "bricks81/bricks-file": "0.*@stable"
     }
 }
