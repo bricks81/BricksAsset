@@ -14,13 +14,14 @@ the http reachable files of a module. Simple, flexible and extendable.
 - neilime/lessphp
 - mrclay/minify
 - leafo/scssphp 
-## Installation
-### Using Composer
+
+### Installation
+#### Using Composer
     php composer.phar require bricks81/BricksAsset
-### Download as Module
+#### Download as Module
 First Download bricks81/BricksFile.
 Load this package and install both under module/BricksFile and module/BricksAsset.
-### Activate Modules
+#### Activate Modules
 Add the modules in your application.config.php:
 
 	// ...    
