@@ -25,16 +25,10 @@ return array(
 		'template_path_stack' => array(
 			__DIR__ . '/../view',
 		),
-	),
-	'view_helpers' => array(
-		'invokables' => array(
-			'HeadLink' => 'Bricks\View\Helper\HeadLink',
-			'HeadScript' => 'Bricks\View\Helper\HeadScript',
-		),
 	),	
+	/*
 	'router' => array(
-		'router_class' => 'Zend\Mvc\Router\Http\TranslatorAwareTreeRouteStack',
-		/*
+		'router_class' => 'Zend\Mvc\Router\Http\TranslatorAwareTreeRouteStack',		
 		'routes' => array(
 			'bricksasset' => array(
 				'type' => 'segment',
@@ -106,26 +100,7 @@ return array(
 					),
 				),
 			),			
-		),
-		*/
+		),		
 	),
-	'Bricks' => array(
-		'BricksAsset' => array(
-			'autoPublish' => false,
-			'autoOptimize' => false,
-			'minifyCssSupport' => false,
-			'minifyJsSupport' => false,
-			'lessSupport' => false,
-			'scssSupport' => false,					
-			'publishAdapter' => 'Bricks\AssetService\PublishAdapter\CopyAdapter',				
-			'lessAdapter' => 'Bricks\AssetService\LessAdapter\NeilimeLessphpAdapter',
-			'scssAdapter' => 'Bricks\AssetService\ScssAdapter\LeafoScssphpAdapter',
-			'minifyAdapter' => 'Bricks\AssetService\MinifyAdapter\MrclayMinifyAdapter',				
-			'module_assets_path' => './public',
-			'wwwroot_path' => './public',
-			'http_assets_path' => 'module',						
-			'module_specific' => array(			
-			),
-		),
-	),
+	*/	
 );

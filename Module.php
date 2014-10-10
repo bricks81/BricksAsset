@@ -26,8 +26,14 @@ class Module {
     
     public function onBootstrap(MvcEvent $e){
     	
-		$e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('HeadLink')->setServiceManager($e->getApplication()->getServiceManager());
-		$e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('HeadScript')->setServiceManager($e->getApplication()->getServiceManager());
+		$hl = $e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('HeadLink');
+		if(method_exists($hl,'setServiceManager')){
+			$hl->setServiceManager($e->getApplication()->getServiceManager());
+		}
+		$hs = $e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('HeadScript');
+		if(method_exists($hs,'setServiceManager')){
+			$hs->setServiceManager($e->getApplication()->getServiceManager());
+		}
 
 		$cfg = $e->getApplication()->getServiceManager()->get('Config');
 		if(isset($cfg['Bricks']['BricksAsset'])){
