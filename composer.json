@@ -1,6 +1,6 @@
 {
     "name": "bricks81/BricksAsset",
-    "description": "Asset Managment for Bricks CMS",
+    "description": "ZF2 Bricks CMS Asset Managment",
     "license": "GPL",
     "authors": [
         {
@@ -12,6 +12,7 @@
     "require": {
     	"php": ">=5.3.3",
         "zendframework/zendframework": "2.*@stable",
+        "leafo/scssphp": "0.*@stable",
         "neilime/lessphp": "0.*@stable",
         "mrclay/minify": "2.*@stable"
     }
