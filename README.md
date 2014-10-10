@@ -35,6 +35,25 @@ Add the modules in your application.config.php:
 	// ...
 
 ## Configuration
+### what you've to do
+Add the following to your autoloaded configuration to enable publishing - please check if the configuration suit to your setup seeing next chapter.
+(For the first time it's saver not to start on installation, so you've to enable it if all things fit to your needs.)
+
+	// ...
+	'Bricks' => array(
+		// ...
+		'BricksAsset' => array(
+			'autoPublish' => true,
+			'autoOptimize' => true,
+			'MinifyCssSupport' => true,
+			'LessSupport' => true,
+			'ScssSupport' => true,
+			'MinifyJsSupport' => true,
+		),
+		// ...
+	),
+	// ...
+
 ### Example of all Features
 This ist the default configuration of BricksAsset and has not to be defined extra.
  
