@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="Bootstrap.php">
+    <testsuites>
+        <testsuite name="BricksAssetTest">
+            <directory>./BricksAssetTest/AssetService</directory>
+            <directory>./BricksAssetTest/View/Helper/HeadLink</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
