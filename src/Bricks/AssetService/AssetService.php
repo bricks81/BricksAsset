@@ -252,7 +252,7 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 		} elseif(isset($assetsCfg['publishAdapter'])){
 			$adapter = $assetsCfg['publishAdapter'];
 		} else {
-			throw new RuntimeException('could not fetch publish adapter for module: '.$name);
+			$adapter = 'Bricks\AssetService\PublishAdapter\CopyAdapter';			
 		}
 		if(!class_exists($adapter,true)){
 			throw new RuntimeException('Publish adapter ('.$adapter.') not exists');
@@ -279,7 +279,7 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 		} elseif(isset($assetsCfg['lessAdapter'])){
 			$adapter = $assetsCfg['lessAdapter'];
 		} else {
-			throw new RuntimeException('could not fetch less adapter for module: '.$name);
+			$adapter = 'Bricks\AssetService\LessAdapter\NeilimeLessphpAdapter';
 		}
 		if(!class_exists($adapter,true)){
 			throw new RuntimeException('Less adapter ('.$adapter.') not exists');
@@ -306,7 +306,7 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 		} elseif(isset($assetsCfg['scssAdapter'])){
 			$adapter = $assetsCfg['scssAdapter'];
 		} else {
-			throw new RuntimeException('could not fetch scss adapter for module: '.$name);
+			$adapter = 'Bricks\AssetService\ScssAdapter\LeafoScssphpAdapter';
 		}		
 		if(!class_exists($adapter,true)){
 			throw new RuntimeException('scss adapter ('.$adapter.') not exists');
@@ -333,7 +333,7 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 		} elseif(isset($assetsCfg['minifyAdapter'])){
 			$adapter = $assetsCfg['minifyAdapter'];
 		} else {
-			throw new RuntimeException('could not fetch minify adapter for module: '.$name);
+			$adapter = 'Bricks\AssetService\MinifyAdapter\MrclayMinifyAdapter';
 		}
 		if(!class_exists($adapter,true)){
 			throw new RuntimeException('Minify adapter ('.$adapter.') not exists');
