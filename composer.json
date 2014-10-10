@@ -1,7 +1,7 @@
 {
     "name": "bricks81/bricks-asset",
     "description": "ZF2 Bricks CMS Asset Managment",
-    "license": "GPLv3",
+    "license": "GPL",
     "authors": [
         {
             "name": "Sven Ullmann",
@@ -16,5 +16,8 @@
         "neilime/lessphp": "0.*@stable",
         "mrclay/minify": "2.*@stable",
         "bricks81/bricks-file": "0.*@stable"
+    },
+    "autoload": {
+    	"classmap": ["Module.php"]
     }
 }
