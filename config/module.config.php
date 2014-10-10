@@ -111,12 +111,12 @@ return array(
 	),
 	'Bricks' => array(
 		'BricksAsset' => array(
-			'autoPublish' => true,
-			'autoOptimize' => true,
-			'minifyCssSupport' => true,
-			'minifyJsSupport' => true,
-			'lessSupport' => true,
-			'scssSupport' => true,					
+			'autoPublish' => false,
+			'autoOptimize' => false,
+			'minifyCssSupport' => false,
+			'minifyJsSupport' => false,
+			'lessSupport' => false,
+			'scssSupport' => false,					
 			'publishAdapter' => 'Bricks\AssetService\PublishAdapter\CopyAdapter',				
 			'lessAdapter' => 'Bricks\AssetService\LessAdapter\NeilimeLessphpAdapter',
 			'scssAdapter' => 'Bricks\AssetService\ScssAdapter\LeafoScssphpAdapter',
