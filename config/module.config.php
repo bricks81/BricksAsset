@@ -8,8 +8,8 @@ return array(
 	),
 	'controllers' => array(
 		'invokables' => array(
-			'BricksAsset\Controller\AssetController' => 'BricksAsset\Controller\AssetController',
-			'BricksAsset\Controller\MenuController' => 'BricksAsset\Controller\MenuController',
+			//'BricksAsset\Controller\AssetController' => 'BricksAsset\Controller\AssetController',
+			//'BricksAsset\Controller\MenuController' => 'BricksAsset\Controller\MenuController',
 		),
 	),
 	'translator' => array(
@@ -34,6 +34,7 @@ return array(
 	),	
 	'router' => array(
 		'router_class' => 'Zend\Mvc\Router\Http\TranslatorAwareTreeRouteStack',
+		/*
 		'routes' => array(
 			'bricksasset' => array(
 				'type' => 'segment',
@@ -74,8 +75,7 @@ return array(
 						'action'     => 'publishSuccess',
 					),
 				),
-			),
-			/*
+			),			
 			'bricksasset-optimize' => array(
 				'type' => 'segment',
 				'options' => array(
@@ -105,9 +105,9 @@ return array(
 						'action'     => 'optimizeSuccess',
 					),
 				),
-			),
-			*/
+			),			
 		),
+		*/
 	),
 	'Bricks' => array(
 		'BricksAsset' => array(
