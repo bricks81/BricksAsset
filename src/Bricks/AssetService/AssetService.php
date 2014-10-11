@@ -70,6 +70,35 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	
 	/**
 	 * @param array $modules
+	 */
+	public function remove(array $modules=array()){
+		$config = $this->getServiceManager()->get('ApplicationConfig');
+		
+		$mm = $this->getServiceManager()->get('ModuleManager');
+		if(!count($modules)){
+			$modules = $mm->getLoadedModules();
+		}
+		foreach($modules AS $module){
+			if(!is_object($module)){
+				$module = $mm->getModule($module);
+			}
+			$class = get_class($module);
+			$ref = new ReflectionClass($class);
+			$filename = $ref->getFileName();
+			$dir = dirname($filename);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+			$wwwroot_path = $this->getWwwrootPath($module);			
+			$http_assets_path = $this->getHttpAssetsPath($module);
+			$path = realpath($wwwroot_path).'/'.$http_assets_path.'/'.$moduleName;
+			if(!file_exists($path)){				
+				return;
+			}
+			Directory::rmdir($path);			
+		}
+	}
+	
+	/**
+	 * @param array $modules
 	 * @throws \RuntimeException
 	 */
 	public function publish(array $modules=array()){
@@ -148,11 +177,11 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 			$minifyAdapter = $this->getMinifyAdapter($module);
 			$minifyCssSupport = $this->getMinifyCssSupport($module);
 			$minifyJsSupport = $this->getMinifyJsSupport($module);			
-				
-			if(!file_exists($http_assets_path)){
-				throw new RuntimeException('please create folder ('.$http_assets_path.')');
-			}
-			$_assets_path = realpath($wwwroot_path.'/'.$http_assets_path);
+
+			$_assets_path = realpath($wwwroot_path).'/'.$http_assets_path;
+			if(!file_exists($_assets_path)){
+				throw new RuntimeException('please create folder ('.$_assets_path.')');
+			}			
 			$_assets_path .= '/'.$moduleName;
 			
 			if($minifyCssSupport){

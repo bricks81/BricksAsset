@@ -6,16 +6,13 @@ return array(
 	
 	'route-bricksasset-publish-do' => 'assets/write',
 	'route-bricksasset-publish-success' => 'Assets/Schreiben/Erfolgreich',
-	/*
-	'route-bricksasset-optimize-do' => 'assets/optimize',
-	'route-bricksasset-optimize' => 'Assets/Optimieren',	
-	'route-bricksasset-optimize-success' => 'Assets/Optimieren/Erfolgreich',
-	*/
 	
-	'tbitem-admin-assets-publish' => 'Assets neu schreiben',
+	'tbitem-admin-assets-publish' => 'Assets verarbeiten',
 	'tbgrp-admin-assets' => 'Assets',
 	
-	/*
-	'tbitem-admin-assets-optimize' => 'Optimieren',
-	*/
+	'bricksasset-form-publish-label-modules' => 'Bitte wählen Sie die Module die Sie verarbeiten möchten',
+	'bricksasset-form-publish-label-remove' => 'Assets vorher löschen',
+	'bricksasset-form-publish-label-update' => 'Assets Aktualisieren',
+	'bricksasset-form-publish-label-optimize' => 'Optimieren',
+	'bricksasset-form-publish-submit' => 'Assets verarbeiten',
 );

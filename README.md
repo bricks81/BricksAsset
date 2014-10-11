@@ -36,9 +36,16 @@ Add the modules in your application.config.php:
 
 ## Configuration
 ### what you've to do
-Add the following to your autoloaded configuration to enable publishing - please check if the configuration suit to your setup seeing next chapter.
-(For the first time it's saver not to start on installation, so you've to enable it if all things fit to your needs.)
+Add the content of BricksAsset/config/dist.global.php to your configuration
+(check if all fits to your needs):
 
+	// ...
+	'view_helpers' => array(
+		'invokables' => array(
+			'HeadLink' => 'Bricks\View\Helper\HeadLink',
+			'HeadScript' => 'Bricks\View\Helper\HeadScript',
+		),
+	),
 	// ...
 	'Bricks' => array(
 		// ...
@@ -49,6 +56,9 @@ Add the following to your autoloaded configuration to enable publishing - please
 			'LessSupport' => true,
 			'ScssSupport' => true,
 			'MinifyJsSupport' => true,
+			'module_assets_path' => './public',
+			'wwwroot_path' => './public',
+			'http_assets_path' => 'module',			
 		),
 		// ...
 	),

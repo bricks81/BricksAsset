@@ -18,12 +18,17 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 	public function setUp(){
 		$this->as = Bootstrap::getServiceManager()->get('Bricks\AssetService');
 		$this->as->setConfig(array(
-			'adapter' => 'BricksAssetTest\Mocking\AssetService\PublishAdapter\MockAdapter',
-			'module_assets_path' => './test/public',
-			'wwwroot_path' => './httpdocs',
-			'http_assets_path' => 'module',
-			'http_cache_path' => 'module/0cache',
-		));			
+			'autoPublish' => false,
+			'autoOptimize' => false,
+			'minifyCssSupport' => true,
+			'minifyJsSupport' => true,
+			'lessSupport' => true,
+			'scssSupport' => true,
+			'publishAdapter' => 'BricksAssetTest\Mocking\AssetService\PublishAdapter\MockAdapter',
+			'module_assets_path' => 'test/public',
+			'wwwroot_path' => realpath('./httpdocs'),
+			'http_assets_path' => 'module',			
+		));
 	}
 	
 	/**
@@ -60,24 +65,33 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($target==$assets_path);
 	}
 	
-	public function testPublish(){
+	public function testRemovePublishAndOptimize(){
 		$as = $this->getAssetService();
 		$cfg = $as->getConfig();
-		$cfg['adapter'] = 'Bricks\AssetService\PublishAdapter\CopyAdapter';
+		$cfg['publishAdapter'] = 'Bricks\AssetService\PublishAdapter\CopyAdapter';
+		$module_path = realpath('./httpdocs').'/module/BricksAsset';
+		
 		$as->setConfig($cfg);
+		if(file_exists($module_path)){
+			$as->remove(array('BricksAsset'));
+		}
+		$this->assertTrue(!file_exists($module_path));
 		$as->publish(array('BricksAsset'));
-		$dir = './httpdocs/module';
-		$modul = $dir.'/bricksasset';
-		$cache = $dir.'/0cache';
-		$mcache = $cache.'/bricksasset';
-		$this->assertTrue(file_exists($dir));
-		$this->assertTrue(file_exists($modul.'/css'));
-		$this->assertTrue(file_exists($modul.'/css/test.css'));
-		$this->assertTrue(file_exists($modul.'/css/test.less'));
-		$this->assertTrue(file_exists($cache));
-		$this->assertTrue(file_exists($mcache));
-		$this->assertTrue(file_exists($mcache.'/css'));
-		$this->assertTrue(file_exists($mcache.'/css/test.less.css'));				
+		$as->optimize(array('BricksAsset'));
+		
+		$this->assertTrue(file_exists($module_path.'/css'));
+		$this->assertTrue(file_exists($module_path.'/css/test.css'));
+		$this->assertTrue(file_exists($module_path.'/css/test.less'));
+		$this->assertTrue(file_exists($module_path.'/css/test.less.css'));
+		$this->assertTrue(file_exists($module_path.'/css/test.less.min.css'));
+		$this->assertTrue(file_exists($module_path.'/css/test.scss'));
+		$this->assertTrue(file_exists($module_path.'/css/test.scss.css'));
+		$this->assertTrue(file_exists($module_path.'/css/test.scss.min.css'));
+		$this->assertTrue(file_exists($module_path.'/css/test.sass'));
+		$this->assertTrue(file_exists($module_path.'/css/test.sass.css'));
+		$this->assertTrue(file_exists($module_path.'/css/test.sass.min.css'));
+		$this->assertTrue(file_exists($module_path.'/js/test.js'));
+		$this->assertTrue(file_exists($module_path.'/js/test.min.js'));
 	}
 	
 }

@@ -22,4 +22,49 @@ return array(
 			),				
 		),
 	),
+	'router' => array(
+		'router_class' => 'Zend\Mvc\Router\Http\TranslatorAwareTreeRouteStack',
+		'routes' => array(
+			'bricksasset' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route'    => '/{route-bricksasset}',
+					'defaults' => array(
+						'controller' => 'BricksAsset\Controller\AssetController',
+						'action'     => 'index',
+					),
+				),
+			),
+			'bricksasset-publish' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route'    => '/{route-bricksasset-publish}',
+					'defaults' => array(
+						'controller' => 'BricksAsset\Controller\AssetController',
+						'action'     => 'publish',
+					),
+				),
+			),
+			'bricksasset-publish-do' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route'    => '/{route-bricksasset-publish-do}',
+					'defaults' => array(
+						'controller' => 'BricksAsset\Controller\AssetController',
+						'action'     => 'publishDo',
+					),
+				),
+			),
+			'bricksasset-publish-success' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route'    => '/{route-bricksasset-publish-success}',
+					'defaults' => array(
+						'controller' => 'BricksAsset\Controller\AssetController',
+						'action'     => 'publishSuccess',
+					),
+				),
+			),			
+		),
+	),
 );

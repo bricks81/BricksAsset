@@ -14,12 +14,8 @@ class CopyAdapter implements PublishAdapterInterface {
 	 * (non-PHPdoc)
 	 * @see \BricksAsset\AssetService\PublishAdapter\PublishAdapterInterface::publish()
 	 */
-	public function publish($source,$target){
-		// make sure there is no linked content on target
-		if(is_link($target)){
-			unlink($target);
-		}
-		if(is_dir($source)){
+	public function publish($source,$target){		
+		if(is_dir($source)){			
 			$dh = opendir($source);
 			if($dh){
 				while(false!==($filename=readdir($dh))){
@@ -31,7 +27,7 @@ class CopyAdapter implements PublishAdapterInterface {
 			}
 			closedir($dh);
 		} else {
-			if(!file_exists($target)||filectime($source)>filectime($target)){
+			if(!file_exists($target)||filectime($source)>filectime($target)){				
 				File::staticCopy($source,$target);	
 			}
 		}
