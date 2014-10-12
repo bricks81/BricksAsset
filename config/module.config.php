@@ -31,6 +31,14 @@ return array(
 			'HeadLink' => 'Bricks\View\Helper\HeadLink',
 			'HeadScript' => 'Bricks\View\Helper\HeadScript',
 		),
+		'delegators' => array(
+			'HeadLink' => array(
+				'Bricks\View\Helper\HeadLinkDelegator',
+			),
+			'HeadScript' => array(
+				'Bricks\View\Helper\HeadScriptDelegator',
+			),
+		),
 	),
 	'Bricks' => array(
 		'BricksAsset' => array(
