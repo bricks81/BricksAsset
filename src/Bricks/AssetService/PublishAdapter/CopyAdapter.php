@@ -19,7 +19,7 @@ class CopyAdapter implements PublishAdapterInterface {
 			$dh = opendir($source);
 			if($dh){
 				while(false!==($filename=readdir($dh))){
-					if('.'==$filename||'..'==$filename){
+					if('.'==$filename[0]){
 						continue;
 					}
 					$this->publish($source.'/'.$filename,$target.'/'.$filename);										

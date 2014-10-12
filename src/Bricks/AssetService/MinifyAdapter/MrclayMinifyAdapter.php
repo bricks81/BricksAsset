@@ -18,7 +18,7 @@ class MrclayMinifyAdapter implements MinifyAdapterInterface {
 			$dh = opendir($source);
 			if($dh){
 				while(false!==($filename=readdir($dh))){
-					if('.'==$filename||'..'==$filename){
+					if('.'==$filename[0]){
 						continue;
 					}
 					$this->minifyCss($source.'/'.$filename,$target.'/'.$filename);
@@ -48,7 +48,7 @@ class MrclayMinifyAdapter implements MinifyAdapterInterface {
 			$dh = opendir($source);
 			if($dh){
 				while(false!==($filename=readdir($dh))){
-					if('.'==$filename||'..'==$filename){
+					if('.'==$filename[0]){
 						continue;
 					}
 					$this->minifyJs($source.'/'.$filename,$target.'/'.$filename);

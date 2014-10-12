@@ -17,9 +17,9 @@ class LeafoScssphpAdapter implements ScssAdapterInterface {
 			$dh = opendir($source);
 			if($dh){
 				while(false!==($filename=readdir($dh))){
-					if('.'==$filename||'..'==$filename){
+					if('.'==$filename[0]){
 						continue;
-					}
+					}					
 					$this->scss($source.'/'.$filename,$target.'/'.$filename);
 				}
 			}
@@ -35,8 +35,12 @@ class LeafoScssphpAdapter implements ScssAdapterInterface {
 			if(!file_exists($_target)||filectime($source)>filectime($_target)){
 				$content = file_get_contents($source);				
 				$scss = new Compiler();
-				$content = $scss->compile($content);
-				file_put_contents($_target,$content);
+				try {
+					$content = $scss->compile($content);
+					file_put_contents($_target,$content);
+				} catch(Exception $e){
+					error_log($e->getMessage());
+				}				
 			}
 		}		
 	}
