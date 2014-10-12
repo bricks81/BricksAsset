@@ -17,10 +17,7 @@ the http reachable files of a module. Simple, flexible and extendable.
 
 ### Installation
 #### Using Composer
-    php composer.phar require bricks81/BricksAsset
-#### Download as Module
-First Download bricks81/BricksFile.
-Load this package and install both under module/BricksFile and module/BricksAsset.
+    php composer.phar require bricks81/bricks-asset
 #### Activate Modules
 Add the modules in your application.config.php:
 
@@ -39,13 +36,6 @@ Add the modules in your application.config.php:
 Add the content of BricksAsset/config/dist.global.php to your configuration
 (check if all fits to your needs):
 
-	// ...
-	'view_helpers' => array(
-		'invokables' => array(
-			'HeadLink' => 'Bricks\View\Helper\HeadLink',
-			'HeadScript' => 'Bricks\View\Helper\HeadScript',
-		),
-	),
 	// ...
 	'Bricks' => array(
 		// ...
@@ -150,8 +140,8 @@ You could define module specific parameters.
 
 You can use your HeadLink and HeadScript as it is. And you could use .less, .scss and .sass files, too.
 
-	echo $this->headLink()->appendStylsheet('module/ModuleName/css/my.less');
-	echo $this->headScript()->appendFile('module/ModuleName/js/my.js');
+	echo $this->headLink()->appendStylsheet('ModuleName/css/my.less');
+	echo $this->headScript()->appendFile('ModuleName/js/my.js');
 
 The example above will output:
 

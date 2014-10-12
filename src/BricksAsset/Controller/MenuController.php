@@ -40,16 +40,6 @@ class MenuController extends AbstractActionController {
 		$toolbarItem->setMenuIcon($menuIcon);
 		$toolbarGroup->addItem($toolbarItem);
 		
-		/*
-		$toolbarItem = new ToolbarItem('tbitem-admin-general-optimize',2);
-		$toolbarItem->setTitle($translator->translate('tbitem-admin-assets-optimize'));
-		$toolbarItem->setUrl($router->assemble(array(),array('name'=>'bricksasset-optimize')));
-		$menuIcon = new MenuIcon();
-		$menuIcon->setIconString('<i class="fa fa-2x fa-area-chart"></i>');
-		$toolbarItem->setMenuIcon($menuIcon);
-		$toolbarGroup->addItem($toolbarItem);
-		*/
-		
 		$toolbarSet->addGroup($toolbarGroup);
 		$menuItem->setToolbarSet($toolbarSet);
 		$menu->addItem($menuItem);

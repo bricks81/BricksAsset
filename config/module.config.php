@@ -26,4 +26,25 @@ return array(
 			__DIR__ . '/../view',
 		),
 	),	
+	'view_helpers' => array(
+		'invokables' => array(
+			'HeadLink' => 'Bricks\View\Helper\HeadLink',
+			'HeadScript' => 'Bricks\View\Helper\HeadScript',
+		),
+	),
+	'Bricks' => array(
+		'BricksAsset' => array(
+			'autoPublish' => false,
+			'autoOptimize' => false,
+			'minifyCssSupport' => false,
+			'minifyJsSupport' => false,
+			'lessSupport' => false,
+			'scssSupport' => false,
+			'module_assets_path' => './public',
+			'wwwroot_path' => './public',
+			'http_assets_path' => 'module',
+			'module_specific' => array(
+			),
+		),
+	),	
 );

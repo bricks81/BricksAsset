@@ -31,7 +31,7 @@ class HeadLink extends ZFHeadLink {
 	 * @see \Zend\View\Helper\HeadLink::itemToString()
 	 */
 	public function itemToString(stdClass $item){
-		$cfg = $this->getServiceManager()->get('Config');
+		$cfg = $this->getServiceManager()->get('Configuration');
 		if(!isset($cfg['Bricks']['BricksAsset']['http_assets_path'])){
 			return parent::itemToString($item);
 		}
@@ -50,7 +50,7 @@ class HeadLink extends ZFHeadLink {
 		
 		$moduleName = '';
 		foreach($this->moduleNames AS $name){		
-			if(false!==strpos($item->href,'/'.$name.'/')){
+			if(substr($item->href,0,strlen($name))==$name){
 				$moduleName = $name;
 				break;
 			}
@@ -87,6 +87,23 @@ class HeadLink extends ZFHeadLink {
 		}
 		if(!isset($http_assets_path)){
 			return parent::itemToString($item);
+		}
+		
+		if(isset($assetsCfg['module_specific'][$moduleName]['wwwroot_path'])){
+			$wwwroot_path = $assetsCfg['module_specific'][$moduleName]['wwwroot_path'];
+		} elseif(isset($assetsCfg['wwwroot_path'])){
+			$wwwroot_path = $assetsCfg['wwwroot_path'];
+		}
+		if(!isset($wwwroot_path)){
+			return parent::itemToString($item);
+		}
+		
+		// we add the assets path if it's missing and the file exists
+		if(substr($item->href,0,strlen($http_assets_path))!=$http_assets_path){
+			$file = realpath($wwwroot_path).'/'.$http_assets_path.'/'.$item->href;
+			if(file_exists($file)){
+				$item->href = $http_assets_path.'/'.$item->href;
+			}
 		}
 		
 		$href = $item->href;

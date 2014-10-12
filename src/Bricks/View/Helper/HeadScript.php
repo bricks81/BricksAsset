@@ -34,7 +34,7 @@ class HeadScript extends ZFHeadScript {
 		if(!isset($item->attributes['src'])){
 			return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
 		}
-		$cfg = $this->getServiceManager()->get('Config');
+		$cfg = $this->getServiceManager()->get('Configuration');
 		if(!isset($cfg['Bricks']['BricksAsset']['http_assets_path'])){
 			return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
 		}
@@ -53,7 +53,7 @@ class HeadScript extends ZFHeadScript {
 		
 		$moduleName = '';
 		foreach($this->moduleNames AS $name){		
-			if(false!==strpos($item->attributes['src'],'/'.$name.'/')){
+			if(substr($item->attributes['src'],0,strlen($name))==$name){
 				$moduleName = $name;
 				break;
 			}
@@ -76,7 +76,24 @@ class HeadScript extends ZFHeadScript {
 		if(!isset($http_assets_path)){
 			return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
 		}
-
+		
+		if(isset($assetsCfg['module_specific'][$moduleName]['wwwroot_path'])){
+			$wwwroot_path = $assetsCfg['module_specific'][$moduleName]['wwwroot_path'];
+		} elseif(isset($assetsCfg['wwwroot_path'])){
+			$wwwroot_path = $assetsCfg['wwwroot_path'];
+		}
+		if(!isset($wwwroot_path)){
+			return parent::itemToString($item);
+		}
+		
+		// we add the assets path if it's missing and the file exists
+		if(substr($item->attributes['src'],0,strlen($http_assets_path))!=$http_assets_path){
+			$file = realpath($wwwroot_path).'/'.$http_assets_path.'/'.$item->attributes['src'];
+			if(file_exists($file)){
+				$item->attributes['src'] = $http_assets_path.'/'.$item->attributes['src'];
+			}
+		}
+		
 		$href = $item->attributes['src'];
 		if(true==$minifySupport){
 			if(substr($href,-3)=='.js'){			

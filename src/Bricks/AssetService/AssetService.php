@@ -31,7 +31,7 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @see \Zend\ServiceManager\FactoryInterface::createService()
 	 */
 	public function createService(ServiceLocatorInterface $serviceLocator){
-		$config = $serviceLocator->get('configuration');
+		$config = $serviceLocator->get('Configuration');		
 		if(!isset($config['Bricks']['BricksAsset'])){
 			throw new RuntimeException('please configure bricks asset service');			
 		}
@@ -195,11 +195,15 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	}
 		
 	/**
-	 * @param object $module
+	 * @param object|string $module
 	 * @throws RuntimeException	 
 	 * @return string the subpath below the module directory
 	 */
 	public function getModuleAssetsSubpath($module){
+		if(is_string($module)){
+			$mm = $this->getServiceManager()->get('ModuleManager');
+			$module = $mm->getModule($module);
+		}
 		$assetsCfg = $this->getConfig();			
 		
 		$class = get_class($module);
@@ -218,11 +222,15 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	}
 	
 	/**
-	 * @param object $module
+	 * @param object| $module
 	 * @throws RuntimeException
 	 * @return string
 	 */
 	public function getWwwrootPath($module){
+		if(is_string($module)){
+			$mm = $this->getServiceManager()->get('ModuleManager');
+			$module = $mm->getModule($module);
+		}
 		$assetsCfg = $this->getConfig();
 		
 		$class = get_class($module);
@@ -241,12 +249,16 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	}
 	
 	/**
-	 * @param 	object $module
+	 * @param 	object|string $module
 	 * @throws 	RuntimeException	 
 	 * @return 	string the relative/absolute path (how it is configured)	
 	 * 			to the public webroot module dir
 	 */
 	public function getHttpAssetsPath($module){
+		if(is_string($module)){
+			$mm = $this->getServiceManager()->get('ModuleManager');
+			$module = $mm->getModule($module);
+		}
 		$assetsCfg = $this->getConfig();
 		
 		$class = get_class($module);
@@ -265,11 +277,15 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	}
 	
 	/**
-	 * @param object $module
+	 * @param object|string $module
 	 * @throws RuntimeException
 	 * @return \Bricks\AssetService\PublishAdapter\PublishAdapterInterface
 	 */
 	public function getPublishAdapter($module){
+		if(is_string($module)){
+			$mm = $this->getServiceManager()->get('ModuleManager');
+			$module = $mm->getModule($module);
+		}
 		$assetsCfg = $this->getConfig();
 		$class = get_class($module);
 		$ref = new ReflectionClass($class);
@@ -293,10 +309,14 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	}
 	
 	/**
-	 * @param object $module
+	 * @param object|string $module
 	 * @return \Bricks\AssetService\MinifyAdapter\MinifyAdapterInterface
 	 */
 	public function getLessAdapter($module){
+		if(is_string($module)){
+			$mm = $this->getServiceManager()->get('ModuleManager');
+			$module = $mm->getModule($module);
+		}
 		$assetsCfg = $this->getConfig();
 		$class = get_class($module);
 		$ref = new ReflectionClass($class);
@@ -320,10 +340,14 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	}
 	
 	/**
-	 * @param object $module
+	 * @param object|string $module
 	 * @return \Bricks\AssetService\ScssAdapter\ScssAdapterInterface
 	 */
 	public function getScssAdapter($module){
+		if(is_string($module)){
+			$mm = $this->getServiceManager()->get('ModuleManager');
+			$module = $mm->getModule($module);
+		}
 		$assetsCfg = $this->getConfig();
 		$class = get_class($module);
 		$ref = new ReflectionClass($class);
@@ -347,10 +371,14 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	}
 	
 	/**
-	 * @param object $module
+	 * @param object|string $module
 	 * @return \Bricks\AssetService\LessAdapter\LessAdapterInterface
 	 */
 	public function getMinifyAdapter($module){
+		if(is_string($module)){
+			$mm = $this->getServiceManager()->get('ModuleManager');
+			$module = $mm->getModule($module);
+		}
 		$assetsCfg = $this->getConfig();
 		$class = get_class($module);
 		$ref = new ReflectionClass($class);
@@ -395,10 +423,14 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	}
 	
 	/**
-	 * @param object $module
+	 * @param object|string $module
 	 * @return boolean
 	 */
 	public function getScssSupport($module){
+		if(is_string($module)){
+			$mm = $this->getServiceManager()->get('ModuleManager');
+			$module = $mm->getModule($module);
+		}
 		$assetsCfg = $this->getConfig();
 		$class = get_class($module);
 		$ref = new ReflectionClass($class);
@@ -416,10 +448,14 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	}
 	
 	/**
-	 * @param object $module
+	 * @param object|string $module
 	 * @return boolean
 	 */
 	public function getMinifyCssSupport($module){
+		if(is_string($module)){
+			$mm = $this->getServiceManager()->get('ModuleManager');
+			$module = $mm->getModule($module);
+		}
 		$assetsCfg = $this->getConfig();
 		$class = get_class($module);
 		$ref = new ReflectionClass($class);
@@ -437,10 +473,14 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	}
 	
 	/**
-	 * @param object $module
+	 * @param object|string $module
 	 * @return boolean
 	 */
 	public function getMinifyJsSupport($module){
+		if(is_string($module)){
+			$mm = $this->getServiceManager()->get('ModuleManager');
+			$module = $mm->getModule($module);
+		}
 		$assetsCfg = $this->getConfig();
 		$class = get_class($module);
 		$ref = new ReflectionClass($class);
