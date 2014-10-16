@@ -2,7 +2,6 @@
 
 namespace Bricks\AssetService;
 
-
 use Bricks\AssetService\MinifyAdapter\MinifyAdapterInterface;
 use Bricks\AssetService\LessAdapter\LessAdapterInterface;
 use Bricks\AssetService\PublishAdapter\PublishAdapterInterface;
@@ -140,7 +139,7 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 			$_assets_path .= '/'.$moduleName;
 			
 			$this->doPublish($publishAdapter,$_module_assets_path,$_assets_path);
-			if($lessSupport){
+			if($lessSupport){				
 				$this->doLess($lessAdapter,$_assets_path,$_assets_path);
 			}
 			if($scssSupport){				
@@ -502,7 +501,7 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @param string $source the source path of the directory
 	 * @param string $target the target directory where it will be copied
 	 */
-	public function doPublish(PublishAdapterInterface $adapter,$source,$target){
+	public function doPublish(PublishAdapterInterface $adapter,$source,$target){		
 		$adapter->publish($source,$target);
 	}
 	

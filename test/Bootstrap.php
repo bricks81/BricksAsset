@@ -58,7 +58,7 @@ class Bootstrap {
         $serviceManager = new ServiceManager(new ServiceManagerConfig());
         $serviceManager->setService('ApplicationConfig', $config);                
         $serviceManager->get('ModuleManager')->loadModules();
-        $con = $serviceManager->get('defaultDatabaseAdapter')->getDriver()->getConnection();
+        //$con = $serviceManager->get('defaultDatabaseAdapter')->getDriver()->getConnection();
         
         static::$serviceManager = $serviceManager;
         static::$config = $config;

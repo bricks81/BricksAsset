@@ -4,7 +4,6 @@ namespace Bricks\AssetService\LessAdapter;
 
 use \lessc;
 use \RuntimeException;
-
 use Bricks\File\File;
 
 class NeilimeLessphpAdapter implements LessAdapterInterface {
@@ -15,32 +14,49 @@ class NeilimeLessphpAdapter implements LessAdapterInterface {
 	 */
 	public function less($source,$target){
 		if(is_dir($source)){
-			$dh = opendir($source);
-			if($dh){
-				while(false!==($filename=readdir($dh))){
-					if('.'==$filename[0]){
-						continue;
-					}
-					$this->less($source.'/'.$filename,$target.'/'.$filename);
-				}
+			$update = $this->getLessUpdate($source,$target);
+			foreach($update AS $source => $target){
+				$this->less($source,$target);
 			}
-			closedir($dh);
 		} else {
-			if(substr($source,-5)!='.less'||substr($source,-9)=='.less.css'){
-				return;
+			$content = file_get_contents($source);
+			$lessc = new lessc();
+			$content = $lessc->compile($content);
+			if(!file_exists($target)){
+				File::touch($target);
 			}
-			$_target = $target.'.css';
-			if(!file_exists($_target)||filectime($source)>filectime($_target)){				
-				$content = file_get_contents($source);
-				$lessc = new lessc();
-				try {
-					$content = $lessc->compile($content);
-					file_put_contents($_target,$content);
-				} catch(Exception $e){
-					error_log($e->getMessage());
-				}				
-			}
+			file_put_contents($target,$content);
 		}		
 	}
+	
+	/**
+	 * @param string $source
+	 * @param string $target
+	 * @return array
+	 */
+	protected function getLessUpdate($source,$target){
+		$update = array();		
+		$filelist = scandir($source);
+		foreach($filelist AS $filename){
+			if('.'==$filename[0]){
+				continue;
+			}
+			$_target = $target.'/'.$filename;
+			$_source = $source.'/'.$filename;						
+			if(is_dir($_source)){
+				$update += $this->getLessUpdate($_source,$_target);
+			} elseif(is_file($_source)){
+				if(substr($_source,-5)!='.less'||substr($_source,-9)=='.less.css'){
+					continue;
+				}
+				$_target .= '.css';
+				if(!file_exists($_target)||filectime($_source)>filectime($_target)){
+					$update[$_source] = $_target;
+				}
+			}
+		}
+		return $update;
+	}
+	
 	
 }

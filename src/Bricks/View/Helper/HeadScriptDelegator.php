@@ -7,6 +7,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class HeadScriptDelegator implements DelegatorFactoryInterface {
 	
+	/**
+	 * (non-PHPdoc)
+	 * @see \Zend\ServiceManager\DelegatorFactoryInterface::createDelegatorWithName()
+	 */
     public function createDelegatorWithName(ServiceLocatorInterface $sl,$name,$requestedName,$callback){
         $headScript = $callback();
 		$headScript->setServiceManager($sl->getServiceLocator());        

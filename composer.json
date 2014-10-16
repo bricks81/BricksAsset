@@ -1,7 +1,7 @@
 {
     "name": "bricks81/bricks-asset",
     "description": "ZF2 Bricks CMS Asset Managment",
-    "license": "GPL",
+    "license": "GPLv3",
     "authors": [
         {
             "name": "Sven Ullmann",
