@@ -90,19 +90,20 @@ This ist the default configuration of BricksAsset and has not to be defined extr
 			'http_assets_path' => 'module',
 			'module_specific' => array(
 				'YourModule' => array(
-				'autoPublish' => false,
-				'autoOptimize' => false,			
-				'MinifyCssSupport' => false, // false for faster development
-				'LessSupport' => true, // if you got a scss webserver module you could deactivate this
-				'ScssSupport' => true, // if you got a scss webserver module you could deactivate this
-				'MinifyJsSupport' => false, // false for faster development
-				'publishAdapter' => 'Bricks\AssetService\PublishAdapter\CopyAdapter',			
-				'lessAdapter' => 'Bricks\AssetService\LessAdapter\NeilimeLessphpAdapter',
-				'scssAdapter' => 'Bricks\AssetService\ScssAdapter\LeafoScssphpAdapter',
-				'minifyAdapter' => 'Bricks\AssetService\MinifyAdapter\MrclayMinifyAdapter',
-				'wwwroot_path' => './public',
-				'http_assets_path' => 'module',
-				'module_assets_path' => dirname(__DIR__).'/public',
+					'autoPublish' => false,
+					'autoOptimize' => false,			
+					'MinifyCssSupport' => false, // false for faster development
+					'LessSupport' => true, // if you got a scss webserver module you could deactivate this
+					'ScssSupport' => true, // if you got a scss webserver module you could deactivate this
+					'MinifyJsSupport' => false, // false for faster development
+					'publishAdapter' => 'Bricks\AssetService\PublishAdapter\CopyAdapter',			
+					'lessAdapter' => 'Bricks\AssetService\LessAdapter\NeilimeLessphpAdapter',
+					'scssAdapter' => 'Bricks\AssetService\ScssAdapter\LeafoScssphpAdapter',
+					'minifyAdapter' => 'Bricks\AssetService\MinifyAdapter\MrclayMinifyAdapter',
+					'wwwroot_path' => './public',
+					'http_assets_path' => 'module',
+					'module_assets_path' => dirname(__DIR__).'/public',
+				),
 			),
 		),
 		// ...

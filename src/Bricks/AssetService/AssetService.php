@@ -253,6 +253,7 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @return \Bricks\AssetService\PublishAdapter\PublishAdapterInterface
 	 */
 	public function getPublishAdapter($module){
+		debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,100);
 		if(!is_string($module)){
 			$class = get_class($module);
 			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
