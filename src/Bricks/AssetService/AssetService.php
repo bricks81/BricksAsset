@@ -78,16 +78,14 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 			$modules = $mm->getLoadedModules();
 		}
 		foreach($modules AS $module){
-			if(!is_object($module)){
-				$module = $mm->getModule($module);
-			}
-			$class = get_class($module);
-			$ref = new ReflectionClass($class);
-			$filename = $ref->getFileName();
-			$dir = dirname($filename);
-			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-			$wwwroot_path = $this->getWwwrootPath($module);			
-			$http_assets_path = $this->getHttpAssetsPath($module);
+			if(is_object($module)){
+				$class = get_class($module);
+				$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+			} else {
+				$moduleName = $this->filterModuleName($module);
+			}			
+			$wwwroot_path = $this->getWwwrootPath($moduleName);			
+			$http_assets_path = $this->getHttpAssetsPath($moduleName);
 			$path = realpath($wwwroot_path).'/'.$http_assets_path.'/'.$moduleName;
 			if(!file_exists($path)){				
 				return;
@@ -101,44 +99,37 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @throws \RuntimeException
 	 */
 	public function publish(array $modules=array()){
-		$config = $this->getServiceManager()->get('ApplicationConfig');
-		
 		$mm = $this->getServiceManager()->get('ModuleManager');
 		if(!count($modules)){
 			$modules = $mm->getLoadedModules();
 		}
 		foreach($modules AS $module){
-			if(!is_object($module)){	
-				$module = $mm->getModule($module);
-			}			
-			
-			$class = get_class($module);
-			$ref = new ReflectionClass($class);
-			$filename = $ref->getFileName();
-			$dir = dirname($filename);
-			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-			
-			$module_assets_subpath = $this->getModuleAssetsSubpath($module);
-			$wwwroot_path = $this->getWwwrootPath($module);	
-			$http_assets_path = $this->getHttpAssetsPath($module);			
-			$publishAdapter = $this->getPublishAdapter($module);
-			$lessAdapter = $this->getLessAdapter($module);
-			$scssAdapter = $this->getScssAdapter($module);
-			$lessSupport = $this->getLessSupport($module);
-			$scssSupport = $this->getScssSupport($module);
-						
-			$_module_assets_path = realpath(rtrim($dir,'/').'/'.$module_assets_subpath);
-			if(!file_exists($_module_assets_path)){				
-				continue;
+			if(is_object($module)){	
+				$class = get_class($module);
+				$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+			} else {			
+				$moduleName = $this->filterModuleName($module);
 			}
 			
+			$module_assets_path = $this->getModuleAssetsPath($moduleName);
+			if(!file_exists($module_assets_path)){
+				continue;
+			}
+			$wwwroot_path = $this->getWwwrootPath($moduleName);	
+			$http_assets_path = $this->getHttpAssetsPath($moduleName);			
+			$publishAdapter = $this->getPublishAdapter($moduleName);
+			$lessAdapter = $this->getLessAdapter($moduleName);
+			$scssAdapter = $this->getScssAdapter($moduleName);
+			$lessSupport = $this->getLessSupport($moduleName);
+			$scssSupport = $this->getScssSupport($moduleName);
+						
 			$_assets_path = realpath($wwwroot_path).'/'.$http_assets_path;			
 			if(!file_exists($_assets_path)){
 				throw new RuntimeException('please create folder ('.$_assets_path.')');
 			}									
 			$_assets_path .= '/'.$moduleName;
 			
-			$this->doPublish($publishAdapter,$_module_assets_path,$_assets_path);
+			$this->doPublish($publishAdapter,$module_assets_path,$_assets_path);
 			if($lessSupport){				
 				$this->doLess($lessAdapter,$_assets_path,$_assets_path);
 			}
@@ -154,28 +145,23 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @throws RuntimeException
 	 */
 	public function optimize(array $modules=array()){
-		$config = $this->getServiceManager()->get('ApplicationConfig');
-		
 		$mm = $this->getServiceManager()->get('ModuleManager');
 		if(!count($modules)){
 			$modules = $mm->getLoadedModules();
 		}		
 		foreach($modules AS $module){			
-			if(!is_object($module)){	
-				$module = $mm->getModule($module);
-			}			
+			if(is_object($module)){	
+				$class = get_class($module);
+				$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+			} else {
+				$moduleName = $this->filterModuleName($module);
+			}
 			
-			$class = get_class($module);
-			$ref = new ReflectionClass($class);
-			$filename = $ref->getFileName();
-			$dir = dirname($filename);
-			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-				
-			$wwwroot_path = $this->getWwwrootPath($module);
-			$http_assets_path = $this->getHttpAssetsPath($module);			
-			$minifyAdapter = $this->getMinifyAdapter($module);
-			$minifyCssSupport = $this->getMinifyCssSupport($module);
-			$minifyJsSupport = $this->getMinifyJsSupport($module);			
+			$wwwroot_path = $this->getWwwrootPath($moduleName);
+			$http_assets_path = $this->getHttpAssetsPath($moduleName);			
+			$minifyAdapter = $this->getMinifyAdapter($moduleName);
+			$minifyCssSupport = $this->getMinifyCssSupport($moduleName);
+			$minifyJsSupport = $this->getMinifyJsSupport($moduleName);			
 
 			$_assets_path = realpath($wwwroot_path).'/'.$http_assets_path;
 			if(!file_exists($_assets_path)){
@@ -196,28 +182,22 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	/**
 	 * @param object|string $module
 	 * @throws RuntimeException	 
-	 * @return string the subpath below the module directory
+	 * @return string
 	 */
-	public function getModuleAssetsSubpath($module){
-		if(is_string($module)){
-			$mm = $this->getServiceManager()->get('ModuleManager');
-			$module = $mm->getModule($module);
-		}
-		$assetsCfg = $this->getConfig();			
-		
-		$class = get_class($module);
-		$ref = new ReflectionClass($class);
-		$filename = $ref->getFileName();
-		$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-		
-		if(isset($assetsCfg['module_specific'][$moduleName]['module_assets_path'])){
-			$subpath = $assetsCfg['module_specific'][$moduleName]['module_assets_path'];
-		} elseif(isset($assetsCfg['module_assets_path'])){
-			$subpath = $assetsCfg['module_assets_path'];
+	public function getModuleAssetsPath($module){
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
 		} else {
-			throw new RuntimeException('could not get module assets subpath for module: '.$moduleName);
+			$moduleName = $this->filterModuleName($module);
+		}
+		$assetsCfg = $this->getConfig();
+		if(isset($assetsCfg['module_specific'][$moduleName]['module_assets_path'])){
+			$path = $assetsCfg['module_specific'][$moduleName]['module_assets_path'];
+		} else {
+			$path = false;
 		}		
-		return $subpath;
+		return $path;
 	}
 	
 	/**
@@ -226,17 +206,13 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @return string
 	 */
 	public function getWwwrootPath($module){
-		if(is_string($module)){
-			$mm = $this->getServiceManager()->get('ModuleManager');
-			$module = $mm->getModule($module);
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+		} else {
+			$moduleName = $this->filterModuleName($module);
 		}
 		$assetsCfg = $this->getConfig();
-		
-		$class = get_class($module);
-		$ref = new ReflectionClass($class);
-		$filename = $ref->getFileName();
-		$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-		
 		if(isset($assetsCfg['module_specific'][$moduleName]['wwwroot_path'])){
 			$path = $assetsCfg['module_specific'][$moduleName]['wwwroot_path'];
 		} elseif(isset($assetsCfg['wwwroot_path'])){
@@ -254,17 +230,13 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * 			to the public webroot module dir
 	 */
 	public function getHttpAssetsPath($module){
-		if(is_string($module)){
-			$mm = $this->getServiceManager()->get('ModuleManager');
-			$module = $mm->getModule($module);
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));			
+		} else {
+			$moduleName = $this->filterModuleName($module);
 		}
 		$assetsCfg = $this->getConfig();
-		
-		$class = get_class($module);
-		$ref = new ReflectionClass($class);
-		$filename = $ref->getFileName();
-		$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-		
 		if(isset($assetsCfg['module_specific'][$moduleName]['http_assets_path'])){
 			$path = $assetsCfg['module_specific'][$moduleName]['http_assets_path'];
 		} elseif(isset($assetsCfg['http_assets_path'])){
@@ -281,16 +253,13 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @return \Bricks\AssetService\PublishAdapter\PublishAdapterInterface
 	 */
 	public function getPublishAdapter($module){
-		if(is_string($module)){
-			$mm = $this->getServiceManager()->get('ModuleManager');
-			$module = $mm->getModule($module);
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+		} else {
+			$moduleName = $this->filterModuleName($module);
 		}
 		$assetsCfg = $this->getConfig();
-		$class = get_class($module);
-		$ref = new ReflectionClass($class);
-		$filename = $ref->getFileName();
-		$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-	
 		if(isset($assetsCfg['module_specific'][$moduleName]['publishAdapter'])){
 			$adapter = $assetsCfg['module_specific'][$moduleName]['publishAdapter'];
 		} elseif(isset($assetsCfg['publishAdapter'])){
@@ -312,16 +281,13 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @return \Bricks\AssetService\MinifyAdapter\MinifyAdapterInterface
 	 */
 	public function getLessAdapter($module){
-		if(is_string($module)){
-			$mm = $this->getServiceManager()->get('ModuleManager');
-			$module = $mm->getModule($module);
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+		} else {
+			$moduleName = $this->filterModuleName($module);
 		}
 		$assetsCfg = $this->getConfig();
-		$class = get_class($module);
-		$ref = new ReflectionClass($class);
-		$filename = $ref->getFileName();
-		$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-	
 		if(isset($assetsCfg['module_specific'][$moduleName]['lessAdapter'])){
 			$adapter = $assetsCfg['module_specific'][$moduleName]['lessAdapter'];
 		} elseif(isset($assetsCfg['lessAdapter'])){
@@ -343,16 +309,13 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @return \Bricks\AssetService\ScssAdapter\ScssAdapterInterface
 	 */
 	public function getScssAdapter($module){
-		if(is_string($module)){
-			$mm = $this->getServiceManager()->get('ModuleManager');
-			$module = $mm->getModule($module);
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+		} else {
+			$moduleName = $this->filterModuleName($module);
 		}
 		$assetsCfg = $this->getConfig();
-		$class = get_class($module);
-		$ref = new ReflectionClass($class);
-		$filename = $ref->getFileName();
-		$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-	
 		if(isset($assetsCfg['module_specific'][$moduleName]['scssAdapter'])){
 			$adapter = $assetsCfg['module_specific'][$moduleName]['scssAdapter'];
 		} elseif(isset($assetsCfg['scssAdapter'])){
@@ -374,16 +337,13 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @return \Bricks\AssetService\LessAdapter\LessAdapterInterface
 	 */
 	public function getMinifyAdapter($module){
-		if(is_string($module)){
-			$mm = $this->getServiceManager()->get('ModuleManager');
-			$module = $mm->getModule($module);
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+		} else {
+			$moduleName = $this->filterModuleName($module);
 		}
 		$assetsCfg = $this->getConfig();
-		$class = get_class($module);
-		$ref = new ReflectionClass($class);
-		$filename = $ref->getFileName();
-		$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-	
 		if(isset($assetsCfg['module_specific'][$moduleName]['minifyAdapter'])){
 			$adapter = $assetsCfg['module_specific'][$moduleName]['minifyAdapter'];
 		} elseif(isset($assetsCfg['minifyAdapter'])){
@@ -405,12 +365,13 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @return boolean
 	 */
 	public function getLessSupport($module){
-		$assetsCfg = $this->getConfig();
-		$class = get_class($module);
-		$ref = new ReflectionClass($class);
-		$filename = $ref->getFileName();
-		$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-		
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+		} else {
+			$moduleName = $this->filterModuleName($module);
+		}		
+		$assetsCfg = $this->getConfig();		
 		if(isset($assetsCfg['module_specific'][$moduleName]['lessSupport'])){
 			$supported = $assetsCfg['module_specific'][$moduleName]['lessSupport'];
 		} elseif(isset($assetsCfg['lessSupport'])){
@@ -426,16 +387,13 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @return boolean
 	 */
 	public function getScssSupport($module){
-		if(is_string($module)){
-			$mm = $this->getServiceManager()->get('ModuleManager');
-			$module = $mm->getModule($module);
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+		} else {
+			$moduleName = $this->filterModuleName($module);
 		}
 		$assetsCfg = $this->getConfig();
-		$class = get_class($module);
-		$ref = new ReflectionClass($class);
-		$filename = $ref->getFileName();
-		$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-	
 		if(isset($assetsCfg['module_specific'][$moduleName]['scssSupport'])){
 			$supported = $assetsCfg['module_specific'][$moduleName]['scssSupport'];
 		} elseif(isset($assetsCfg['scssSupport'])){
@@ -451,16 +409,13 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @return boolean
 	 */
 	public function getMinifyCssSupport($module){
-		if(is_string($module)){
-			$mm = $this->getServiceManager()->get('ModuleManager');
-			$module = $mm->getModule($module);
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+		} else {
+			$moduleName = $this->filterModuleName($module);
 		}
 		$assetsCfg = $this->getConfig();
-		$class = get_class($module);
-		$ref = new ReflectionClass($class);
-		$filename = $ref->getFileName();
-		$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-	
 		if(isset($assetsCfg['module_specific'][$moduleName]['minifyCssSupport'])){
 			$supported = $assetsCfg['module_specific'][$moduleName]['minifyCssSupport'];
 		} elseif(isset($assetsCfg['minifyCssSupport'])){
@@ -476,20 +431,61 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @return boolean
 	 */
 	public function getMinifyJsSupport($module){
-		if(is_string($module)){
-			$mm = $this->getServiceManager()->get('ModuleManager');
-			$module = $mm->getModule($module);
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+		} else {
+			$moduleName = $this->filterModuleName($module);
 		}
 		$assetsCfg = $this->getConfig();
-		$class = get_class($module);
-		$ref = new ReflectionClass($class);
-		$filename = $ref->getFileName();
-		$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
-	
 		if(isset($assetsCfg['module_specific'][$moduleName]['minifyJsSupport'])){
 			$supported = $assetsCfg['module_specific'][$moduleName]['minifyJsSupport'];
 		} elseif(isset($assetsCfg['minifyJsSupport'])){
 			$supported = $assetsCfg['minifyJsSupport'];
+		} else {
+			$supported = false;
+		}
+		return $supported;
+	}
+	
+	/**
+	 * @param object|string $module
+	 * @return boolean
+	 */
+	public function getIsAutoPublish($module){
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+		} else {
+			$moduleName = $this->filterModuleName($module);
+		}
+		$assetsCfg = $this->getConfig();
+		if(isset($assetsCfg['module_specific'][$moduleName]['autoPublish'])){
+			$supported = $assetsCfg['module_specific'][$moduleName]['autoPublish'];
+		} elseif(isset($assetsCfg['autoPublish'])){
+			$supported = $assetsCfg['autoPublish'];
+		} else {
+			$supported = false;
+		}
+		return $supported;
+	}
+	
+	/**
+	 * @param object|string $module
+	 * @return boolean
+	 */
+	public function getIsAutoOptimize($module){
+		if(!is_string($module)){
+			$class = get_class($module);
+			$moduleName = $this->filterModuleName(basename(dirname(str_replace('\\','/',$class))));
+		} else {
+			$moduleName = $this->filterModuleName($module);
+		}
+		$assetsCfg = $this->getConfig();
+		if(isset($assetsCfg['module_specific'][$moduleName]['autoOptimize'])){
+			$supported = $assetsCfg['module_specific'][$moduleName]['autoOptimize'];
+		} elseif(isset($assetsCfg['autoOptimize'])){
+			$supported = $assetsCfg['autoOptimize'];
 		} else {
 			$supported = false;
 		}
@@ -548,7 +544,7 @@ class AssetService implements FactoryInterface, ServiceManagerAwareInterface {
 	 * @return string|false
 	 */
 	public function filterModuleName($name){
-		if(preg_match('#^[a-zA-Z0-9._-]*$#',$name)){
+		if(preg_match('#^[a-zA-Z]{1}[a-zA-Z0-9._-]*$#',$name)){
 			return $name;
 		}
 		return false;		

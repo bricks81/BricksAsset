@@ -28,7 +28,7 @@ class Module {
 			$cfg = $e->getApplication()->getServiceManager()->get('Config');
 			if(isset($cfg['Bricks']['BricksAsset'])){
 				$assetsConfig = $cfg['Bricks']['BricksAsset'];
-				$as = $e->getApplication()->getServiceManager()->get('Bricks\AssetService');
+				$as = $e->getApplication()->getServiceManager()->get('Bricks\AssetService');			
 				if(isset($assetsConfig['autoPublish'])&&$assetsConfig['autoPublish']){
 					$as->publish();
 				}

@@ -45,10 +45,25 @@ Add the content of BricksAsset/config/dist.global.php to your configuration
 			'MinifyCssSupport' => true,
 			'LessSupport' => true,
 			'ScssSupport' => true,
-			'MinifyJsSupport' => true,
-			'module_assets_path' => './public',
+			'MinifyJsSupport' => true,			
 			'wwwroot_path' => './public',
 			'http_assets_path' => 'module',			
+		),
+		// ...
+	),
+	// ...
+
+After this you've to add the configuration for your module:
+
+	// ...
+	'Bricks' => array(
+		// ...
+		'BricksAsset' => array(
+			'module_specific' => array(
+				'YourModule => array(
+					'module_assets_path' => dirname(__DIR__).'/public';
+				),
+			),
 		),
 		// ...
 	),
@@ -71,9 +86,24 @@ This ist the default configuration of BricksAsset and has not to be defined extr
 			'lessAdapter' => 'Bricks\AssetService\LessAdapter\NeilimeLessphpAdapter',
 			'scssAdapter' => 'Bricks\AssetService\ScssAdapter\LeafoScssphpAdapter',
 			'minifyAdapter' => 'Bricks\AssetService\MinifyAdapter\MrclayMinifyAdapter',
-			'module_assets_path' => './public',
 			'wwwroot_path' => './public',
-			'http_assets_path' => 'module',			
+			'http_assets_path' => 'module',
+			'module_specific' => array(
+				'YourModule' => array(
+				'autoPublish' => false,
+				'autoOptimize' => false,			
+				'MinifyCssSupport' => false, // false for faster development
+				'LessSupport' => true, // if you got a scss webserver module you could deactivate this
+				'ScssSupport' => true, // if you got a scss webserver module you could deactivate this
+				'MinifyJsSupport' => false, // false for faster development
+				'publishAdapter' => 'Bricks\AssetService\PublishAdapter\CopyAdapter',			
+				'lessAdapter' => 'Bricks\AssetService\LessAdapter\NeilimeLessphpAdapter',
+				'scssAdapter' => 'Bricks\AssetService\ScssAdapter\LeafoScssphpAdapter',
+				'minifyAdapter' => 'Bricks\AssetService\MinifyAdapter\MrclayMinifyAdapter',
+				'wwwroot_path' => './public',
+				'http_assets_path' => 'module',
+				'module_assets_path' => dirname(__DIR__).'/public',
+			),
 		),
 		// ...
 	),
@@ -89,8 +119,9 @@ Meaning of this parts
 
 	'minifyAdapter' 		specifies the minify adapter which will be used.
 
-	'module_assets_path' 	is the relative subdirectory of the module in 
-							which are files stored that have to be published.
+	'module_assets_path' 	is the absolute path of the modules public dir 
+							which stores files that have to be published.
+							This have to be defined for each Module.
 
 	'wwwroot_path' 			defines the directory which is reachable through 
 							your browser (path of the filesystem - can be relative).
@@ -104,37 +135,12 @@ Meaning of this parts
 	|- Modules
 	|	|- BricksAsset		
 	|		|- public		module_assets_path (refers to the filesystem 
-	|						- must be relative to the modules
-	|						directory)
+	|						- must be absolute directory path)
  	|
 	|- public				wwwroot_path (refers to the filesystem 
 		|					- can be relative)
 		|- module			http_assets_path (refers to the http path 
-							- must be relative to the www root)
-
-### Advanced configuration
-You could define module specific parameters.
-	
-	// ...
-	'Bricks' => array(
-		// ...
-		'BricksAsset' => array(
-			// ...
-			'module_specific' => array(
-				'YourModule' => array(
-				 	'publishAdapter' => 'YourModule\AssetService\PublishAdapter\CopyAdapter',
-					'lessAdapter' => 'Bricks\AssetService\LessAdapter\NeilimeLessphpAdapter',
-					'lessAdapter' => 'Bricks\AssetService\ScssAdapter\LeafoScssphpAdapter',
-					'minifyAdapter' => 'Bricks\AssetService\MinifyAdapter\MrclayMinifyAdapter',
-					'module_assets_path' => './your/public',
-					'wwwroot_path' => './public',
-					'http_assets_path' => 'your/module/public/path',					
-				),
-			),
-		),
-		// ...
-	),   
-	// ...
+							- must be relative to the wwwroot_path)
 
 ## Usage
 

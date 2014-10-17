@@ -48,7 +48,7 @@ return array(
 			'minifyJsSupport' => false,
 			'lessSupport' => false,
 			'scssSupport' => false,
-			'module_assets_path' => './public',
+			//'module_assets_path' => dirname(__DIR__).'/public',
 			'wwwroot_path' => './public',
 			'http_assets_path' => 'module',
 			'module_specific' => array(
