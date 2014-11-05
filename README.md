@@ -33,21 +33,13 @@ Add the modules in your application.config.php:
 
 ## Configuration
 ### what you've to do
-Add the content of BricksAsset/config/dist.global.php to your configuration
-(check if all fits to your needs):
+Add one important line
 
 	// ...
 	'Bricks' => array(
 		// ...
 		'BricksAsset' => array(
-			'autoPublish' => true,
-			'autoOptimize' => true,
-			'MinifyCssSupport' => true,
-			'LessSupport' => true,
-			'ScssSupport' => true,
-			'MinifyJsSupport' => true,			
-			'wwwroot_path' => './public',
-			'http_assets_path' => 'module',			
+			'module_assets_path' => dirname(__DIR__).'/public',			
 		),
 		// ...
 	),
@@ -76,32 +68,25 @@ This ist the default configuration of BricksAsset and has not to be defined extr
 	'bricks' => array(
 		// ...
 		'BricksAsset' => array(
-			'autoPublish' => false,
-			'autoOptimize' => false,			
-			'MinifyCssSupport' => false, // false for faster development
-			'LessSupport' => true, // if you got a scss webserver module you could deactivate this
-			'ScssSupport' => true, // if you got a scss webserver module you could deactivate this
-			'MinifyJsSupport' => false, // false for faster development
-			'publishAdapter' => 'Bricks\AssetService\PublishAdapter\CopyAdapter',			
-			'lessAdapter' => 'Bricks\AssetService\LessAdapter\NeilimeLessphpAdapter',
-			'scssAdapter' => 'Bricks\AssetService\ScssAdapter\LeafoScssphpAdapter',
-			'minifyAdapter' => 'Bricks\AssetService\MinifyAdapter\MrclayMinifyAdapter',
 			'wwwroot_path' => './public',
 			'http_assets_path' => 'module',
+			'autoPublish' => false,
+			'autoOptimize' => false,			
+			'minifyCssSupport' => false, // false for faster development
+			'lessSupport' => true, // if you got a scss webserver module you could deactivate this
+			'scssSupport' => true, // if you got a scss webserver module you could deactivate this
+			'minifyJsSupport' => false, // false for faster development
+			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
+			'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
+			'publishStrategy' => 'Bricks\AssetService\PublishStrategy\CopyStrategy',	
+			'removeStrategy' => 'Bricks\AssetService\RemoveStrategy\RemoveStrategy',
+			'lessStrategy' => 'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',
+			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
+			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
+			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy/MrclayMinifyStrategy',
 			'module_specific' => array(
 				'YourModule' => array(
-					'autoPublish' => false,
-					'autoOptimize' => false,			
-					'MinifyCssSupport' => false, // false for faster development
-					'LessSupport' => true, // if you got a scss webserver module you could deactivate this
-					'ScssSupport' => true, // if you got a scss webserver module you could deactivate this
-					'MinifyJsSupport' => false, // false for faster development
-					'publishAdapter' => 'Bricks\AssetService\PublishAdapter\CopyAdapter',			
-					'lessAdapter' => 'Bricks\AssetService\LessAdapter\NeilimeLessphpAdapter',
-					'scssAdapter' => 'Bricks\AssetService\ScssAdapter\LeafoScssphpAdapter',
-					'minifyAdapter' => 'Bricks\AssetService\MinifyAdapter\MrclayMinifyAdapter',
-					'wwwroot_path' => './public',
-					'http_assets_path' => 'module',
+					// all options like above but module specific
 					'module_assets_path' => dirname(__DIR__).'/public',
 				),
 			),
@@ -112,14 +97,6 @@ This ist the default configuration of BricksAsset and has not to be defined extr
 
 Meaning of this parts
 	
-	'publishAdapter' 		specifies the publish adapter which will be used.
-
-	'lessAdapter' 			specifies the less adapter which will be used.
-
-	'scssAdapter'			specifies the scss/sass adapter which will be used.
-
-	'minifyAdapter' 		specifies the minify adapter which will be used.
-
 	'module_assets_path' 	is the absolute path of the modules public dir 
 							which stores files that have to be published.
 							This have to be defined for each Module.
@@ -127,8 +104,7 @@ Meaning of this parts
 	'wwwroot_path' 			defines the directory which is reachable through 
 							your browser (path of the filesystem - can be relative).
 
-	'http_assets_path' 		is the relative subpath to the folder where the files 
-							will be copied or linked.
+	'http_assets_path' 		is the relative subpath to the folder where the 						files will be copied or linked.
 
 ### Graficaly
 	application dir			current working directory

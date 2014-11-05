@@ -25,17 +25,11 @@ class Module {
     public function onBootstrap(MvcEvent $e){
     	
     	$e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_DISPATCH,function(MvcEvent $e){
-			$cfg = $e->getApplication()->getServiceManager()->get('Config');
-			if(isset($cfg['Bricks']['BricksAsset'])){
-				$assetsConfig = $cfg['Bricks']['BricksAsset'];
-				$as = $e->getApplication()->getServiceManager()->get('Bricks\AssetService');			
-				if(isset($assetsConfig['autoPublish'])&&$assetsConfig['autoPublish']){
-					$as->publish();
-				}
-				if(isset($assetsConfig['autoOptimize'])&&$assetsConfig['autoOptimize']){
-					$as->optimize();
-				}
-			}		
+    		$sm = $e->getApplication()->getServiceManager();
+    		$appcfg = $sm->get('ApplicationConfig');
+    		$as = $sm->get('Bricks\AssetService');
+    		$as->autoPublish();
+    		$as->autoOptimize();								
     	});
 		
     }

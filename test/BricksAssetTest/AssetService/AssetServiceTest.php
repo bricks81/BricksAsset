@@ -2,96 +2,65 @@
 
 namespace BricksAssetTest\AssetService;
 
-use Bricks\File\Directory;
-
 use BricksAssetTest\Mocking\AssetService\PublishAdapter\MockAdapter;
-use Bricks\AssetService\AssetService;
-use Zend\Log\Logger;
-use Zend\Log\Writer\Mock;
 use PHPUnit_Framework_TestCase;
 use BricksAssetTest\Bootstrap;
+use Bricks\Di\Di;
 
 class AssetServiceTest extends PHPUnit_Framework_TestCase {
 	
-	protected $as;
-	
-	public function setUp(){
-		$this->as = Bootstrap::getServiceManager()->get('Bricks\AssetService');
-		$this->as->setConfig(array(
-			'autoPublish' => false,
-			'autoOptimize' => false,
-			'minifyCssSupport' => true,
-			'minifyJsSupport' => true,
-			'lessSupport' => true,
-			'scssSupport' => true,
-			'publishAdapter' => 'BricksAssetTest\Mocking\AssetService\PublishAdapter\MockAdapter',
-			'module_assets_path' => 'test/public',
-			'wwwroot_path' => realpath('./httpdocs'),
-			'http_assets_path' => 'module',			
-		));
+	public function testGetInstance(){
+		$as = Di::getInstance()->newInstance('Bricks\AssetService\AssetService');
+		$this->assertInstanceOf('\Bricks\AssetService\AssetService',$as);
 	}
 	
-	/**
-	 * @return AssetService
-	 */
-	public function getAssetService(){
-		return $this->as;
+	public function testAdapter(){
+		$as = Di::getInstance()->newInstance('Bricks\AssetService\AssetService');
+		$this->assertInstanceOf('\Bricks\AssetService\Adapter\FileAdapter',$as->getAdapter());
+		$adapter = $as->getAdapter();
+		$new = Di::getInstance()->newInstance('BricksAssetTest\Mock\BricksAsset\Adapter\AdapterMock');
+		$as->setAdapter($new);
+		$this->assertInstanceOf('BricksAssetTest\Mock\BricksAsset\Adapter\AdapterMock',$as->getAdapter());		
 	}
 	
-	public function testInstantiation(){
-		$this->assertTrue(Bootstrap::getServiceManager()->get('Bricks\AssetService') instanceof AssetService);		
-	}
-	
-	public function testTryRun(){
-		$as = $this->getAssetService();
-		$writer = new Mock();
-		$logger = new Logger();
-		$logger->addWriter($writer);
-		MockAdapter::setLogger($logger);
-		$as->publish(array('BricksAsset'));		
-		
-		$module = Bootstrap::getServiceManager()->get('ModuleManager')->getModule('BricksAsset');
-		$class = get_class($module);
-		$ref = new \ReflectionClass($class);
-		$dir = dirname($ref->getFileName());
-		
-		$cfg = $as->getConfig();		
-		$source = $writer->events[0]['message'];
-		$target = $writer->events[1]['message'];
-		$module_path = realpath($dir.'/'.$cfg['module_assets_path']);		
-		$this->assertTrue($source==$module_path);
-		
-		$assets_path = realpath($cfg['wwwroot_path']).'/'.$cfg['http_assets_path'].'/BricksAsset';
-		$this->assertTrue($target==$assets_path);
+	public function testSetStrategy(){
+		$as = Di::getInstance()->newInstance('Bricks\AssetService\AssetService');
+		$cfg = $as->getConfig();
+		$cfg['module_specific']['BricksAsset']['publishStrategy'] = 'BricksAssetTest\Mock\PublishStrategy\NullStrategy';
+		$as->setConfig($cfg);
+		$cfg = $as->getConfig();
+		$this->assertTrue(isset($cfg['module_specific']['BricksAsset']['publishStrategy']));
+		$this->assertTrue('BricksAssetTest\Mock\PublishStrategy\NullStrategy'==$cfg['module_specific']['BricksAsset']['publishStrategy']);
+		$this->assertInstanceof('BricksAssetTest\Mock\PublishStrategy\NullStrategy',$as->getPublishStrategy('BricksAsset'));
 	}
 	
 	public function testRemovePublishAndOptimize(){
-		$as = $this->getAssetService();
-		$cfg = $as->getConfig();
-		$cfg['publishAdapter'] = 'Bricks\AssetService\PublishAdapter\CopyAdapter';
-		$module_path = realpath('./httpdocs').'/module/BricksAsset';
-		
-		$as->setConfig($cfg);
-		if(file_exists($module_path)){
-			$as->remove(array('BricksAsset'));
+		$as = Di::getInstance()->newInstance('Bricks\AssetService\AssetService');
+		$wwwroot_path = $as->getWwwRootPath('BricksAsset');
+		$http_assets_path = $as->getHttpAssetsPath('BricksAsset');
+		$httpdir = realpath($wwwroot_path).'/'.$http_assets_path.'/BricksAsset';
+		if(file_exists($httpdir)){
+			$as->remove('BricksAsset');
 		}
-		$this->assertTrue(!file_exists($module_path));
-		$as->publish(array('BricksAsset'));
-		$as->optimize(array('BricksAsset'));
+		$this->assertTrue(!file_exists($httpdir));
+		$as->publish('BricksAsset');
+		$as->optimize('BricksAsset');
 		
-		$this->assertTrue(file_exists($module_path.'/css'));
-		$this->assertTrue(file_exists($module_path.'/css/test.css'));
-		$this->assertTrue(file_exists($module_path.'/css/test.less'));
-		$this->assertTrue(file_exists($module_path.'/css/test.less.css'));
-		$this->assertTrue(file_exists($module_path.'/css/test.less.min.css'));
-		$this->assertTrue(file_exists($module_path.'/css/test.scss'));
-		$this->assertTrue(file_exists($module_path.'/css/test.scss.css'));
-		$this->assertTrue(file_exists($module_path.'/css/test.scss.min.css'));
-		$this->assertTrue(file_exists($module_path.'/css/test.sass'));
-		$this->assertTrue(file_exists($module_path.'/css/test.sass.css'));
-		$this->assertTrue(file_exists($module_path.'/css/test.sass.min.css'));
-		$this->assertTrue(file_exists($module_path.'/js/test.js'));
-		$this->assertTrue(file_exists($module_path.'/js/test.min.js'));
+		$this->assertFileExists($httpdir.'/css');
+		$this->assertFileExists($httpdir.'/css/test.css');		
+		$this->assertFileExists($httpdir.'/css/test.less');
+		$this->assertFileExists($httpdir.'/css/test.less.css');
+		$this->assertFileExists($httpdir.'/css/test.less.min.css');
+		$this->assertFileExists($httpdir.'/css/test.scss');
+		$this->assertFileExists($httpdir.'/css/test.scss.css');
+		$this->assertFileExists($httpdir.'/css/test.scss.min.css');
+		$this->assertFileExists($httpdir.'/css/test.sass');
+		$this->assertFileExists($httpdir.'/css/test.sass.css');
+		$this->assertFileExists($httpdir.'/css/test.sass.min.css');
+		$this->assertFileExists($httpdir.'/js/test.js');
+		$this->assertFileExists($httpdir.'/js/test.min.js');
+		
+		$as->remove('BricksAsset');
 	}
 	
 }
