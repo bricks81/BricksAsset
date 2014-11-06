@@ -13,6 +13,8 @@ class AssetModule {
 	
 	protected $moduleName;
 	
+	protected $classLoader;
+	
 	/**
 	 * @param array $config
 	 * @param string $moduleName

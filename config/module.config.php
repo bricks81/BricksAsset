@@ -8,6 +8,7 @@ return array(
 			'Bricks\AssetService' => 'Bricks\AssetService\Service\AssetServiceFactory',
 		),				
 	),
+	/*
 	'di' => array(		
 		'definition' => array(
 			'class' => array(
@@ -147,6 +148,7 @@ return array(
 	       	),
 	    ),
 	),	
+	*/
 	'controllers' => array(
 		'invokables' => array(
 			'BricksAsset\Controller\AssetController' => 'BricksAsset\Controller\AssetController',

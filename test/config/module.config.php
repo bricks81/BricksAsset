@@ -11,6 +11,7 @@ return array(
 			),
 		),
 	),
+	/*
 	'di' => array(
 		'definition' => array(
 			'class' => array(
@@ -137,6 +138,7 @@ return array(
 	       			'Bricks\AssetService\Adapter\FileAdapter',
 	       		),
 	       	),
-	    ),
+	    ),	    
 	),
+	*/
 );
