@@ -21,8 +21,10 @@ class AssetServiceFactory implements FactoryInterface {
 			if(!is_array($value)){
 				continue;
 			}
-			$loaderClass = $value['classLoader'];
-			$loaderClass::getInstance($serviceLocator);
+			if(isset($value['classLoader'])){
+				$loaderClass = $value['classLoader'];
+				$loaderClass::getInstance($serviceLocator);
+			}
 		}
 		
 		// return the service

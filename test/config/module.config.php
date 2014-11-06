@@ -3,15 +3,29 @@
 return array(
 	'Bricks' => array(
 		'BricksAsset' => array(
+			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
+			'assetModule' => 'Bricks\AssetService\AssetModule',
+			'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
+			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
+			'lessStrategy' => 'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',
+			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
+			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
+			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy',
+			'publishStrategy' => 'Bricks\AssetService\PublishStrategy\CopyStrategy',
+			'removeStrategy' => 'Bricks\AssetService\RemoveStrategy\RemoveStrategy',
+			'minifyCssSupport' => true,
+			'minifyJsSupport' => true,
+			'lessSupport' => true,
+			'scssSupport' => true,			
+			'http_assets_path' => 'module',			
 			'wwwroot_path' => dirname(__DIR__).'/httpdocs',
 			'module_specific' => array(
 				'BricksAsset' => array(
-					'module_assets_path' => dirname(__DIR__).'/public',					
+					'module_asset_path' => dirname(__DIR__).'/public',					
 				),
 			),
 		),
 	),
-	/*
 	'di' => array(
 		'definition' => array(
 			'class' => array(
@@ -34,6 +48,20 @@ return array(
 						),
 					),
 				),	
+				'Bricks\AssetService\AssetModule' => array(
+					'methods' => array(
+						'__construct' => array(
+							array(
+								'type' => false,
+								'required' => true
+							),
+							array(
+								'type' => false,
+								'required' => true
+							),							
+						),
+					),
+				),				
 				'Bricks\AssetService\PublishStrategy\CopyStrategy' => array(
 					'methods' => array(
 						'__construct' => array(
@@ -90,7 +118,8 @@ return array(
 					),
 				),
 			),
-		),				
+		),		
+		/*		
 		'instance' => array(
 	        'Bricks\AssetService\AssetService' => array(
 	        	'parameters' => array(
@@ -138,7 +167,7 @@ return array(
 	       			'Bricks\AssetService\Adapter\FileAdapter',
 	       		),
 	       	),
-	    ),	    
-	),
-	*/
+	    ),
+	    */	    
+	),	
 );

@@ -2,6 +2,8 @@
 
 namespace Bricks\AssetService\ScssStrategy;
 
+use Bricks\AssetService\AssetModule;
+
 interface ScssStrategyInterface {
 	
 	/**

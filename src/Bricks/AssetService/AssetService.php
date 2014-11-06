@@ -1,14 +1,11 @@
-);<?php
+<?php
 
 namespace Bricks\AssetService;
-
-use Zend\ServiceManager\ServiceManagerAwareInterface;
-use Zend\ServiceManager\ServiceManager;
 
 /**
  * Service which allow us to control each module
  */
-class AssetService implements ServiceManagerAwareInterface {
+class AssetService {
 	
 	protected $config = array();
 	
@@ -25,33 +22,12 @@ class AssetService implements ServiceManagerAwareInterface {
 	protected $modules = array();
 	
 	/**
-	 * The Service Manager here is needed to load a diffrent class loader.
-	 * @var ServiceManager
-	 */
-	protected $sm;
-	
-	/**
 	 * @param array $config
 	 * @param array $loadedModules
 	 */
 	public function __construct(array $config,array $loadedModules){
 		$this->setLoadedModules($loadedModules);
-		$this->setConfig($config);
-		$this->updateModules();						
-	}
-	
-	/**
-	 * @param ServiceManager $serviceManager
-	 */
-	public function setServiceManager(ServiceManager $serviceManager){
-		$this->sm = $serviceManager;
-	}
-	
-	/**
-	 * @return \Zend\ServiceManager\ServiceManager
-	 */
-	public function getServiceManager(){		
-		return $this->sm;
+		$this->setConfig($config);								
 	}
 	
 	/**
@@ -106,6 +82,14 @@ class AssetService implements ServiceManagerAwareInterface {
 	}
 	
 	/**
+	 * @param string $moduleName
+	 * @return boolean
+	 */
+	public function hasModule($moduleName){
+		return isset($this->modules[$moduleName]);
+	}
+	
+	/**
 	 * re-/configures setted up modules
 	 */
 	protected function updateModules(){
@@ -114,8 +98,15 @@ class AssetService implements ServiceManagerAwareInterface {
 			if(!isset($cfg['module_specific'][$moduleName])){
 				continue;
 			}
-			$classLoaderClass = ($cfg['module_specific'][$moduleName]['classLoader'])?:$cfg['classLoader'];
-			$classLoader = $classLoaderClass::getInstance();				
+			
+			$classLoaderClass = isset($cfg['module_specific'][$moduleName]['classLoader'])
+				?$cfg['module_specific'][$moduleName]['classLoader']
+				:$cfg['classLoader'];							
+			
+			$assetModuleClass = isset($cfg['module_specific'][$moduleName]['assetModule'])
+				?$cfg['module_specific'][$moduleName]['assetModule']
+				:$cfg['assetModule'];
+			
 			$config = array();
 			foreach($cfg AS $key => $value){
 				if('module_specific'==$key){
@@ -124,13 +115,14 @@ class AssetService implements ServiceManagerAwareInterface {
 				$config[$key] = $value;
 			}
 			$config = array_merge($config,$cfg['module_specific'][$moduleName]);
+			
 			if(!count($this->modules)){
-				$module = $classLoader->get($this->getAssetModule(),array($config,$moduleName,$classLoader));					
+				$classLoader = $classLoaderClass::getInstance();
+				$module = $classLoader->get($assetModuleClass,array($config,$moduleName));					
 			} else {
-				$module = $this->getModule($moduleName);
-				$module->setClassLoader($classLoader);
-				$module->setConfig($config);	
-			}				
+				$module = $this->getModule($moduleName);				
+				$module->setConfig($config);
+			}
 			$this->setModule($module);
 		}		
 	}

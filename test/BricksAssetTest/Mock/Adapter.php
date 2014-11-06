@@ -1,39 +1,36 @@
 <?php
 
-namespace Bricks\AssetService\AssetAdapter;
+namespace BricksAssetTest\Mock;
 
 use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
 use Bricks\AssetService\AssetModule;
-use Bricks\File\Directory;
-use Bricks\File\File;
+use Zend\Log\Logger;
 
-/**
- * Stores module assets using the filesystem
- */
-class FilesystemAdapter implements AssetAdapterInterface {
+class Adapter implements AssetAdapterInterface {
+	
+	protected $log;
+	
+	public function setLogger(Logger $log){
+		$this->log = $log;
+	}
+	
+	public function getLogger(){
+		return $this->log;
+	}
 	
 	/**
 	 * (non-PHPdoc)
 	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::getHttpAssetsPath()
 	 */
 	public function getHttpAssetsPath(AssetModule $module){
-		$http_assets_path = $module->getHttpAssetsPath();
-		if(is_dir($http_assets_path)){
-			return $http_assets_path;
-		}
-		return false;
+		return $module->getHttpAssetsPath();		
 	}
 	
 	/**
 	 * (non-PHPdoc)
 	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::removeHttpAssetsPath()
 	 */
-	public function removeHttpAssetsPath(AssetModule $module){
-		$http_assets_path = $module->getHttpAssetsPath();
-		if(false==$http_assets_path){
-			return;
-		}
-		Directory::rmdir($http_assets_path);
+	public function removeHttpAssetsPath(AssetModule $module){		
 	}
 	
 	/**
@@ -41,11 +38,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::getModuleAssetsPath()
 	 */
 	public function getModuleAssetsPath(AssetModule $module){
-		$module_assets_path = $module->getModuleAssetsPath();
-		if(is_dir($module_assets_path)){
-			return $module_assets_path;
-		}
-		return false;
+		return $module->getModuleAssetsPath();		
 	}
 	
 	/**
@@ -53,14 +46,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::getSourceDirList()
 	 */
 	public function getSourceDirList($path){
-		$files = array();
-		foreach(scandir($path) AS $filename){
-			if('.'==$filename||'..'==$filename){
-				continue;
-			}
-			$files[] = $filename;
-		}
-		return $files;
+		return array();
 	}
 	
 	/**
@@ -100,13 +86,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::copy()
 	 */
 	public function copy($source,$target){
-		if($this->isDir($source)){
-			$dir = new Directory($source);
-			$dir->copy($target);
-		} elseif($this->isFile($source)) {
-			$file = new File($source);
-			$file->copy($target);
-		}
+		return;
 	}
 	
 	/**
@@ -122,10 +102,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::writeTargetFile()
 	 */
 	public function writeTargetFile($target,$content){
-		if(!is_dir(dirname($target))){
-			Directory::mkdir(dirname($target));
-		}
-		file_put_contents($target,$content);
+		return;
 	}
-		
+	
 }

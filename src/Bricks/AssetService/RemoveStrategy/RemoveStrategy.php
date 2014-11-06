@@ -3,6 +3,7 @@
 namespace Bricks\AssetService\RemoveStrategy;
 
 use Bricks\AssetService\AssetModule;
+use Bricks\AssetService\RemoveStrategy\RemoveStrategyInterface;
 
 class RemoveStrategy implements RemoveStrategyInterface {
 	

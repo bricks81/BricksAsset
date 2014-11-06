@@ -13,17 +13,16 @@ class AssetModule {
 	
 	protected $moduleName;
 	
-	protected $classLoader;
+	protected $classLoaderClass;
 	
 	/**
 	 * @param array $config
 	 * @param string $moduleName
-	 * @param ClassLoaderInterface $classLoader
+	 * @param string $classLoader
 	 */
-	public function __construct(array $config,$moduleName,ClassLoaderInterface $classLoader){
+	public function __construct(array $config,$moduleName){
 		$this->setConfig($config);
-		$this->setModuleName($moduleName);		
-		$this->setClassLoader($classLoader);
+		$this->setModuleName($moduleName);
 	}
 	
 	/**
@@ -55,17 +54,18 @@ class AssetModule {
 	}
 	
 	/**
-	 * @param ClassLoaderInterface $classLoader
+	 * @return string
 	 */
-	public function setClassLoader(ClassLoaderInterface $classLoader){
-		$this->classLoader = $classLoader;
+	public function getClassLoaderClass(){
+		return $this->getConfig()['classLoader'];
 	}
 	
 	/**
 	 * @return ClassLoaderInterface
 	 */
 	public function getClassLoader(){		
-		return $this->classLoader;
+		$class = $this->getClassLoaderClass();
+		return $class::getInstance();
 	}
 	
 	/**
@@ -103,6 +103,13 @@ class AssetModule {
 	}
 	
 	/**
+	 * @return string
+	 */
+	public function getWwwrootPath(){
+		return $this->getConfig()['wwwroot_path'];
+	}
+	
+	/**
 	 * @return string|false
 	 */
 	public function getHttpAssetsPath(){
@@ -113,7 +120,7 @@ class AssetModule {
 	 * @return string
 	 */
 	public function getModuleAssetPath(){
-		return $this->getConfig['module_asset_path'];
+		return $this->getConfig()['module_asset_path'];
 	}
 	
 	public function remove(){

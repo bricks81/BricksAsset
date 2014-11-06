@@ -28,6 +28,12 @@ return array(
   'BricksAssetTest\Bootstrap'                                        => __DIR__ . '/test/Bootstrap.php',
   'BricksAssetTest\AssetService\AssetServiceTest'                    => __DIR__ . '/test/BricksAssetTest/AssetService/AssetServiceTest.php',
   'BricksAssetTest\Mock\BricksAsset\Adapter\AdapterMock'             => __DIR__ . '/test/BricksAssetTest/Mock/Adapter/AdapterMock.php',
-  'BricksAssetTest\Mock\PublishStrategy\NullStrategy'                => __DIR__ . '/test/BricksAssetTest/Mock/PublishStrategy/NullStrategy.php',
+  'BricksAssetTest\Mock\ClassLoader'                                 => __DIR__ . '/test/BricksAssetTest/Mock/ClassLoader.php',
+  'BricksAssetTest\Mock\LessStrategy'                                => __DIR__ . '/test/BricksAssetTest/Mock/LessStrategy.php',
+  'BricksAssetTest\Mock\MinifyCssStrategy'                           => __DIR__ . '/test/BricksAssetTest/Mock/MinifyCssStrategy.php',
+  'BricksAssetTest\Mock\MinifyJsStrategy'                            => __DIR__ . '/test/BricksAssetTest/Mock/MinifyJsStrategy.php',
+  'BricksAssetTest\Mock\PublishStrategy'                             => __DIR__ . '/test/BricksAssetTest/Mock/PublishStrategy.php',
+  'BricksAssetTest\Mock\RemoveStrategy'                              => __DIR__ . '/test/BricksAssetTest/Mock/RemoveStrategy.php',
+  'BricksAssetTest\Mock\ScssStrategy'                                => __DIR__ . '/test/BricksAssetTest/Mock/ScssStrategy.php',
   'BricksAssetTest\View\Helper\HeadLinkTest'                         => __DIR__ . '/test/BricksAssetTest/View/Helper/HeadLinkTest.php',
 );

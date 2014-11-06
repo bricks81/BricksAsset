@@ -6,7 +6,6 @@ use Zend\Loader\AutoloaderFactory;
 use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ArrayUtils;
-use Bricks\Di\Di;
 
 error_reporting(E_ALL | E_STRICT);
 chdir(__DIR__);
@@ -29,7 +28,7 @@ class Bootstrap {
     	
     	putenv('APP_ENV=phpunit');
     	
-        $testConfig = include __DIR__ . '/TestConfig.php';
+        $testConfig = array_merge(include __DIR__ . '/TestConfig.php');
         
         $zf2ModulePaths = array();
 
@@ -61,8 +60,7 @@ class Bootstrap {
         $serviceManager->get('ModuleManager')->loadModules();
         //$con = $serviceManager->get('defaultDatabaseAdapter')->getDriver()->getConnection();
         
-        static::$serviceManager = $serviceManager;
-        Di::getInstance($serviceManager,$serviceManager->get('Di'));
+        static::$serviceManager = $serviceManager;        
         static::$config = $config;
     }
 

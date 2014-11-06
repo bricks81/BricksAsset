@@ -3,10 +3,11 @@
 namespace Bricks\AssetService\LessStrategy;
 
 use \lessc;
-use Bricks\AssetService\Adapter\AdapterProvider;
+use Bricks\AssetService\AssetModule;
 use Bricks\AssetService\Adapter\AssetAdapterInterface;
+use Bricks\AssetService\LessStrategy\LessStrategyInterface;
 
-class NeilimeLessphpStrategy {
+class NeilimeLessphpStrategy implements LessStrategyInterface {
 	
 	/**
 	 * (non-PHPdoc)

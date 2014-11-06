@@ -24,7 +24,7 @@ class ClassLoader implements ClassLoaderInterface {
 		return self::$instance;
 	}
 	
-	public static function get($class,array $params=array()){
+	public function get($class,array $params=array()){
 		return $this->di->get($class,$params);
 	}
 	

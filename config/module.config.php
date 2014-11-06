@@ -5,7 +5,7 @@ use Bricks\Di\Di;
 return array(	
 	'service_manager' => array(
 		'factories' => array(
-			'Bricks\AssetService' => 'Bricks\AssetService\Service\AssetServiceFactory',
+			'Bricks\AssetService' => 'Bricks\AssetService\ServiceManager\AssetServiceFactory',
 		),				
 	),
 	/*
@@ -197,7 +197,10 @@ return array(
 			'scssSupport' => true,
 			'wwwroot_path' => './public',
 			'http_assets_path' => 'module',
-			'module_specific' => array(				
+			'module_specific' => array(
+				'BricksAsset' => array(
+					'module_asset_path' => dirname(__DIR__).'/public',
+				),				
 			),			
 		),
 	),	

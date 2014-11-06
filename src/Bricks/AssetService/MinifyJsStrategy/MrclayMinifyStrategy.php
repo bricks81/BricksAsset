@@ -3,7 +3,6 @@
 namespace Bricks\AssetService\MinifyJsStrategy;
 
 use \JSMin;
-use Bricks\AssetService\Adapter\AdapterProvider;
 use Bricks\AssetService\AssetModule;
 use Bricks\AssetService\Adapter\AssetAdapterInterface;
 

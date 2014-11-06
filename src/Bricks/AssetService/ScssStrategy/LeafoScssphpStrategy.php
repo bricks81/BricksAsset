@@ -3,10 +3,10 @@
 namespace Bricks\AssetService\ScssStrategy;
 
 use Leafo\ScssPhp\Compiler;
-use Bricks\AssetService\Adapter\AdapterProvider;
-use Bricks\AssetService\Adapter\AssetAdapterInterface;
+use Bricks\AssetService\AssetModule;
+use Bricks\AssetService\ScssStrategy\ScssStrategyInterface;
 
-class LeafoScssphpStrategy extends AdapterProvider implements ScssStrategyInterface {
+class LeafoScssphpStrategy implements ScssStrategyInterface {
 
 	/**
 	 * (non-PHPdoc)

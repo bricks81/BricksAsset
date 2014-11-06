@@ -3,7 +3,8 @@
 namespace Bricks\AssetService\MinifyCssStrategy;
 
 use \CSSmin;
-use Bricks\AssetService\Adapter\AdapterProvider;
+use Bricks\AssetService\AssetModule;
+use Bricks\AssetService\MinifyCssStrategy\MinifyCssStrategyInterface;
 use Bricks\AssetService\Adapter\AssetAdapterInterface;
 
 class MrclayMinifyStrategy implements MinifyCssStrategyInterface {
