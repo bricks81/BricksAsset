@@ -3,43 +3,22 @@
 namespace Bricks\AssetService\AssetAdapter;
 
 use Bricks\AssetService\AssetModule;
+use Bricks\File\Directory;
+use Bricks\File\File;
 
 interface AssetAdapterInterface {
-	
-	/**
-	 * Gets the assets path of the given module
-	 * If it not exists, it will return false
-	 * 
-	 * @param AssetModule $module
-	 * @return string|false
-	 */
-	public function getHttpAssetsPath(AssetModule $module);
-	
-	/**
-	 * Removes the http assets path
-	 * 
-	 * @param AssetModule $module
-	 */
-	public function removeHttpAssetsPath(AssetModule $module);
-	
-	/**
-	 * @param AssetModule $module
-	 * 
-	 * @return string|false
-	 */
-	public function getModuleAssetsPath(AssetModule $module);
 	
 	/**
 	 * @param string $path
 	 * @return array
 	 */
-	public function getSourceDirList($path);
+	public function getSourceDirList($dir);
 	
 	/**
 	 * @param string $source
 	 * @return boolean
 	 */
-	public function isSourceDir($source);
+	public function isSourceDir($dir);
 	
 	/**
 	 * @param string $file
@@ -48,10 +27,45 @@ interface AssetAdapterInterface {
 	public function isSourceFile($file);
 	
 	/**
+	 * @param string $dir
+	 * @return array
+	 */
+	public function getTargetDirList($dir);
+	
+	/**
+	 * @param string $dir
+	 */
+	public function removeTargetDir($dir);
+	
+	/**
+	 * @param string $dir
+	 * @param numeric $mode
+	 * @return Directory
+	 */
+	public function makeTargetDir($dir,$mode=0750);
+	
+	/**
+	 * @param string $dir
+	 * @return boolean
+	 */
+	public function isTargetDir($dir);
+	
+	/**
 	 * @param string $file
 	 * @return boolean
 	 */
 	public function isTargetFile($file);
+	
+	/**
+	 * @param string $file	 
+	 */
+	public function unlinkTargetFile($file);
+	
+	/**
+	 * @param string $file
+	 * @return File
+	 */
+	public function touchTargetFile($file,$mode=0644,$dmode=0750);
 	
 	/**
 	 * @param string $source

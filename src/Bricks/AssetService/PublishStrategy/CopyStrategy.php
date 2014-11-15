@@ -16,13 +16,13 @@ class CopyStrategy implements PublishStrategyInterface {
 	 * @see \Bricks\AssetService\PublishStrategy\PublishStrategyInterface::publish()
 	 */
 	public function publish(AssetModule $module){
-		$adapter = $module->getAssetAdapter();
-		$module_assets_path = $adapter->getModuleAssetsPath($module);
-		$http_assets_path = $adapter->getHttpAssetsPath($module);
-		if(false==$module_assets_path||false==$http_assets_path){
+		$adapter = $module->getAssetAdapter();		
+		$module_asset_path = $module->getModuleAssetPath();
+		$http_assets_path = $module->getHttpAssetsPath();
+		if(false==$module_asset_path||false==$http_assets_path){
 			return;
 		}			
-		$update = $this->getPublishUpdate($module_assets_path,$http_assets_path);			
+		$update = $this->getPublishUpdate($adapter,$module_asset_path,$http_assets_path);
 		foreach($update AS $source => $target){
 			$adapter->copy($source,$target);
 		}		

@@ -53,6 +53,13 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$module = $as->getModule('BricksAsset');
 		$this->assertInstanceOf('\BricksAssetTest\Mock\Adapter',$module->getAssetAdapter());
 		$as->setConfig($before);
+		$classLoader = $module->getClassLoader();
+		$assetAdapter = $classLoader->get('BricksAssetTest\Mock\Adapter');
+		$module->setAssetAdapter($assetAdapter);
+		$_cfg = $module->getConfig();
+		$this->assertEquals('BricksAssetTest\Mock\Adapter',$_cfg['assetAdapter']);
+		$this->assertInstanceOf('\BricksAssetTest\Mock\Adapter',$module->getAssetAdapter());
+		$as->setConfig($before);		
 	}
 	
 	public function testBothChangeAssetAdapter(){
@@ -95,8 +102,13 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$cfg['module_specific']['BricksAsset']['classLoader'] = 'BricksAssetTest\Mock\ClassLoader';
 		$as->setConfig($cfg);
 		$module = $as->getModule('BricksAsset');
-		$this->assertEquals('BricksAssetTest\Mock\ClassLoader',$module->getClassLoaderClass());
-		$this->assertInstanceof('\BricksAssetTest\Mock\ClassLoader',$module->getClassLoader());
+		$classLoader = $module->getClassLoader();
+		$this->assertInstanceof('\BricksAssetTest\Mock\ClassLoader',$classLoader);
+		$as->setConfig($before);
+		$module->setClassLoader($classLoader);
+		$_cfg = $module->getConfig();
+		$this->assertEquals('BricksAssetTest\Mock\ClassLoader',$_cfg['classLoader']);
+		$this->assertInstanceOf('\BricksAssetTest\Mock\ClassLoader',$module->getClassLoader());
 		$as->setConfig($before);
 	}
 	
@@ -117,7 +129,7 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 	public function testWwwrootPath(){
 		$as = Bootstrap::getServiceManager()->get('Bricks\AssetService');
 		$module = $as->getModule('BricksAsset');
-		$this->assertEquals(realpath('./httpdocs'),$module->getWwwrootPath());
+		$this->assertEquals(realpath('./httpdocs'),$module->getWwwrootPath());		
 	}
 	
 	public function testGlobalyChangeWwwrootPath(){
@@ -140,6 +152,11 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$module = $as->getModule('BricksAsset');
 		$this->assertEquals(realpath('./public2'),$module->getWwwrootPath());
 		$as->setConfig($before);
+		$module->setWwwrootPath(realpath('./public2'));
+		$_cfg = $module->getConfig();
+		$this->assertEquals(realpath('./public2'),$cfg['wwwroot_path']);		
+		$this->assertEquals(realpath('./public2'),$module->getWwwrootPath());
+		$as->setConfig($before);
 	}
 	
 	public function testBothChangeWwwrootPath(){
@@ -149,7 +166,7 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$cfg['wwwroot_path'] = realpath('./public');
 		$cfg['module_specific']['BricksAsset']['wwwroot_path'] = realpath('./public2');
 		$as->setConfig($cfg);
-		$module = $as->getModule('BricksAsset');
+		$module = $as->getModule('BricksAsset');		
 		$this->assertEquals(realpath('./public2'),$module->getWwwrootPath());
 		$as->setConfig($before);
 	}
@@ -168,7 +185,7 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$as->setConfig($cfg);
 		$module = $as->getModule('BricksAsset');
 		$this->assertEquals('module2',$module->getHttpAssetsPath());
-		$as->setConfig($before);
+		$as->setConfig($before);		
 	}
 	
 	public function testSpecificChangeHttpAssetsPath(){
@@ -178,6 +195,11 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$cfg['module_specific']['BricksAsset']['http_assets_path'] = 'module2';
 		$as->setConfig($cfg);
 		$module = $as->getModule('BricksAsset');
+		$this->assertEquals('module2',$module->getHttpAssetsPath());
+		$as->setConfig($before);
+		$module->setHttpAssetsPath('module2');
+		$_cfg = $module->getConfig();
+		$this->assertEquals('module2',$cfg['http_assets_path']);
 		$this->assertEquals('module2',$module->getHttpAssetsPath());
 		$as->setConfig($before);
 	}
@@ -209,6 +231,11 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$module = $as->getModule('BricksAsset');
 		$this->assertEquals(realpath('./public2'),$module->getModuleAssetPath());
 		$as->setConfig($before);
+		$module->setModuleAssetPath(realpath('./public2'));
+		$_cfg = $module->getConfig();
+		$this->assertEquals(realpath('./public2'),$_cfg['module_asset_path']);
+		$this->assertEquals(realpath('./public2'),$module->getModuleAssetPath());
+		$as->setConfig($before);
 	}
 	
 	public function testIsAutoPublish(){
@@ -236,6 +263,11 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$as->setConfig($cfg);
 		$module = $as->getModule('BricksAsset');
 		$this->assertFalse($module->isAutoPublish());
+		$as->setConfig($before);
+		$module->setIsAutoPublish(true);
+		$_cfg = $module->getConfig();
+		$this->assertEquals(true,$_cfg['autoPublish']);
+		$this->assertEquals(true,$module->isAutoPublish());
 		$as->setConfig($before);
 	}
 
@@ -277,6 +309,10 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$module = $as->getModule('BricksAsset');
 		$this->assertFalse($module->isAutoOptimize());
 		$as->setConfig($before);
+		$module->setIsAutoOptimize(true);
+		$this->assertEquals(true,$_cfg['autoOptimize']);
+		$this->assertEquals(true,$module->isAutoOptimize());
+		$as->setConfig($before);
 	}
 	
 	public function testBothSpecificIsAutoOptimize(){
@@ -317,6 +353,12 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$module = $as->getModule('BricksAsset');
 		$this->assertInstanceof('\BricksAssetTest\Mock\RemoveStrategy',$module->getRemoveStrategy());
 		$as->setConfig($before);
+		$strategy = new \BricksAssetTest\Mock\RemoveStrategy;
+		$module->setRemoveStrategy($strategy);
+		$_cfg = $module->getConfig();
+		$this->assertEquals('BricksAssetTest\Mock\RemoveStrategy',$_cfg['removeStrategy']);
+		$this->assertInstanceof('\BricksAssetTest\Mock\RemoveStrategy',$module->getRemoveStrategy());
+		$as->setConfig($before);		
 	}	
 	
 	public function testPublishStrategy(){
@@ -343,6 +385,12 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$cfg['module_specific']['BricksAsset']['publishStrategy'] = 'BricksAssetTest\Mock\PublishStrategy';
 		$as->setConfig($cfg);
 		$module = $as->getModule('BricksAsset');
+		$this->assertInstanceof('\BricksAssetTest\Mock\PublishStrategy',$module->getPublishStrategy());
+		$as->setConfig($before);
+		$strategy = new \BricksAssetTest\Mock\PublishStrategy;
+		$module->setPublishStrategy($strategy);
+		$_cfg = $module->getConfig();
+		$this->assertEquals('BricksAssetTest\Mock\PublishStrategy',$_cfg['publishStrategy']);
 		$this->assertInstanceof('\BricksAssetTest\Mock\PublishStrategy',$module->getPublishStrategy());
 		$as->setConfig($before);
 	}
@@ -373,6 +421,12 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$module = $as->getModule('BricksAsset');
 		$this->assertInstanceof('\BricksAssetTest\Mock\LessStrategy',$module->getLessStrategy());
 		$as->setConfig($before);
+		$strategy = new \BricksAssetTest\Mock\LessStrategy;
+		$module->setLessStrategy($strategy);
+		$_cfg = $module->getConfig();
+		$this->assertEquals('BricksAssetTest\Mock\LessStrategy',$_cfg['lessStrategy']);
+		$this->assertInstanceof('\BricksAssetTest\Mock\LessStrategy',$module->getLessStrategy());
+		$as->setConfig($before);
 	}
 	
 	public function testScssStrategy(){
@@ -399,6 +453,12 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$cfg['module_specific']['BricksAsset']['scssStrategy'] = 'BricksAssetTest\Mock\ScssStrategy';
 		$as->setConfig($cfg);
 		$module = $as->getModule('BricksAsset');
+		$this->assertInstanceof('\BricksAssetTest\Mock\ScssStrategy',$module->getScssStrategy());
+		$as->setConfig($before);
+		$strategy = new \BricksAssetTest\Mock\ScssStrategy;
+		$module->setScssStrategy($strategy);
+		$_cfg = $module->getConfig();
+		$this->assertEquals('BricksAssetTest\Mock\ScssStrategy',$_cfg['scssStrategy']);
 		$this->assertInstanceof('\BricksAssetTest\Mock\ScssStrategy',$module->getScssStrategy());
 		$as->setConfig($before);
 	}
@@ -429,6 +489,12 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$module = $as->getModule('BricksAsset');
 		$this->assertInstanceof('\BricksAssetTest\Mock\MinifyCssStrategy',$module->getMinifyCssStrategy());
 		$as->setConfig($before);
+		$strategy = new \BricksAssetTest\Mock\MinifyCssStrategy;
+		$module->setMinifyCssStrategy($strategy);
+		$_cfg = $module->getConfig();
+		$this->assertEquals('BricksAssetTest\Mock\MinifyCssStrategy',$_cfg['minifyCssStrategy']);
+		$this->assertInstanceof('\BricksAssetTest\Mock\MinifyCssStrategy',$module->getMinifyCssStrategy());
+		$as->setConfig($before);
 	}
 	
 	public function testMinifyJsStrategy(){
@@ -457,31 +523,26 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$module = $as->getModule('BricksAsset');
 		$this->assertInstanceof('\BricksAssetTest\Mock\MinifyJsStrategy',$module->getMinifyJsStrategy());
 		$as->setConfig($before);
+		$strategy = new \BricksAssetTest\Mock\MinifyJsStrategy;
+		$module->setMinifyJsStrategy($strategy);
+		$_cfg = $module->getConfig();
+		$this->assertEquals('BricksAssetTest\Mock\MinifyJsStrategy',$_cfg['minifyJsStrategy']);
+		$this->assertInstanceof('\BricksAssetTest\Mock\MinifyJsStrategy',$module->getMinifyJsStrategy());
+		$as->setConfig($before);
 	}
 	
-	/*
-	public function testSetStrategy(){
-		$as = Di::getInstance()->newInstance('Bricks\AssetService\AssetService');
-		$cfg = $as->getConfig();
-		$cfg['module_specific']['BricksAsset']['publishStrategy'] = 'BricksAssetTest\Mock\PublishStrategy\NullStrategy';
-		$as->setConfig($cfg);
-		$cfg = $as->getConfig();
-		$this->assertTrue(isset($cfg['module_specific']['BricksAsset']['publishStrategy']));
-		$this->assertTrue('BricksAssetTest\Mock\PublishStrategy\NullStrategy'==$cfg['module_specific']['BricksAsset']['publishStrategy']);
-		$this->assertInstanceof('BricksAssetTest\Mock\PublishStrategy\NullStrategy',$as->getPublishStrategy('BricksAsset'));
-	}
-	
-	public function testRemovePublishAndOptimize(){
-		$as = Di::getInstance()->newInstance('Bricks\AssetService\AssetService');
-		$wwwroot_path = $as->getWwwRootPath('BricksAsset');
-		$http_assets_path = $as->getHttpAssetsPath('BricksAsset');
-		$httpdir = realpath($wwwroot_path).'/'.$http_assets_path.'/BricksAsset';
-		if(file_exists($httpdir)){
-			$as->remove('BricksAsset');
-		}
-		$this->assertTrue(!file_exists($httpdir));
+	public function testRun1(){
+		$as = Bootstrap::getServiceManager()->get('Bricks\AssetService');
+		$module = $as->getModule('BricksAsset');
+		$httpdir = realpath($module->getWwwrootPath()).'/'.$module->getHttpAssetsPath().'/BricksAsset';
+		
+		$as->remove('BricksAsset');
+		$this->assertFalse(file_exists($module->getHttpAssetsPath()));
+		
 		$as->publish('BricksAsset');
 		$as->optimize('BricksAsset');
+		
+		$this->assertTrue(file_exists($httpdir));
 		
 		$this->assertFileExists($httpdir.'/css');
 		$this->assertFileExists($httpdir.'/css/test.css');		
@@ -498,7 +559,6 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$this->assertFileExists($httpdir.'/js/test.min.js');
 		
 		$as->remove('BricksAsset');
-	}
-	*/
+	}	
 	
 }

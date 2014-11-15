@@ -3,6 +3,13 @@
 namespace Bricks\AssetService;
 
 use Bricks\AssetService\ClassLoader\ClassLoaderInterface;
+use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
+use Bricks\AssetService\RemoveStrategy\RemoveStrategyInterface;
+use Bricks\AssetService\PublishStrategy\PublishStrategyInterface;
+use Bricks\AssetService\LessStrategy\LessStrategyInterface;
+use Bricks\AssetService\ScssStrategy\ScssStrategyInterface;
+use Bricks\AssetService\MinifyCssStrategy\MinifyCssStrategyInterface;
+use Bricks\AssetService\MinifyJsStrategy\MinifyJsStrategyInterface;
 
 /**
  * Represents a module
@@ -13,7 +20,45 @@ class AssetModule {
 	
 	protected $moduleName;
 	
-	protected $classLoaderClass;
+	/**
+	 * @var \Bricks\AssetService\ClassLoader\ClassLoaderInterface
+	 */
+	protected $classLoader;
+	
+	/**
+	 * @var \Bricks\AssetService\AssetAdapter\AssetAdapterInterface
+	 */
+	protected $assetAdapter;
+	
+	/**
+	 * @var \Bricks\AssetService\PublishStrategy\PublishStrategyInterface
+	 */
+	protected $publishStrategy;
+	
+	/**
+	 * @var \Bricks\AssetService\RemoveStrategy\RemoveStrategyInterface
+	 */
+	protected $removeStrategy;
+	
+	/**
+	 * @var \Bricks\AssetService\LessStrategy\LessStrategyInterface
+	 */
+	protected $lessStrategy;
+	
+	/**
+	 * @var \Bricks\AssetService\ScssStrategy\ScssStrategyInterface
+	 */
+	protected $scssStrategy;
+	
+	/**
+	 * @var \Bricks\AssetService\MinifyCssStrategy\MinifyCssStrategyInterface
+	 */
+	protected $minifyCssStrategy;
+	
+	/**
+	 * @var \Bricks\AssetService\MinifyJsStrategy\MinifyJsStrategyInterface
+	 */
+	protected $minifyJsStrategy;
 	
 	/**
 	 * @param array $config
@@ -21,8 +66,8 @@ class AssetModule {
 	 * @param string $classLoader
 	 */
 	public function __construct(array $config,$moduleName){
-		$this->setConfig($config);
 		$this->setModuleName($moduleName);
+		$this->setConfig($config);		
 	}
 	
 	/**
@@ -30,6 +75,7 @@ class AssetModule {
 	 */
 	public function setConfig(array $config){
 		$this->config = $config;
+		$this->updateConfig();
 	}
 	
 	/**
@@ -53,19 +99,42 @@ class AssetModule {
 		return $this->moduleName;
 	}
 	
-	/**
-	 * @return string
-	 */
-	public function getClassLoaderClass(){
-		return $this->getConfig()['classLoader'];
+	protected function updateConfig(){
+		$cfg = $this->getConfig();		
+		$classLoaderClass = $cfg['classLoader'];
+		if(null==$this->getClassLoader()||!($this->getClassLoader() instanceof $classLoaderClass)){			
+			$this->setClassLoader($classLoaderClass::getInstance());
+		}
+		$list = array(
+			'assetAdapter',
+			'publishStrategy',
+			'removeStrategy',
+			'lessStrategy',
+			'scssStrategy',
+			'minifyCssStrategy',
+			'minifyJsStrategy',
+		);
+		foreach($list AS $part){
+			${$part.'Class'} = $cfg['assetAdapter'];
+			if(null==$this->{'get'.ucfirst($part)}()||!($this->{'get'.ucfirst($part)}() instanceof ${$part.'Class'})){			
+				$this->{'set'.ucfirst($part)}($this->getClassLoader()->get(${$part.'Class'}));
+			}
+		}
 	}
 	
 	/**
-	 * @return ClassLoaderInterface
+	 * @return \Bricks\AssetService\ClassLoader\ClassLoaderInterface
 	 */
 	public function getClassLoader(){		
-		$class = $this->getClassLoaderClass();
-		return $class::getInstance();
+		return $this->classLoader;
+	}
+	
+	/**
+	 * @param ClassLoaderInterface $classLoader
+	 */
+	public function setClassLoader(ClassLoaderInterface $classLoader){
+		$this->classLoader = $classLoader;
+		$this->config['classLoader'] = get_class($classLoader);
 	}
 	
 	/**
@@ -73,6 +142,13 @@ class AssetModule {
 	 */
 	public function isAutoPublish(){
 		return $this->getConfig()['autoPublish']?true:false;
+	}
+	
+	/**
+	 * @param boolean $bool
+	 */
+	public function setIsAutoPublish($bool){
+		$this->config['autoPublish'] = $bool?true:false;
 	}
 	
 	public function autoPublish(){
@@ -88,6 +164,13 @@ class AssetModule {
 		return $this->getConfig()['autoOptimize']?true:false;
 	}
 	
+	/**
+	 * @param boolean $bool
+	 */
+	public function setIsAutoOptimize($bool){
+		$this->config['autoOptimize'] = $bool?true:false;
+	}
+	
 	public function autoOptimize(){		
 		if($this->isAutoOptimize()){
 			$this->optimize();
@@ -95,11 +178,18 @@ class AssetModule {
 	}
 	
 	/**
+	 * @param AssetAdapterInterface $assetAdapter
+	 */
+	public function setAssetAdapter(AssetAdapterInterface $assetAdapter){
+		$this->assetAdapter = $assetAdapter;
+		$this->config['assetAdapter'] = get_class($assetAdapter);
+	}
+	
+	/**
 	 * @return \Bricks\AssetService\AssetServiceAwareInterface
 	 */
 	public function getAssetAdapter(){
-		$class = $this->getConfig()['assetAdapter'];		
-		return $this->getClassLoader()->get($class);
+		return $this->assetAdapter;
 	}
 	
 	/**
@@ -110,10 +200,24 @@ class AssetModule {
 	}
 	
 	/**
+	 * @param string $path
+	 */
+	public function setWwwrootPath($path){
+		$this->config['wwwroot_path'] = $path;
+	}
+	
+	/**
 	 * @return string|false
 	 */
 	public function getHttpAssetsPath(){
 		return $this->getConfig()['http_assets_path'];				
+	}
+	
+	/**
+	 * @param string $relativePath relative to wwwroot_path
+	 */
+	public function setHttpAssetsPath($relativePath){
+		$this->config['http_assets_path'] = $relativePath;
 	}
 	
 	/**
@@ -123,133 +227,186 @@ class AssetModule {
 		return $this->getConfig()['module_asset_path'];
 	}
 	
+	/**
+	 * @param string $absolutePath points to the modules directory
+	 */
+	public function setModuleAssetPath($absolutePath){
+		$this->config['module_asset_path'] = $absolutePath;
+	}
+	
 	public function remove(){
 		$strategy = $this->getRemoveStrategy();
 		$strategy->remove($this);
 	}
 	
 	/**
-	 * @throws \RuntimeException
 	 * @return \Bricks\AssetService\RemoveStrategy\RemoveStrategyInterface
 	 */
 	public function getRemoveStrategy(){
-		$strategy = $this->getConfig()['removeStrategy'];
-		if(!class_exists($strategy,true)){
-			throw new \RuntimeException('Strategy ('.$strategy.') not exists');
-		}
-		return $this->getClassLoader()->get($strategy);		
+		return $this->removeStrategy;		
 	}
 	
 	/**
-	 * @throws \RuntimeException
+	 * @param RemoveStrategyInterface $removeStrategy
+	 */
+	public function setRemoveStrategy(RemoveStrategyInterface $removeStrategy){
+		$this->removeStrategy = $removeStrategy;
+		$this->config['removeStrategy'] = get_class($removeStrategy);
+	}
+	
+	/**
 	 * @return \Bricks\AssetService\PublishStrategy\PublishStrategyInterface
 	 */
 	public function getPublishStrategy(){
-		$class = $this->getConfig()['publishStrategy'];
-		if(!class_exists($class,true)){
-			throw new \RuntimeException('Strategy ('.$class.') not exists');
-		}
-		return $this->getClassLoader()->get($class);		
+		return $this->publishStrategy;		
+	}
+
+	/**
+	 * @param PublishStrategyInterface $publishStrategy
+	 */
+	public function setPublishStrategy(PublishStrategyInterface $publishStrategy){
+		$this->publishStrategy = $publishStrategy;
+		$this->config['publishStrategy'] = get_class($publishStrategy);
 	}
 	
 	public function publish(){
 		$strategy = $this->getPublishStrategy();
 		$strategy->publish($this);				
-		if($this->hasLessSupport()){
+		if($this->isLessSupport()){
 			$strategy = $this->getLessStrategy();
 			$strategy->less($this);
 		}
-		if($this->hasScssSupport()){
+		if($this->isScssSupport()){
 			$strategy = $this->getScssStrategy();
 			$strategy->scss($this);
 		}
 	}
 	
 	/**
-	 * @throws \RuntimeException
+	 * @return boolean
+	 */
+	public function isLessSupport(){
+		return $this->getConfig()['lessSupport']?true:false;
+	}
+	
+	/**
+	 * @param boolean $bool
+	 */
+	public function setIsLessSupport($bool){
+		$this->config['lessSupport'] = $bool?true:false;
+	}
+	
+	/**
 	 * @return \Bricks\AssetService\LessStrategy\LessStrategyInterface
 	 */
 	public function getLessStrategy(){
-		$class = $this->getConfig()['lessStrategy'];
-		if(!class_exists($class,true)){
-			throw new \RuntimeException('Strategy ('.$class.') not exists');
-		}
-		return $this->getClassLoader()->get($class);
+		return $this->lessStrategy;
 	}
 	
 	/**
-	 * @return boolean
+	 * @param LessStrategyInterface $lessStrategy
 	 */
-	public function hasLessSupport(){
-		return $this->getConfig()['lessSupport']?true:false;
-	}	
+	public function setLessStrategy(LessStrategyInterface $lessStrategy){
+		$this->lessStrategy = $lessStrategy;
+		$this->config['lessStrategy'] = get_class($lessStrategy);
+	}
 	
 	/**
-	 * @throws \RuntimeException
 	 * @return \Bricks\AssetService\ScssStrategy\ScssStrategyInterface
 	 */
 	public function getScssStrategy(){
-		$class = $this->getConfig()['scssStrategy'];
-		if(!class_exists($class,true)){
-			throw new \RuntimeException('Strategy ('.$class.') not exists');
-		}
-		return $this->getClassLoader()->get($class);
+		return $this->scssStrategy;
+	}
+	
+	/**
+	 * @param ScssStrategyInterface $scssStrategy
+	 */
+	public function setScssStrategy(ScssStrategyInterface $scssStrategy){
+		$this->scssStrategy = $scssStrategy;
+		$this->config['scssStrategy'] = get_class($scssStrategy);
 	}
 	
 	/**
 	 * @return boolean
 	 */
-	public function hasScssSupport(){
+	public function isScssSupport(){
 		return $this->getConfig()['scssSupport']?true:false;
 	}
 	
+	/**
+	 * @param boolean $bool
+	 */
+	public function setIsScssSupport($bool){
+		$this->config['scssSupport'] = $bool?true:false;
+	}
+	
 	public function optimize(){
-		if($this->hasMinifyCssSupport){
+		if($this->isMinifyCssSupport()){
 			$strategy = $this->getMinifyCssStrategy();
 			$strategy->minify($this);
 		}
-		if($this->hasMinifyJsSupport){
+		if($this->isMinifyJsSupport()){
 			$strategy = $this->getMinifyJsStrategy();
 			$strategy->minify($this);
 		}
 	}
 	
 	/**
-	 * @throws \RuntimeException
 	 * @return \Bricks\AssetService\MinifyCssStrategy\MinifyCssStrategyInterface
 	 */
 	public function getMinifyCssStrategy(){
-		$class = $this->getConfig()['minifyCssStrategy'];
-		if(!class_exists($class,true)){
-			throw new \RuntimeException('Strategy ('.$class.') not exists');
-		}
-		return $this->getClassLoader()->get($class);
+		return $this->minifyCssStrategy;
+	}
+	
+	/**
+	 * @param MinifyCssStrategyInterface $minifyCssStrategy
+	 */
+	public function setMinifyCssStrategy(MinifyCssStrategyInterface $minifyCssStrategy){
+		$this->minifyCssStrategy = $minifyCssStrategy;
+		$this->config['minifyCssStrategy'] = get_class($minifyCssStrategy);
 	}
 	
 	/**
 	 * @return boolean
 	 */
-	public function hasMinifyCssSUpport(){
+	public function isMinifyCssSupport(){
 		return $this->getConfig()['minifyCssSupport']?true:false;
 	}
 	
 	/**
-	 * @throws \RuntimeException
+	 * @param boolean $bool
+	 */
+	public function setIsMinifyCssSupport($bool){
+		$this->config['minifyCssSupport'] = $bool?true:false;
+	}
+	
+	/**
 	 * @return \Bricks\AssetService\MinifyJsStrategy\MinifyJsStrategyInterface
 	 */
 	public function getMinifyJsStrategy(){
-		$class = $this->getConfig()['minifyJsStrategy'];
-		if(!class_exists($class,true)){
-			throw new \RuntimeException('Strategy ('.$class.') not exists');
-		}
-		return $this->getClassLoader()->get($class);
+		return $this->minifyJsStrategy;
+	}
+	
+	/**
+	 * @param MinifyJsStrategyInterface $minifyJsStrategy
+	 */
+	public function setMinifyJsStrategy(MinifyJsStrategyInterface $minifyJsStrategy){
+		$this->minifyJsStrategy = $minifyJsStrategy;
+		$this->config['minifyJsStrategy'] = get_class($minifyJsStrategy);
 	}
 	
 	/**
 	 * @return boolean
 	 */
-	public function hasMinifyJsSupport(){
+	public function isMinifyJsSupport(){
 		return $this->getConfig()['minifyJsSupport']?true:false;
+	}
+	
+	/**
+	 * @param boolean $bool
+	 */
+	public function setIsMinifyJsSupport($bool){
+		$this->config['minifyJsSUpport'] = $bool?true:false;
 	}
 	
 }
