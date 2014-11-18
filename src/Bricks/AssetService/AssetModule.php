@@ -13,12 +13,35 @@ use Bricks\AssetService\MinifyJsStrategy\MinifyJsStrategyInterface;
 
 /**
  * Represents a module
+ * 
+ * The parameter $isDefault on the setter methods will be used
+ * when the defaults on the asset service will be changed.
+ * If it's true each change on the asset service
+ * will change this specific value in the module, too.
  */
 class AssetModule {
 	
-	protected $config = array();
-	
 	protected $moduleName;
+	
+	protected $isAutoPublish = false;
+	
+	protected $isAutoOptimize = false;
+	
+	protected $lessSupport = false;
+	
+	protected $scssSupport = false;
+	
+	protected $minifyCssSupport = false;
+	
+	protected $minifyJsSupport = false;
+	
+	protected $wwwRootPath;
+	
+	protected $httpAssetsPath;
+	
+	protected $moduleAssetsPath;
+	
+	protected $isDefault = array();
 	
 	/**
 	 * @var \Bricks\AssetService\ClassLoader\ClassLoaderInterface
@@ -62,34 +85,66 @@ class AssetModule {
 	
 	/**
 	 * @param array $config
-	 * @param string $moduleName
-	 * @param string $classLoader
+	 * @param string $moduleName	 
 	 */
 	public function __construct(array $config,$moduleName){
-		$this->setModuleName($moduleName);
-		$this->setConfig($config);		
-	}
-	
-	/**
-	 * @param array $config
-	 */
-	public function setConfig(array $config){
-		$this->config = $config;
-		$this->updateConfig();
-	}
-	
-	/**
-	 * @return array
-	 */
-	public function getConfig(){
-		return $this->config;
-	}
-	
-	/**
-	 * @param string $moduleName
-	 */
-	public function setModuleName($moduleName){
 		$this->moduleName = $moduleName;
+		$list = array(
+			'autoPublish' => false,
+			'autoOptimize' => false,
+			'lessSupport' => false,
+			'scssSupport' => false,
+			'minifyCssSupport' => false,
+			'minifyJsSupport' => false,
+			'wwwRootPath' => null,
+			'httpAssetsPath' => null,
+			'moduleAssetsPath' => null,
+			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
+			'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
+			'lessStrategy' => 'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',
+			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
+			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
+			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy',
+		);		
+		foreach($list AS $key => $default){
+			if('classLoader'==$key){
+				if(!isset($config[$key])){
+					$object = $default::getInstance();
+					$this->isDefault[$key] = true;
+				} else {
+					$object = $config[$key]::getInstance();
+					$this->isDefault[$key] = false;
+				}
+				$classLoader = $object;
+			} else {
+				if(is_bool($default)){
+					if(!isset($config[$key])){
+						$var = $default;
+						$isDefault = true;						
+					} else {
+						$var = $config[$key];
+						$isDefault = false;
+					}
+				} elseif(is_null($default)){
+					if(!isset($config[$key])){
+						$var = $default;
+						$isDefault = true;
+					} else {
+						$var = $config[$key];
+						$isDefault = false;
+					}
+				} else {
+					if(!isset($config[$key])){
+						$var = $classLoader->get($default);
+						$isDefault = true;
+					} else {
+						$var = $classLoader->get($config[$key]);
+						$isDefault = false;
+					}
+				}
+			}
+			$this->{'set'.ucfirst($key)}($var,$isDefault);
+		}
 	}
 	
 	/**
@@ -97,29 +152,6 @@ class AssetModule {
 	 */
 	public function getModuleName(){
 		return $this->moduleName;
-	}
-	
-	protected function updateConfig(){
-		$cfg = $this->getConfig();		
-		$classLoaderClass = $cfg['classLoader'];
-		if(null==$this->getClassLoader()||!($this->getClassLoader() instanceof $classLoaderClass)){			
-			$this->setClassLoader($classLoaderClass::getInstance());
-		}
-		$list = array(
-			'assetAdapter',
-			'publishStrategy',
-			'removeStrategy',
-			'lessStrategy',
-			'scssStrategy',
-			'minifyCssStrategy',
-			'minifyJsStrategy',
-		);
-		foreach($list AS $part){
-			${$part.'Class'} = $cfg['assetAdapter'];
-			if(null==$this->{'get'.ucfirst($part)}()||!($this->{'get'.ucfirst($part)}() instanceof ${$part.'Class'})){			
-				$this->{'set'.ucfirst($part)}($this->getClassLoader()->get(${$part.'Class'}));
-			}
-		}
 	}
 	
 	/**
@@ -131,24 +163,27 @@ class AssetModule {
 	
 	/**
 	 * @param ClassLoaderInterface $classLoader
+	 * @param boolean $isDefault	 
 	 */
-	public function setClassLoader(ClassLoaderInterface $classLoader){
+	public function setClassLoader(ClassLoaderInterface $classLoader,$isDefault=false){
 		$this->classLoader = $classLoader;
-		$this->config['classLoader'] = get_class($classLoader);
+		$this->isDefault['classLoader'] = $isDefault?true:false;	
 	}
 	
 	/**
 	 * @return boolean
 	 */
 	public function isAutoPublish(){
-		return $this->getConfig()['autoPublish']?true:false;
+		return $this->isAutoPublish;
 	}
 	
 	/**
 	 * @param boolean $bool
+	 * @param boolean $isDefault
 	 */
-	public function setIsAutoPublish($bool){
-		$this->config['autoPublish'] = $bool?true:false;
+	public function setAutoPublish($bool,$isDefault=false){
+		$this->isAutoPublish = $bool?true:false;		
+		$this->isDefault['autoPublish'] = $isDefault?true:false;
 	}
 	
 	public function autoPublish(){
@@ -161,14 +196,16 @@ class AssetModule {
 	 * @return boolean
 	 */
 	public function isAutoOptimize(){
-		return $this->getConfig()['autoOptimize']?true:false;
+		return $this->isAutoOptimize;
 	}
 	
 	/**
 	 * @param boolean $bool
+	 * @param boolean $isDefault
 	 */
-	public function setIsAutoOptimize($bool){
-		$this->config['autoOptimize'] = $bool?true:false;
+	public function setAutoOptimize($bool,$isDefault=false){
+		$this->isAutoOptimize = $bool?true:false;
+		$this->isDefault['autoOptimize'] = $isDefault?true:false;
 	}
 	
 	public function autoOptimize(){		
@@ -179,10 +216,11 @@ class AssetModule {
 	
 	/**
 	 * @param AssetAdapterInterface $assetAdapter
+	 * @param boolean $isDefault
 	 */
-	public function setAssetAdapter(AssetAdapterInterface $assetAdapter){
+	public function setAssetAdapter(AssetAdapterInterface $assetAdapter,$isDefault=false){
 		$this->assetAdapter = $assetAdapter;
-		$this->config['assetAdapter'] = get_class($assetAdapter);
+		$this->isDefault['assetAdapter'] = $isDefault?true:false;
 	}
 	
 	/**
@@ -193,45 +231,51 @@ class AssetModule {
 	}
 	
 	/**
-	 * @return string
+	 * @return string|null
 	 */
-	public function getWwwrootPath(){
-		return $this->getConfig()['wwwroot_path'];
+	public function getWwwRootPath(){
+		return $this->wwwRootPath;
+	}
+
+	/**
+	 * @param string $path absolute or relative path to the www reachable directory
+	 * @param boolean $isDefault
+	 */
+	public function setWwwRootPath($path,$isDefault=false){
+		$this->wwwRootPath = $path;
+		$this->isDefault['wwwRootPath'] = $isDefault?true:false;
 	}
 	
 	/**
-	 * @param string $path
-	 */
-	public function setWwwrootPath($path){
-		$this->config['wwwroot_path'] = $path;
-	}
-	
-	/**
-	 * @return string|false
+	 * @return string|null
 	 */
 	public function getHttpAssetsPath(){
-		return $this->getConfig()['http_assets_path'];				
+		return $this->httpAssetsPath;				
 	}
 	
 	/**
-	 * @param string $relativePath relative to wwwroot_path
+	 * @param string $relativePath relative to $wwwRootPath
+	 * @param boolean $isDefault
 	 */
-	public function setHttpAssetsPath($relativePath){
-		$this->config['http_assets_path'] = $relativePath;
+	public function setHttpAssetsPath($relativePath,$isDefault=false){
+		$this->httpAssetsPath = $relativePath;
+		$this->isDefault['httpAssetsPath'] = $isDefault?true:false;
 	}
 	
 	/**
-	 * @return string
+	 * @return string|null
 	 */
-	public function getModuleAssetPath(){
-		return $this->getConfig()['module_asset_path'];
+	public function getModuleAssetsPath(){
+		return $this->moduleAssetsPath;
 	}
 	
 	/**
 	 * @param string $absolutePath points to the modules directory
+	 * @param boolean $isDefault
 	 */
-	public function setModuleAssetPath($absolutePath){
-		$this->config['module_asset_path'] = $absolutePath;
+	public function setModuleAssetsPath($absolutePath,$isDefault=false){
+		$this->moduleAssetsPath;
+		$this->isDefault['moduleAssetsPath'] = $isDefault?true:false;
 	}
 	
 	public function remove(){
@@ -248,10 +292,11 @@ class AssetModule {
 	
 	/**
 	 * @param RemoveStrategyInterface $removeStrategy
+	 * @param boolean $isDefault
 	 */
-	public function setRemoveStrategy(RemoveStrategyInterface $removeStrategy){
-		$this->removeStrategy = $removeStrategy;
-		$this->config['removeStrategy'] = get_class($removeStrategy);
+	public function setRemoveStrategy(RemoveStrategyInterface $removeStrategy,$isDefault=false){
+		$this->removeStrategy = $removeStrategy;				
+		$this->isDefault['removeStrategy'] = $isDefault?true:false;
 	}
 	
 	/**
@@ -263,10 +308,11 @@ class AssetModule {
 
 	/**
 	 * @param PublishStrategyInterface $publishStrategy
+	 * @param boolean $isDefault
 	 */
-	public function setPublishStrategy(PublishStrategyInterface $publishStrategy){
-		$this->publishStrategy = $publishStrategy;
-		$this->config['publishStrategy'] = get_class($publishStrategy);
+	public function setPublishStrategy(PublishStrategyInterface $publishStrategy,$isDefault=false){
+		$this->publishStrategy = $publishStrategy;		
+		$this->isDefault['publishStrategy'] = $isDefault?true:false;
 	}
 	
 	public function publish(){
@@ -286,14 +332,16 @@ class AssetModule {
 	 * @return boolean
 	 */
 	public function isLessSupport(){
-		return $this->getConfig()['lessSupport']?true:false;
+		return $this->lessSupport;
 	}
 	
 	/**
 	 * @param boolean $bool
+	 * @param boolean $isDefault 
 	 */
-	public function setIsLessSupport($bool){
-		$this->config['lessSupport'] = $bool?true:false;
+	public function setLessSupport($bool,$isDefault=false){
+		$this->lessSupport = $bool?true:false;
+		$this->isDefault = $isDefault?true:false;
 	}
 	
 	/**
@@ -305,10 +353,11 @@ class AssetModule {
 	
 	/**
 	 * @param LessStrategyInterface $lessStrategy
+	 * @param boolean $isDefault
 	 */
-	public function setLessStrategy(LessStrategyInterface $lessStrategy){
-		$this->lessStrategy = $lessStrategy;
-		$this->config['lessStrategy'] = get_class($lessStrategy);
+	public function setLessStrategy(LessStrategyInterface $lessStrategy,$isDefault=false){
+		$this->lessStrategy = $lessStrategy;		
+		$this->isDefault['lessStrategy'] = $isDefault?true:false;
 	}
 	
 	/**
@@ -320,24 +369,27 @@ class AssetModule {
 	
 	/**
 	 * @param ScssStrategyInterface $scssStrategy
+	 * @param boolean $isDefault
 	 */
-	public function setScssStrategy(ScssStrategyInterface $scssStrategy){
-		$this->scssStrategy = $scssStrategy;
-		$this->config['scssStrategy'] = get_class($scssStrategy);
+	public function setScssStrategy(ScssStrategyInterface $scssStrategy,$isDefault=false){
+		$this->scssStrategy = $scssStrategy;		
+		$this->isDefault['scssStrategy'] = $isDefault?true:false;
 	}
 	
 	/**
 	 * @return boolean
 	 */
 	public function isScssSupport(){
-		return $this->getConfig()['scssSupport']?true:false;
+		return $this->scssSupport;
 	}
 	
 	/**
 	 * @param boolean $bool
+	 * @param boolean $isDefault
 	 */
-	public function setIsScssSupport($bool){
-		$this->config['scssSupport'] = $bool?true:false;
+	public function setScssSupport($bool,$isDefault=false){
+		$this->scssSupport = $bool?true:false;
+		$this->isDefault['scssSupport'] = $isDefault?true:false;
 	}
 	
 	public function optimize(){
@@ -360,25 +412,28 @@ class AssetModule {
 	
 	/**
 	 * @param MinifyCssStrategyInterface $minifyCssStrategy
+	 * @param boolean $isDefault
 	 */
-	public function setMinifyCssStrategy(MinifyCssStrategyInterface $minifyCssStrategy){
-		$this->minifyCssStrategy = $minifyCssStrategy;
-		$this->config['minifyCssStrategy'] = get_class($minifyCssStrategy);
+	public function setMinifyCssStrategy(MinifyCssStrategyInterface $minifyCssStrategy,$isDefault=false){
+		$this->minifyCssStrategy = $minifyCssStrategy;		
+		$this->isDefault['minifyCssStrategy'] = $isDefault?true:false;
 	}
 	
 	/**
 	 * @return boolean
 	 */
 	public function isMinifyCssSupport(){
-		return $this->getConfig()['minifyCssSupport']?true:false;
+		return $this->minifyCssSupport;
 	}
 	
 	/**
 	 * @param boolean $bool
+	 * @param boolean $isDefault
 	 */
-	public function setIsMinifyCssSupport($bool){
-		$this->config['minifyCssSupport'] = $bool?true:false;
-	}
+	public function setIsMinifyCssSupport($bool,$isDefault=false){
+		$this->minifyCssSupport = $bool?true:false;
+		$this->isDefault['minifyCssSupport'] = $isDefault?true:false;
+	}	
 	
 	/**
 	 * @return \Bricks\AssetService\MinifyJsStrategy\MinifyJsStrategyInterface
@@ -389,24 +444,39 @@ class AssetModule {
 	
 	/**
 	 * @param MinifyJsStrategyInterface $minifyJsStrategy
+	 * @param boolean $isDefault
 	 */
-	public function setMinifyJsStrategy(MinifyJsStrategyInterface $minifyJsStrategy){
-		$this->minifyJsStrategy = $minifyJsStrategy;
-		$this->config['minifyJsStrategy'] = get_class($minifyJsStrategy);
+	public function setMinifyJsStrategy(MinifyJsStrategyInterface $minifyJsStrategy,$isDefault=false){
+		$this->minifyJsStrategy = $minifyJsStrategy;		
+		$this->isDefault['minifyJsStrategy'] = $isDefault?true:false;
 	}
 	
 	/**
 	 * @return boolean
 	 */
 	public function isMinifyJsSupport(){
-		return $this->getConfig()['minifyJsSupport']?true:false;
+		return $this->minifyJsSupport;
 	}
 	
 	/**
 	 * @param boolean $bool
+	 * @param boolean $isDefault
 	 */
-	public function setIsMinifyJsSupport($bool){
-		$this->config['minifyJsSUpport'] = $bool?true:false;
+	public function setMinifyJsSupport($bool,$isDefault=false){
+		$this->minifyJsSupport = $bool?true:false;
+		$this->isDefault = $isDefault?true:false;
+	}
+	
+	/**
+	 * This method should be called if the asset service change any default value
+	 * @param AssetService $as
+	 */
+	public function defaultsChanged(AssetService $as){
+		foreach($this->isDefault AS $key => $value){
+			if(true==$value){
+				$this->{'set'.ucfirst($key)}($as->{'get'.ucfirst($key)}(),true);
+			}
+		}
 	}
 	
 }

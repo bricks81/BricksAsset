@@ -2,12 +2,18 @@
 
 namespace Bricks\AssetService;
 
+use Bricks\AssetService\ClassLoader\ClassLoaderInterface;
+use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
+use Bricks\AssetService\PublishStrategy\PublishStrategyInterface;
+use Bricks\AssetService\RemoveStrategy\RemoveStrategyInterface;
+use Bricks\AssetService\LessStrategy\LessStrategyInterface;
+use Bricks\AssetService\ScssStrategy\ScssStrategyInterface;
+use Bricks\AssetService\MinifyCssStrategy\MinifyCssStrategyInterface;
+use Bricks\AssetService\MinifyJsStrategy\MinifyJsStrategyInterface;
 /**
  * Service which allow us to control each module
  */
 class AssetService {
-	
-	protected $config = array();
 	
 	/**
 	 * an array containing strings with the names of each module
@@ -21,36 +27,139 @@ class AssetService {
 	 */
 	protected $modules = array();
 	
+	protected $autoPublish = false;
+	
+	protected $autoOptimize = false;
+	
+	protected $lessSupport = false;
+	
+	protected $scssSupport = false;
+	
+	protected $minifyCssSupport = false;
+	
+	protected $minifyJsSupport = false;
+	
+	/**
+	 * @var \Bricks\AssetService\ClassLoader\ClassLoaderInterface
+	 */
+	protected $classLoader;
+	
+	/**
+	 * @var \Bricks\AssetService\AssetAdapter\AssetAdapterInterface
+	 */
+	protected $assetAdapter;
+	
+	/**
+	 * @var \Bricks\AssetService\PublishStrategy\PublishStrategyInterface
+	 */
+	protected $publishStrategy;
+	
+	/**
+	 * @var \Bricks\AssetService\RemoveStrategy\RemoveStrategyInterface
+	 */
+	protected $removeStrategy;
+	
+	/**
+	 * @var \Bricks\AssetService\LessStrategy\LessStrategyInterface
+	 */
+	protected $lessStrategy;
+	
+	/**
+	 * @var \Bricks\AssetService\ScssStrategy\ScssStrategyInterface
+	 */
+	protected $scssStrategy;
+	
+	/**
+	 * @var \Bricks\AssetService\MinifyCssStrategy\MinifyCssStrategyInterface
+	 */
+	protected $minifyCssStrategy;
+	
+	/**
+	 * @var \Bricks\AssetService\MinifyJsStrategy\MinifyJsStrategyInterface
+	 */
+	protected $minifyJsStrategy;
+	
 	/**
 	 * @param array $config
 	 * @param array $loadedModules
 	 */
 	public function __construct(array $config,array $loadedModules){
-		$this->setLoadedModules($loadedModules);
-		$this->setConfig($config);								
-	}
-	
-	/**
-	 * @param array $config
-	 */
-	public function setConfig(array $config){		
-		$this->config = $config;		
-		$this->updateModules();		
-	}
-	
-	/**
-	 * @return array
-	 */
-	public function getConfig(){	
-		return $this->config;
-	}
-	
-	/**
-	 * @param array $loadedModules
-	 */
-	public function setLoadedModules(array $loadedModules){
 		$this->loadedModules = $loadedModules;
+		$list = array(
+			'autoPublish' => false,
+			'autoOptimize' => false,
+			'lessSupport' => false,
+			'scssSupport' => false,
+			'minifyCssSupport' => false,
+			'minifyJsSupport' => false,
+			'wwwRootPath' => null,
+			'httpAssetsPath' => null,
+			'moduleAssetsPath' => null,
+			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
+			'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
+			'lessStrategy' => 'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',
+			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
+			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
+			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy',
+		);
+		foreach($list AS $key => $default){
+			if('classLoader'==$key){
+				if(!isset($config[$key])){
+					$object = $default::getInstance();
+				} else {
+					$object = $config[$key]::getInstance();
+				}
+				$classLoader = $object;
+			} else {
+				if(is_bool($default)){
+					if(!isset($config[$key])){
+						$var = $default;
+					} else {
+						$var = $config[$key];
+					}
+				} elseif(is_null($default)){
+					if(!isset($config[$key])){
+						$var = $default;
+					} else {
+						$var = $config[$key];
+					}
+				} else {
+					if(!isset($config[$key])){
+						$var = $classLoader->get($default);
+					} else {
+						$var = $classLoader->get($config[$key]);
+					}
+				}
+			}
+			$this->$key = $var;
+		}
+
+		// setup modules
+		$config = $config['moduleSpecific'];
+		foreach($this->getLoadedModules AS $moduleName){
+			if(!isset($config[$moduleName])){
+				continue;
+			}
+			
+			$classLoaderClass = isset($config[$moduleName]['classLoader'])
+				?$config[$moduleName]['classLoader']
+				:$cfg['classLoader'];
+			
+			$assetModuleClass = isset($config[$moduleName]['assetModule'])
+				?$config[$moduleName]['assetModule']
+				:$cfg['assetModule'];
+			
+			if(!count($this->modules)){
+				$classLoader = $classLoaderClass::getInstance();
+				$module = $classLoader->get($assetModuleClass,array($config[$moduleName],$moduleName));
+			}
+			$this->setModule($module);
+			
+		}
+				
 	}
+	
+	
 	
 	/**
 	 * @return array
@@ -90,41 +199,18 @@ class AssetService {
 	}
 	
 	/**
-	 * re-/configures setted up modules
+	 * @return boolean
 	 */
-	protected function updateModules(){
-		$cfg = $this->getConfig();		
-		foreach($this->getLoadedModules() AS $moduleName){
-			if(!isset($cfg['module_specific'][$moduleName])){
-				continue;
-			}
-			
-			$classLoaderClass = isset($cfg['module_specific'][$moduleName]['classLoader'])
-				?$cfg['module_specific'][$moduleName]['classLoader']
-				:$cfg['classLoader'];							
-			
-			$assetModuleClass = isset($cfg['module_specific'][$moduleName]['assetModule'])
-				?$cfg['module_specific'][$moduleName]['assetModule']
-				:$cfg['assetModule'];
-			
-			$config = array();
-			foreach($cfg AS $key => $value){
-				if('module_specific'==$key){
-					continue;
-				}
-				$config[$key] = $value;
-			}
-			$config = array_merge($config,$cfg['module_specific'][$moduleName]);
-			
-			if(!count($this->modules)){
-				$classLoader = $classLoaderClass::getInstance();
-				$module = $classLoader->get($assetModuleClass,array($config,$moduleName));					
-			} else {
-				$module = $this->getModule($moduleName);				
-				$module->setConfig($config);
-			}
-			$this->setModule($module);
-		}		
+	public function isAutoPublish(){
+		return $this->autoPublish;
+	}
+	
+	/**
+	 * @param boolean $bool
+	 */
+	public function setAutoPublish($bool){
+		$this->autoPublish = $bool?true:false;
+		$this->updateModules();		
 	}
 	
 	/**
@@ -137,11 +223,215 @@ class AssetService {
 	}
 	
 	/**
+	 * @return boolean
+	 */
+	public function isAutoOptimize(){
+		return $this->autoOptimize;
+	}
+	
+	/**
+	 * @param boolean $bool
+	 */
+	public function setAutoOptimize($bool){
+		$this->autoOptimize = $bool?true:false;
+		$this->updateModules();
+	}
+	
+	/**
 	 * Optimize if it's configured as optimize automaticly
 	 */
 	public function autoOptimize(){
 		foreach($this->getModules() AS $module){
 			$module->autoPublish();
+		}
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function isLessSupport(){
+		return $this->lessSupport;
+	}
+	
+	/**
+	 * @param boolean $bool
+	 */
+	public function setLessSupport($bool){
+		$this->lessSupport = $bool?true:false;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function isScssSupport(){
+		return $this->scssSupport;
+	}
+	
+	/**
+	 * @param boolean $bool
+	 */
+	public function setScssSupport($bool){
+		$this->scssSupport = $bool?true:false;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function isMinifyCssSupport(){
+		return $this->minifyCssSupport;
+	}
+	
+	/**
+	 * @param boolean $bool
+	 */
+	public function setMinifyCssSupport($bool){
+		$this->minifyCssSupport = $bool?true:false;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function isMinifyJsSupport(){
+		return $this->minifyJsSupport;
+	}
+	
+	/**
+	 * @param boolean $bool
+	 */
+	public function setMinifyJsSupport($bool){
+		$this->minifyJsSupport = $bool?true:false;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return \Bricks\AssetService\ClassLoader\ClassLoaderInterface
+	 */
+	public function getClassLoader(){
+		return $this->classLoader;
+	}
+	
+	/**
+	 * @param ClassLoaderInterface $classLoader
+	 */
+	public function setClassLoader(ClassLoaderInterface $classLoader){
+		$this->classLoader = $classLoader;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return \Bricks\AssetService\AssetAdapter\AssetAdapterInterface
+	 */
+	public function getAssetAdapter(){
+		return $this->assetAdapter;
+	}
+	
+	/**
+	 * @param AssetAdapterInterface $assetAdapter
+	 */
+	public function setAssetAdapter(AssetAdapterInterface $assetAdapter){
+		$this->assetAdapter = $assetAdapter;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return \Bricks\AssetService\PublishStrategy\PublishStrategyInterface
+	 */
+	public function getPublishStrategy(){
+		return $this->publishStrategy;
+	}
+	
+	/**
+	 * @param PublishStrategyInterface $publishStrategy
+	 */
+	public function setPublishStrategy(PublishStrategyInterface $publishStrategy){
+		$this->publishStrategy = $publishStrategy;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return \Bricks\AssetService\RemoveStrategy\RemoveStrategyInterface
+	 */
+	public function getRemoveStrategy(){
+		return $this->removeStrategy;
+	}
+	
+	/**
+	 * @param RemoveStrategyInterface $removeStrategy
+	 */
+	public function setRemoveStrategy(RemoveStrategyInterface $removeStrategy){
+		$this->removeStrategy = $removeStrategy;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return \Bricks\AssetService\LessStrategy\LessStrategyInterface
+	 */
+	public function getLessStrategy(){
+		return $this->lessStrategy;
+	}
+	
+	/**
+	 * @param LessStrategyInterface $lessStrategy
+	 */
+	public function setLessStrategy(LessStrategyInterface $lessStrategy){
+		$this->lessStrategy = $lessStrategy;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return \Bricks\AssetService\ScssStrategy\ScssStrategyInterface
+	 */
+	public function getScssStrategy(){
+		return $this->scssStrategy;
+	}
+	
+	/**
+	 * @param ScssStrategyInterface $scssStrategy
+	 */
+	public function setScssStrategy(ScssStrategyInterface $scssStrategy){
+		$this->scssStrategy = $scssStrategy;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return \Bricks\AssetService\MinifyCssStrategy\MinifyCssStrategyInterface
+	 */
+	public function getMinifyCssStrategy(){
+		return $this->minifyCssStrategy;
+	}
+	
+	/**
+	 * @param MinifyCssStrategyInterface $minifyCssStrategy
+	 */
+	public function setMinifyCssStrategy(MinifyCssStrategyInterface $minifyCssStrategy){
+		$this->minifyCssStrategy = $minifyCssStrategy;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return \Bricks\AssetService\MinifyJsStrategy\MinifyJsStrategyInterface
+	 */
+	public function getMinifyJsStrategy(){
+		return $this->minifyJsStrategy;
+	}
+	
+	/**
+	 * @param MinifyJsStrategyInterface $minifyJsStrategy
+	 */
+	public function setMinifyJsStrategy(MinifyJsStrategyInterface $minifyJsStrategy){
+		$this->minifyJsStrategy = $minifyJsStrategy;
+		$this->updateModules();
+	}
+	
+	/**
+	 * Give the asset service to the modules if a default value will be changed
+	 */
+	public function updateModules(){
+		foreach($this->modules AS $module){
+			$module->defaultsChanged($this);
 		}
 	}
 	

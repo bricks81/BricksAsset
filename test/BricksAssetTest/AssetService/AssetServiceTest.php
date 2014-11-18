@@ -14,6 +14,51 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf('\Bricks\AssetService\AssetService',$as);
 	}
 	
+	public function testConfigInterface(){
+		$as = Bootstrap::getServiceManager()->get('Bricks\AssetService');
+		$this->assertInstanceOf('\Bricks\AssetService\AssetService',$as);
+		$config = $as->getConfig();
+		
+		// store initial state
+		$reset = $config;
+		
+		$aList = array(
+			'ClassLoader',
+			'AssetAdapter',
+			'PublishStrategy',
+			'RemoveStrategy',
+			'LessStrategy',
+			'ScssStrategy',
+			'MinifyCssStrategy',
+			'MinifyJsStrategy',
+		);
+		$altCfg = $config;
+		foreach($aList as $key){
+			$altCfg['module_specific']['BricksAsset'][$key] =
+				str_replace('Bricks\AssetService\\'.ucfirst($key),'BricksAssetTest\Mock');
+		}		
+		
+		// test using asset service
+		$as->setConfig($altCfg);
+		$this->assertEquals($altCfg,$as->getConfig());
+		$module = $as->getModule('BricksAsset');
+		$this->assertEquals($altCfg['module_specific']['BricksAsset'],$module->getConfig());
+		
+		// reset
+		$as->setConfig($reset);
+		$config = $as->getConfig();
+		
+		// test using module
+		foreach($aList AS $key){
+			$config['module_specific']['BricksAsset'][$key] =
+				str_replace('Bricks\AssetService\\'.ucfirst($key),'BricksAssetTest\Mock');
+		}
+		$module = $as->getModule('BricksAsset');
+		$module->setConfig($config['module_specific']['BricksAsset']);
+		
+		
+	}
+	
 	public function testGetModuleName(){
 		$as = Bootstrap::getServiceManager()->get('Bricks\AssetService');
 		$module = $as->getModule('BricksAsset');

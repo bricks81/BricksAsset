@@ -17,11 +17,11 @@ return array(
 			'minifyJsSupport' => true,
 			'lessSupport' => true,
 			'scssSupport' => true,			
-			'http_assets_path' => 'module',			
-			'wwwroot_path' => dirname(__DIR__).'/httpdocs',
-			'module_specific' => array(
+			'httpAssetsPath' => 'module',			
+			'wwwRootPath' => dirname(__DIR__).'/httpdocs',
+			'moduleSpecific' => array(
 				'BricksAsset' => array(
-					'module_asset_path' => dirname(__DIR__).'/public',					
+					'moduleAssetPath' => dirname(__DIR__).'/public',					
 				),
 			),
 		),
