@@ -39,7 +39,7 @@ Add one important line
 	'Bricks' => array(
 		// ...
 		'BricksAsset' => array(
-			'module_assets_path' => dirname(__DIR__).'/public',			
+			'moduleAssetsPath' => dirname(__DIR__).'/public',			
 		),
 		// ...
 	),
@@ -51,9 +51,9 @@ After this you've to add the configuration for your module:
 	'Bricks' => array(
 		// ...
 		'BricksAsset' => array(
-			'module_specific' => array(
+			'moduleSpecific' => array(
 				'YourModule => array(
-					'module_assets_path' => dirname(__DIR__).'/public';
+					'moduleAssetsPath' => dirname(__DIR__).'/public';
 				),
 			),
 		),
@@ -65,11 +65,11 @@ After this you've to add the configuration for your module:
 This ist the default configuration of BricksAsset and has not to be defined extra.
  
 	// ...
-	'bricks' => array(
+	'Bricks' => array(
 		// ...
 		'BricksAsset' => array(
-			'wwwroot_path' => './public',
-			'http_assets_path' => 'module',
+			'wwwRootPath' => './public',
+			'httpAssetsPath' => 'module',
 			'autoPublish' => false,
 			'autoOptimize' => false,			
 			'minifyCssSupport' => false, // false for faster development
@@ -77,6 +77,7 @@ This ist the default configuration of BricksAsset and has not to be defined extr
 			'scssSupport' => true, // if you got a scss webserver module you could deactivate this
 			'minifyJsSupport' => false, // false for faster development
 			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
+			'assetModule' => 'Bricks\AssetService\AssetModule',
 			'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
 			'publishStrategy' => 'Bricks\AssetService\PublishStrategy\CopyStrategy',	
 			'removeStrategy' => 'Bricks\AssetService\RemoveStrategy\RemoveStrategy',
@@ -84,10 +85,25 @@ This ist the default configuration of BricksAsset and has not to be defined extr
 			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
 			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
 			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy/MrclayMinifyStrategy',
-			'module_specific' => array(
+			'moduleSpecific' => array(
 				'YourModule' => array(
-					// all options like above but module specific
-					'module_assets_path' => dirname(__DIR__).'/public',
+					'wwwRootPath' => './public',
+					'httpAssetsPath' => 'module',
+					'autoPublish' => false,
+					'autoOptimize' => false,			
+					'minifyCssSupport' => false, // false for faster development
+					'lessSupport' => true, // if you got a scss webserver module you could deactivate this
+					'scssSupport' => true, // if you got a scss webserver module you could deactivate this
+					'minifyJsSupport' => false, // false for faster development
+					'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
+					'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
+					'publishStrategy' => 'Bricks\AssetService\PublishStrategy\CopyStrategy',	
+					'removeStrategy' => 'Bricks\AssetService\RemoveStrategy\RemoveStrategy',
+					'lessStrategy' => 'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',
+					'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
+					'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
+					'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy/MrclayMinifyStrategy',
+					'moduleAssetsPath' => dirname(__DIR__).'/public',
 				),
 			),
 		),
@@ -97,27 +113,27 @@ This ist the default configuration of BricksAsset and has not to be defined extr
 
 Meaning of this parts
 	
-	'module_assets_path' 	is the absolute path of the modules public dir 
+	'moduleAssetsPath'	 	is the absolute path of the modules public dir 
 							which stores files that have to be published.
 							This have to be defined for each Module.
 
-	'wwwroot_path' 			defines the directory which is reachable through 
+	'wwwRootPath' 			defines the directory which is reachable through 
 							your browser (path of the filesystem - can be relative).
 
-	'http_assets_path' 		is the relative subpath to the folder where the 						files will be copied or linked.
+	'httpAssetsPath' 		is the relative subpath to the folder where the 						files will be copied or linked.
 
 ### Graficaly
 	application dir			current working directory
 	|
 	|- Modules
 	|	|- BricksAsset		
-	|		|- public		module_assets_path (refers to the filesystem 
+	|		|- public		moduleAssetsPath (refers to the filesystem 
 	|						- must be absolute directory path)
  	|
-	|- public				wwwroot_path (refers to the filesystem 
+	|- public				wwwRootPath (refers to the filesystem 
 		|					- can be relative)
-		|- module			http_assets_path (refers to the http path 
-							- must be relative to the wwwroot_path)
+		|- module			httpAssetsPath (refers to the http path 
+							- must be relative to the wwwRootPath)
 
 ## Usage
 
