@@ -84,12 +84,13 @@ class AssetModule {
 	protected $minifyJsStrategy;
 	
 	/**
-	 * @param array $config
-	 * @param string $moduleName	 
+	 * @param array $asDefaults Asset Service default config as array
+	 * @param array $config The modules specific configuration
+	 * @param string $moduleName
 	 */
-	public function __construct(array $config,$moduleName){
+	public function __construct(array $asDefaults,array $config,$moduleName){
 		$this->moduleName = $moduleName;
-		$list = array(
+		$defaults = array(
 			'autoPublish' => false,
 			'autoOptimize' => false,
 			'lessSupport' => false,
@@ -108,39 +109,39 @@ class AssetModule {
 			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
 			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy',
 		);		
-		foreach($list AS $key => $default){
-			if('classLoader'==$key){
-				if(!isset($config[$key])){
-					$list[$key] = $default::getInstance();
-					$this->isDefault[$key] = true;
-				} else {
-					$list[$key] = $config[$key]::getInstance();
-					$this->isDefault[$key] = false;
-				}				
+		
+		$prepared = array();
+		
+		foreach($defaults AS $key => $default){
+			if(isset($config[$key])){
+				$prepared[$key] = $config[$key];
+				$this->isDefault[$key] = false;
+			} else {
+				$prepared[$key] = $asDefaults[$key];
+				$this->isDefault[$key] = true;
 			}
 		}
-		foreach($list AS $key => $default){
+		
+		$solved = array();
+		
+		// fetch the class loader
+		foreach($prepared AS $key => $value){
+			if('classLoader'==$key){
+				$solved[$key] = $value::getInstance();								
+			}
+		}
+		
+		// create the parts and set them
+		foreach($defaults AS $key => $default){
 			if('classLoader'==$key){
 				continue;
 			}
 			if(is_bool($default) || is_null($default)){
-				if(!isset($config[$key])){
-					$var = $default;
-					$isDefault = true;						
-				} else {
-					$var = $config[$key];
-					$isDefault = false;
-				}
+				$var = $prepared[$key];				
 			} else {
-				if(!isset($config[$key])){
-					$var = $list['classLoader']->get($default);
-					$isDefault = true;
-				} else {
-					$var = $list['classLoader']->get($config[$key]);
-					$isDefault = false;
-				}
+				$var = $solved['classLoader']->get($prepared[$key]);				
 			}
-			$this->{'set'.ucfirst($key)}($var,$isDefault);			
+			$this->{'set'.ucfirst($key)}($var,$this->isDefault[$key]);			
 		}		
 	}
 	

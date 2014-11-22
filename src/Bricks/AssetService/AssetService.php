@@ -105,7 +105,7 @@ class AssetService {
 	 */
 	public function __construct(array $config,array $loadedModules){
 		$this->loadedModules = $loadedModules;
-		$list = array(
+		$defaults = array(
 			'assetModule' => 'Bricks\AssetService\AssetModule',
 			'autoPublish' => false,
 			'autoOptimize' => false,
@@ -125,40 +125,40 @@ class AssetService {
 			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy',
 		);		
 		
+		$prepared = array();
+		
+		foreach($defaults AS $key => $default){
+			if(isset($config[$key])){
+				$prepared[$key] = $config[$key];
+			} else {
+				$prepared[$key] = $default;
+			}
+		}
+		
+		$solved = array();
+		
 		// fetch classloader
-		foreach($list AS $key => $default){
+		foreach($prepared AS $key => $value){
 			if('classLoader'==$key){
-				if(!isset($config[$key])){
-					$list[$key] = $default::getInstance();
-				} else {
-					$list[$key] = $config[$key]::getInstance();
-				}
+				$solved[$key] = $value::getInstance();				
 			}
 		}		
 		
 		// process each
-		foreach($list AS $key => $default){
+		foreach($defaults AS $key => $default){
 			if('classLoader'==$key){
 				continue;
 			}
 			if(is_bool($default) || is_null($default) || 'assetModule' == $key){
-				if(!isset($config[$key])){
-					$var = $default;
-				} else {
-					$var = $config[$key];
-				}
+				$var = $prepared[$key];				
 			} else {
-				if(!isset($config[$key])){
-					$var = $list['classLoader']->get($default);
-				} else {
-					$var = $list['classLoader']->get($config[$key]);
-				}
+				$var = $solved['classLoader']->get($prepared[$key]);				
 			}
-			$list[$key] = $var;			
+			$solved[$key] = $var;			
 		}
 		
 		// set the list
-		foreach($list AS $key => $var){
+		foreach($solved AS $key => $var){
 			if('assetModule'==$key){
 				$this->setAssetModuleClass($var);
 			} else {
@@ -167,28 +167,31 @@ class AssetService {
 		}
 
 		// setup modules
-		$config = $config['moduleSpecific'];
+		$mConfig = $config['moduleSpecific'];
 		foreach($this->loadedModules AS $moduleName){
-			if(!isset($config[$moduleName])){
+			if(!isset($mConfig[$moduleName])){
 				continue;
 			}
 			
-			$classLoaderClass = isset($config[$moduleName]['classLoader'])
-				?$config[$moduleName]['classLoader']
+			$classLoaderClass = isset($mConfig[$moduleName]['classLoader'])
+				?$mConfig[$moduleName]['classLoader']
 				:$this->getClassLoader();
 			
-			$assetModuleClass = isset($config[$moduleName]['assetModule'])
-				?$config[$moduleName]['assetModule']
+			$assetModuleClass = isset($mConfig[$moduleName]['assetModule'])
+				?$mConfig[$moduleName]['assetModule']
 				:$this->getAssetModuleClass();
 			
-			if(!count($this->modules)){
-				if(is_object($classLoaderClass)){
-					$classLoader = $classLoaderClass;
-				} else {
-					$classLoader = $classLoaderClass::getInstance();
-				}
-				$module = $classLoader->get($assetModuleClass,array($config[$moduleName],$moduleName));
+			if(is_object($classLoaderClass)){
+				$classLoader = $classLoaderClass;
+			} else {
+				$classLoader = $classLoaderClass::getInstance();
 			}
+			$params = array(
+				$prepared,
+				$mConfig[$moduleName],
+				$moduleName					
+			);
+			$module = $classLoader->get($assetModuleClass,$params);
 			$this->setModule($module);			
 		}
 				

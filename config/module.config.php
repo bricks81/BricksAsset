@@ -8,14 +8,16 @@ return array(
 			'Bricks\AssetService' => 'Bricks\AssetService\ServiceManager\AssetServiceFactory',
 		),				
 	),
-	/*
 	'di' => array(		
 		'definition' => array(
 			'class' => array(
-				'Bricks\AssetService\AssetService' => array(
-					//'instantiator' => '__construct',
+				'Bricks\AssetService\AssetModule' => array(					
 					'methods' => array(
 						'__construct' => array(
+							array(
+								'type' => false,
+								'required' => true,
+							),
 							array(								
 								'type' => false,
 								'required' => true,								
@@ -24,131 +26,13 @@ return array(
 								'type' => false,
 								'required' => true,
 							),	
-							array(
-								'type' => 'Bricks\AssetService\Adapter\AdapterInterface',
-								'required' => true,
-							),			
 							'required' => true,
 						),
 					),
-				),	
-				'Bricks\AssetService\PublishStrategy\CopyStrategy' => array(
-					//'instantiator' => '__construct',
-					'methods' => array(
-						'__construct' => array(
-							array(
-								'type' => 'Bricks\AssetService\Adapter\AdapterInterface',
-								'required' => false,
-							),
-							'required' => true,
-						),
-					),
-				),
-				'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy' => array(
-					//'instantiator' => '__construct',
-					'methods' => array(
-						'__construct' => array(
-							array(
-								'type' => 'Bricks\AssetService\Adapter\AdapterInterface',
-								'required' => false,
-							),
-							'required' => true,
-						),
-					),
-				),
-				'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy' => array(
-					//'instantiator' => '__construct',
-					'methods' => array(
-						'__construct' => array(
-							array(
-								'type' => 'Bricks\AssetService\Adapter\AdapterInterface',
-								'required' => false,
-							),
-							'required' => true,
-						),
-					),
-				),
-				'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy' => array(
-					//'instantiator' => '__construct',
-					'methods' => array(
-						'__construct' => array(
-							array(
-								'type' => 'Bricks\AssetService\Adapter\AdapterInterface',
-								'required' => false,
-							),
-							'required' => true,
-						),
-					),
-				),
-				'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy' => array(
-					//'instantiator' => '__construct',
-					'methods' => array(
-						'__construct' => array(
-							array(
-								'type' => 'Bricks\AssetService\Adapter\AdapterInterface',
-								'required' => false,
-							),
-							'required' => true,
-						),
-					),
-				),
-			),
-		),				
-		'instance' => array(
-			'Bricks\AssetService\AssetService' => array(
-	        	'parameters' => array(
-	        		function(Di $di){				        					
-	        			$config = $di->getServiceManager()->get('Config');
-	        			if(!isset($config['Bricks']['BricksAsset'])){
-	        				throw new \RuntimeException('please configure BricksAsset');
-	        			}
-	        			return $config['Bricks']['BricksAsset'];
-	        		},
-	        		function(Di $di){	        			
-	        			$appcfg = $di->getServiceManager()->get('ApplicationConfig');
-	        			return $appcfg['modules'];	        			
-	        		},
-	        		'Bricks\AssetService\Adapter\FileAdapter',       		   		    		     			
-	        	),
+				),				
 	       	),
-	       	'Bricks\AssetService\PublishStrategy\CopyStrategy' => array(
-	       		'parameters' => array(
-	       			function(Di $di){
-	       				return $di->getServiceManager()->get('Bricks\AssetService')->getAdapter();	       				
-	       			},	       			
-	       		),
-	       	),
-	       	'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy' => array(
-	       		'parameters' => array(
-	       			function(Di $di){
-	       				return $di->getServiceManager()->get('Bricks\AssetService')->getAdapter();
-	       			},
-	       		),
-	       	),
-	       	'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy' => array(
-	       		'parameters' => array(
-	       			function(Di $di){
-	       				return $di->getServiceManager()->get('Bricks\AssetService')->getAdapter();
-	       			},
-	       		),
-	       	),
-	       	'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy' => array(
-	       		'parameters' => array(
-	       			function(Di $di){
-	       				return $di->getServiceManager()->get('Bricks\AssetService')->getAdapter();
-	       			},
-	       		),
-	       	),
-	       	'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy' => array(
-	       		'parameters' => array(
-	       			function(Di $di){
-	       				return $di->getServiceManager()->get('Bricks\AssetService')->getAdapter();
-	       			},
-	       		),
-	       	),
-	    ),
+	    ),	    
 	),	
-	*/
 	'controllers' => array(
 		'invokables' => array(
 			'BricksAsset\Controller\AssetController' => 'BricksAsset\Controller\AssetController',
