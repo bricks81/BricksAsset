@@ -27,7 +27,7 @@ return array(
   'BricksAsset\Controller\MenuController'                            => __DIR__ . '/src/BricksAsset/Controller/MenuController.php',
   'BricksAssetTest\Bootstrap'                                        => __DIR__ . '/test/Bootstrap.php',
   'BricksAssetTest\AssetService\AssetServiceTest'                    => __DIR__ . '/test/BricksAssetTest/AssetService/AssetServiceTest.php',
-  'BricksAssetTest\Mock\BricksAsset\Adapter\AdapterMock'             => __DIR__ . '/test/BricksAssetTest/Mock/Adapter/AdapterMock.php',
+  'BricksAssetTest\Mock\Adapter'                                     => __DIR__ . '/test/BricksAssetTest/Mock/AssetAdapter.php',
   'BricksAssetTest\Mock\ClassLoader'                                 => __DIR__ . '/test/BricksAssetTest/Mock/ClassLoader.php',
   'BricksAssetTest\Mock\LessStrategy'                                => __DIR__ . '/test/BricksAssetTest/Mock/LessStrategy.php',
   'BricksAssetTest\Mock\MinifyCssStrategy'                           => __DIR__ . '/test/BricksAssetTest/Mock/MinifyCssStrategy.php',

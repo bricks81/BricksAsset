@@ -13,10 +13,11 @@ class RemoveStrategy implements RemoveStrategyInterface {
 	 */
 	public function remove(AssetModule $module){
 		$adapter = $module->getAssetAdapter();
-		if(false==$adapter->getHttpAssetsPath($module)){
+		$path = realpath($module->getWwwRootPath().'/'.$module->getHttpAssetsPath().'/'.$module->getModuleName());
+		if(false==$path){
 			return;
 		}		
-		$adapter->removeHttpAssetsPath($module);
+		$adapter->removeTargetDir($path);
 	}
 	
 }

@@ -40,6 +40,11 @@ class AssetService {
 	protected $minifyJsSupport = false;
 	
 	/**
+	 * @var string
+	 */
+	protected $assetModuleClass;
+	
+	/**
 	 * @var \Bricks\AssetService\ClassLoader\ClassLoaderInterface
 	 */
 	protected $classLoader;
@@ -80,12 +85,28 @@ class AssetService {
 	protected $minifyJsStrategy;
 	
 	/**
+	 * @var string relative or absolute path to the www dir
+	 */
+	protected $wwwRootPath;
+	
+	/**
+	 * @var string subpath after www dir
+	 */
+	protected $httpAssetsPath;
+	
+	/**
+	 * @var string absolute path to the module assets dir
+	 */
+	protected $moduleAssetsPath;
+	
+	/**
 	 * @param array $config
 	 * @param array $loadedModules
 	 */
 	public function __construct(array $config,array $loadedModules){
 		$this->loadedModules = $loadedModules;
 		$list = array(
+			'assetModule' => 'Bricks\AssetService\AssetModule',
 			'autoPublish' => false,
 			'autoOptimize' => false,
 			'lessSupport' => false,
@@ -93,68 +114,82 @@ class AssetService {
 			'minifyCssSupport' => false,
 			'minifyJsSupport' => false,
 			'wwwRootPath' => null,
-			'httpAssetsPath' => null,
-			'moduleAssetsPath' => null,
+			'httpAssetsPath' => null,		
 			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
 			'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
+			'publishStrategy' => 'Bricks\AssetService\PublishStrategy\CopyStrategy',
+			'removeStrategy' => 'Bricks\AssetService\RemoveStrategy\RemoveStrategy',
 			'lessStrategy' => 'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',
 			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
 			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
 			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy',
-		);
+		);		
+		
+		// fetch classloader
 		foreach($list AS $key => $default){
 			if('classLoader'==$key){
 				if(!isset($config[$key])){
-					$object = $default::getInstance();
+					$list[$key] = $default::getInstance();
 				} else {
-					$object = $config[$key]::getInstance();
-				}
-				$classLoader = $object;
-			} else {
-				if(is_bool($default)){
-					if(!isset($config[$key])){
-						$var = $default;
-					} else {
-						$var = $config[$key];
-					}
-				} elseif(is_null($default)){
-					if(!isset($config[$key])){
-						$var = $default;
-					} else {
-						$var = $config[$key];
-					}
-				} else {
-					if(!isset($config[$key])){
-						$var = $classLoader->get($default);
-					} else {
-						$var = $classLoader->get($config[$key]);
-					}
+					$list[$key] = $config[$key]::getInstance();
 				}
 			}
-			$this->$key = $var;
+		}		
+		
+		// process each
+		foreach($list AS $key => $default){
+			if('classLoader'==$key){
+				continue;
+			}
+			if(is_bool($default) || is_null($default) || 'assetModule' == $key){
+				if(!isset($config[$key])){
+					$var = $default;
+				} else {
+					$var = $config[$key];
+				}
+			} else {
+				if(!isset($config[$key])){
+					$var = $list['classLoader']->get($default);
+				} else {
+					$var = $list['classLoader']->get($config[$key]);
+				}
+			}
+			$list[$key] = $var;			
+		}
+		
+		// set the list
+		foreach($list AS $key => $var){
+			if('assetModule'==$key){
+				$this->setAssetModuleClass($var);
+			} else {
+				$this->{'set'.ucfirst($key)}($var);
+			}
 		}
 
 		// setup modules
 		$config = $config['moduleSpecific'];
-		foreach($this->getLoadedModules AS $moduleName){
+		foreach($this->loadedModules AS $moduleName){
 			if(!isset($config[$moduleName])){
 				continue;
 			}
 			
 			$classLoaderClass = isset($config[$moduleName]['classLoader'])
 				?$config[$moduleName]['classLoader']
-				:$cfg['classLoader'];
+				:$this->getClassLoader();
 			
 			$assetModuleClass = isset($config[$moduleName]['assetModule'])
 				?$config[$moduleName]['assetModule']
-				:$cfg['assetModule'];
+				:$this->getAssetModuleClass();
 			
 			if(!count($this->modules)){
-				$classLoader = $classLoaderClass::getInstance();
+				if(is_object($classLoaderClass)){
+					$classLoader = $classLoaderClass;
+				} else {
+					$classLoader = $classLoaderClass::getInstance();
+				}
 				$module = $classLoader->get($assetModuleClass,array($config[$moduleName],$moduleName));
 			}
-			$this->setModule($module);
-			
+			$this->setModule($module);			
 		}
 				
 	}
@@ -166,6 +201,20 @@ class AssetService {
 	 */
 	public function getLoadedModules(){
 		return $this->loadedModules;
+	}
+	
+	/**
+	 * @param string $class
+	 */
+	public function setAssetModuleClass($class){
+		$this->assetModuleClass = $class;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getAssetModuleClass(){
+		return $this->assetModuleClass;
 	}
 	
 	/**
@@ -201,7 +250,7 @@ class AssetService {
 	/**
 	 * @return boolean
 	 */
-	public function isAutoPublish(){
+	public function getAutoPublish(){
 		return $this->autoPublish;
 	}
 	
@@ -225,7 +274,7 @@ class AssetService {
 	/**
 	 * @return boolean
 	 */
-	public function isAutoOptimize(){
+	public function getAutoOptimize(){
 		return $this->autoOptimize;
 	}
 	
@@ -249,7 +298,7 @@ class AssetService {
 	/**
 	 * @return boolean
 	 */
-	public function isLessSupport(){
+	public function getLessSupport(){
 		return $this->lessSupport;
 	}
 	
@@ -264,7 +313,7 @@ class AssetService {
 	/**
 	 * @return boolean
 	 */
-	public function isScssSupport(){
+	public function getScssSupport(){
 		return $this->scssSupport;
 	}
 	
@@ -279,7 +328,7 @@ class AssetService {
 	/**
 	 * @return boolean
 	 */
-	public function isMinifyCssSupport(){
+	public function getMinifyCssSupport(){
 		return $this->minifyCssSupport;
 	}
 	
@@ -294,7 +343,7 @@ class AssetService {
 	/**
 	 * @return boolean
 	 */
-	public function isMinifyJsSupport(){
+	public function getMinifyJsSupport(){
 		return $this->minifyJsSupport;
 	}
 	
@@ -317,7 +366,7 @@ class AssetService {
 	 * @param ClassLoaderInterface $classLoader
 	 */
 	public function setClassLoader(ClassLoaderInterface $classLoader){
-		$this->classLoader = $classLoader;
+		$this->classLoader = $classLoader;				
 		$this->updateModules();
 	}
 	
@@ -419,6 +468,36 @@ class AssetService {
 	}
 	
 	/**
+	 * @param string $path
+	 */
+	public function setWwwRootPath($path){
+		$this->wwwRootPath = $path;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getWwwRootPath(){
+		return $this->wwwRootPath;
+	}
+	
+	/**
+	 * @param string $path
+	 */
+	public function setHttpAssetsPath($path){
+		$this->httpAssetsPath = $path;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getHttpAssetsPath(){
+		return $this->httpAssetsPath;
+	}
+	
+	/**
 	 * @param MinifyJsStrategyInterface $minifyJsStrategy
 	 */
 	public function setMinifyJsStrategy(MinifyJsStrategyInterface $minifyJsStrategy){
@@ -429,7 +508,7 @@ class AssetService {
 	/**
 	 * Give the asset service to the modules if a default value will be changed
 	 */
-	public function updateModules(){
+	public function updateModules(){				
 		foreach($this->modules AS $module){
 			$module->defaultsChanged($this);
 		}

@@ -4,7 +4,7 @@ namespace Bricks\AssetService\PublishStrategy;
 
 use Bricks\AssetService\PublishStrategy\PublishStrategyInterface;
 use Bricks\AssetService\AssetModule;
-use Bricks\AssetService\Adapter\AssetAdapterInterface;
+use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
 
 /**
  * This adapter copies a file to the public resource directory
@@ -17,12 +17,12 @@ class CopyStrategy implements PublishStrategyInterface {
 	 */
 	public function publish(AssetModule $module){
 		$adapter = $module->getAssetAdapter();		
-		$module_asset_path = $module->getModuleAssetPath();
-		$http_assets_path = $module->getHttpAssetsPath();
-		if(false==$module_asset_path||false==$http_assets_path){
+		$modulePath = $module->getModuleAssetsPath();
+		$path = realpath($module->getWwwRootPath().'/'.$module->getHttpAssetsPath()).'/'.$module->getModuleName();
+		if(false==$modulePath||false==$path){
 			return;
 		}			
-		$update = $this->getPublishUpdate($adapter,$module_asset_path,$http_assets_path);
+		$update = $this->getPublishUpdate($adapter,$modulePath,$path);
 		foreach($update AS $source => $target){
 			$adapter->copy($source,$target);
 		}		

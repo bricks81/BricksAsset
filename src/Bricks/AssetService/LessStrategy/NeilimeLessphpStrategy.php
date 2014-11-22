@@ -4,7 +4,7 @@ namespace Bricks\AssetService\LessStrategy;
 
 use \lessc;
 use Bricks\AssetService\AssetModule;
-use Bricks\AssetService\Adapter\AssetAdapterInterface;
+use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
 use Bricks\AssetService\LessStrategy\LessStrategyInterface;
 
 class NeilimeLessphpStrategy implements LessStrategyInterface {
@@ -15,11 +15,11 @@ class NeilimeLessphpStrategy implements LessStrategyInterface {
 	 */
 	public function less(AssetModule $module){
 		$adapter = $module->getAssetAdapter();
-		$http_assets_path = $adapter->getHttpAssetsPath($module);
-		if(false==$http_assets_path){
+		$path = realpath($module->getWwwRootPath().'/'.$module->getHttpAssetsPath().'/'.$module->getModuleName());
+		if(false==$path){
 			return;
 		}
-		$update = $this->getLessUpdate($adapter,$http_assets_path,$http_assets_path);
+		$update = $this->getLessUpdate($adapter,$path,$path);
 		foreach($update AS $source => $target){
 			$content = $adapter->readSourceFile($source);
 			$lessc = new lessc();

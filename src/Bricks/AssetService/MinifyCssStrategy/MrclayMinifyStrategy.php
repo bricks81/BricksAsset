@@ -5,7 +5,7 @@ namespace Bricks\AssetService\MinifyCssStrategy;
 use \CSSmin;
 use Bricks\AssetService\AssetModule;
 use Bricks\AssetService\MinifyCssStrategy\MinifyCssStrategyInterface;
-use Bricks\AssetService\Adapter\AssetAdapterInterface;
+use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
 
 class MrclayMinifyStrategy implements MinifyCssStrategyInterface {
 	
@@ -15,11 +15,11 @@ class MrclayMinifyStrategy implements MinifyCssStrategyInterface {
 	 */
 	public function minify(AssetModule $module){
 		$adapter = $module->getAssetAdapter();
-		$http_assets_path = $adapter->getHttpAssetsPath($module);
-		if(false==$http_assets_path){
+		$path = realpath($module->getWwwRootPath().'/'.$module->getHttpAssetsPath().'/'.$module->getModuleName());
+		if(false==$path){
 			return;
 		} 
-		$update = $this->getMinifyUpdate($adapter,$source,$target);
+		$update = $this->getMinifyUpdate($adapter,$path,$path);
 		foreach($update AS $source => $target){
 			$content = $adapter->readSourceFile($source);
 			$min = new CSSmin();

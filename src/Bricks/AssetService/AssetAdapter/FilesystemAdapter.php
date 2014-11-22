@@ -18,6 +18,9 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	 */
 	public function getSourceDirList($dir){
 		$files = array();
+		if(!is_dir($dir)){
+			return $files;
+		}
 		foreach(scandir($dir) AS $filename){
 			if('.'==$filename||'..'==$filename){
 				continue;
@@ -67,7 +70,9 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::removeTargetDir()
 	 */
 	public function removeTargetDir($dir){
-		Directory::rmdir($dir);		
+		if(is_dir($dir)){
+			Directory::rmdir($dir);
+		}		
 	}
 	
 	/**
@@ -98,7 +103,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	 * (non-PHPdoc)
 	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::touchTargetFile()
 	 */
-	public function touchTargetFile($file,$mode=0644,$dmode0750){
+	public function touchTargetFile($file,$mode=0644,$dmode=0750){
 		return File::touch($file,$mode,$dmode);
 	}
 	
@@ -115,10 +120,10 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::copy()
 	 */
 	public function copy($source,$target){
-		if($this->isDir($source)){
+		if($this->isSourceDir($source)){
 			$dir = new Directory($source);
 			$dir->copy($target);
-		} elseif($this->isFile($source)) {
+		} elseif($this->isSourceFile($source)) {
 			$file = new File($source);
 			$file->copy($target);
 		}

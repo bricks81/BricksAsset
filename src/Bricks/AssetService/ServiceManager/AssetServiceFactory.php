@@ -17,13 +17,10 @@ class AssetServiceFactory implements FactoryInterface {
 		// initilize the class loaders
 		$loaderClass = $cfg['classLoader'];
 		$loaderClass::getInstance($serviceLocator);
-		foreach($cfg AS $key => $value){
-			if(!is_array($value)){
-				continue;
-			}
-			if(isset($value['classLoader'])){
-				$loaderClass = $value['classLoader'];
-				$loaderClass::getInstance($serviceLocator);
+		foreach($cfg['moduleSpecific'] AS $moduleName => $mConfig){
+			if(isset($mConfig['classLoader'])){
+				$loaderClass = $mConfig['classLoader'];
+				$loaderClass::getInstance($serviceLocator);				
 			}
 		}
 		

@@ -3,7 +3,7 @@
 return array(
   'BricksAssetTest\Bootstrap'                     => __DIR__ . '/Bootstrap.php',
   'BricksAssetTest\AssetService\AssetServiceTest' => __DIR__ . '/BricksAssetTest/AssetService/AssetServiceTest.php',
-  'BricksAssetTest\Mock\Adapter'                  => __DIR__ . '/BricksAssetTest/Mock/Adapter.php',
+  'BricksAssetTest\Mock\Adapter'                  => __DIR__ . '/BricksAssetTest/Mock/AssetAdapter.php',
   'BricksAssetTest\Mock\ClassLoader'              => __DIR__ . '/BricksAssetTest/Mock/ClassLoader.php',
   'BricksAssetTest\Mock\LessStrategy'             => __DIR__ . '/BricksAssetTest/Mock/LessStrategy.php',
   'BricksAssetTest\Mock\MinifyCssStrategy'        => __DIR__ . '/BricksAssetTest/Mock/MinifyCssStrategy.php',

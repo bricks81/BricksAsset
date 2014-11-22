@@ -101,6 +101,8 @@ class AssetModule {
 			'moduleAssetsPath' => null,
 			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
 			'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
+			'publishStrategy' => 'Bricks\AssetService\PublishStrategy\CopyStrategy',
+			'removeStrategy' => 'Bricks\AssetService\RemoveStrategy\RemoveStrategy',
 			'lessStrategy' => 'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',
 			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
 			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
@@ -109,42 +111,37 @@ class AssetModule {
 		foreach($list AS $key => $default){
 			if('classLoader'==$key){
 				if(!isset($config[$key])){
-					$object = $default::getInstance();
+					$list[$key] = $default::getInstance();
 					$this->isDefault[$key] = true;
 				} else {
-					$object = $config[$key]::getInstance();
+					$list[$key] = $config[$key]::getInstance();
 					$this->isDefault[$key] = false;
-				}
-				$classLoader = $object;
-			} else {
-				if(is_bool($default)){
-					if(!isset($config[$key])){
-						$var = $default;
-						$isDefault = true;						
-					} else {
-						$var = $config[$key];
-						$isDefault = false;
-					}
-				} elseif(is_null($default)){
-					if(!isset($config[$key])){
-						$var = $default;
-						$isDefault = true;
-					} else {
-						$var = $config[$key];
-						$isDefault = false;
-					}
+				}				
+			}
+		}
+		foreach($list AS $key => $default){
+			if('classLoader'==$key){
+				continue;
+			}
+			if(is_bool($default) || is_null($default)){
+				if(!isset($config[$key])){
+					$var = $default;
+					$isDefault = true;						
 				} else {
-					if(!isset($config[$key])){
-						$var = $classLoader->get($default);
-						$isDefault = true;
-					} else {
-						$var = $classLoader->get($config[$key]);
-						$isDefault = false;
-					}
+					$var = $config[$key];
+					$isDefault = false;
+				}
+			} else {
+				if(!isset($config[$key])){
+					$var = $list['classLoader']->get($default);
+					$isDefault = true;
+				} else {
+					$var = $list['classLoader']->get($config[$key]);
+					$isDefault = false;
 				}
 			}
-			$this->{'set'.ucfirst($key)}($var,$isDefault);
-		}
+			$this->{'set'.ucfirst($key)}($var,$isDefault);			
+		}		
 	}
 	
 	/**
@@ -173,7 +170,7 @@ class AssetModule {
 	/**
 	 * @return boolean
 	 */
-	public function isAutoPublish(){
+	public function getAutoPublish(){
 		return $this->isAutoPublish;
 	}
 	
@@ -195,7 +192,7 @@ class AssetModule {
 	/**
 	 * @return boolean
 	 */
-	public function isAutoOptimize(){
+	public function getAutoOptimize(){
 		return $this->isAutoOptimize;
 	}
 	
@@ -271,11 +268,9 @@ class AssetModule {
 	
 	/**
 	 * @param string $absolutePath points to the modules directory
-	 * @param boolean $isDefault
 	 */
-	public function setModuleAssetsPath($absolutePath,$isDefault=false){
-		$this->moduleAssetsPath;
-		$this->isDefault['moduleAssetsPath'] = $isDefault?true:false;
+	public function setModuleAssetsPath($absolutePath){
+		$this->moduleAssetsPath = $absolutePath;				
 	}
 	
 	public function remove(){
@@ -318,11 +313,11 @@ class AssetModule {
 	public function publish(){
 		$strategy = $this->getPublishStrategy();
 		$strategy->publish($this);				
-		if($this->isLessSupport()){
+		if($this->getLessSupport()){
 			$strategy = $this->getLessStrategy();
 			$strategy->less($this);
 		}
-		if($this->isScssSupport()){
+		if($this->getScssSupport()){
 			$strategy = $this->getScssStrategy();
 			$strategy->scss($this);
 		}
@@ -331,7 +326,7 @@ class AssetModule {
 	/**
 	 * @return boolean
 	 */
-	public function isLessSupport(){
+	public function getLessSupport(){
 		return $this->lessSupport;
 	}
 	
@@ -341,7 +336,7 @@ class AssetModule {
 	 */
 	public function setLessSupport($bool,$isDefault=false){
 		$this->lessSupport = $bool?true:false;
-		$this->isDefault = $isDefault?true:false;
+		$this->isDefault['lessSupport'] = $isDefault?true:false;
 	}
 	
 	/**
@@ -379,7 +374,7 @@ class AssetModule {
 	/**
 	 * @return boolean
 	 */
-	public function isScssSupport(){
+	public function getScssSupport(){
 		return $this->scssSupport;
 	}
 	
@@ -388,16 +383,16 @@ class AssetModule {
 	 * @param boolean $isDefault
 	 */
 	public function setScssSupport($bool,$isDefault=false){
-		$this->scssSupport = $bool?true:false;
+		$this->scssSupport = $bool?true:false;		
 		$this->isDefault['scssSupport'] = $isDefault?true:false;
 	}
 	
 	public function optimize(){
-		if($this->isMinifyCssSupport()){
+		if($this->getMinifyCssSupport()){
 			$strategy = $this->getMinifyCssStrategy();
 			$strategy->minify($this);
 		}
-		if($this->isMinifyJsSupport()){
+		if($this->getMinifyJsSupport()){
 			$strategy = $this->getMinifyJsStrategy();
 			$strategy->minify($this);
 		}
@@ -422,7 +417,7 @@ class AssetModule {
 	/**
 	 * @return boolean
 	 */
-	public function isMinifyCssSupport(){
+	public function getMinifyCssSupport(){
 		return $this->minifyCssSupport;
 	}
 	
@@ -430,7 +425,7 @@ class AssetModule {
 	 * @param boolean $bool
 	 * @param boolean $isDefault
 	 */
-	public function setIsMinifyCssSupport($bool,$isDefault=false){
+	public function setMinifyCssSupport($bool,$isDefault=false){
 		$this->minifyCssSupport = $bool?true:false;
 		$this->isDefault['minifyCssSupport'] = $isDefault?true:false;
 	}	
@@ -454,7 +449,7 @@ class AssetModule {
 	/**
 	 * @return boolean
 	 */
-	public function isMinifyJsSupport(){
+	public function getMinifyJsSupport(){
 		return $this->minifyJsSupport;
 	}
 	
@@ -464,7 +459,7 @@ class AssetModule {
 	 */
 	public function setMinifyJsSupport($bool,$isDefault=false){
 		$this->minifyJsSupport = $bool?true:false;
-		$this->isDefault = $isDefault?true:false;
+		$this->isDefault['minifyJsSupport'] = $isDefault?true:false;
 	}
 	
 	/**
@@ -473,9 +468,14 @@ class AssetModule {
 	 */
 	public function defaultsChanged(AssetService $as){
 		foreach($this->isDefault AS $key => $value){
-			if(true==$value){
-				$this->{'set'.ucfirst($key)}($as->{'get'.ucfirst($key)}(),true);
+			if(false==$value){
+				continue;
 			}
+			$var = $as->{'get'.ucfirst($key)}();
+			if(null===$var){
+				continue;
+			}
+			$this->{'set'.ucfirst($key)}($var,true);			
 		}
 	}
 	
