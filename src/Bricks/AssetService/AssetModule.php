@@ -184,7 +184,7 @@ class AssetModule {
 	}
 	
 	public function autoPublish(){
-		if($this->isAutoPublish()){
+		if($this->getAutoPublish()){
 			$this->publish();
 		}		
 	}
@@ -206,7 +206,7 @@ class AssetModule {
 	}
 	
 	public function autoOptimize(){		
-		if($this->isAutoOptimize()){
+		if($this->getAutoOptimize()){
 			$this->optimize();
 		}
 	}

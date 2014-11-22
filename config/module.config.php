@@ -195,12 +195,14 @@ return array(
 			'minifyJsSupport' => true,
 			'lessSupport' => true,
 			'scssSupport' => true,
-			'wwwroot_path' => './public',
-			'http_assets_path' => 'module',
-			'module_specific' => array(
+			'wwwRootPath' => './public',
+			'httpAssetsPath' => 'module',
+			'moduleSpecific' => array(
+				/*
 				'BricksAsset' => array(
-					'module_asset_path' => dirname(__DIR__).'/public',
-				),				
+					'moduleAssetsPath' => dirname(__DIR__).'/public',
+				),
+				*/								
 			),			
 		),
 	),	
