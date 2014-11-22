@@ -313,7 +313,7 @@ class AssetModule {
 	
 	public function publish(){
 		$strategy = $this->getPublishStrategy();
-		$strategy->publish($this);				
+		$strategy->publish($this);
 		if($this->getLessSupport()){
 			$strategy = $this->getLessStrategy();
 			$strategy->less($this);

@@ -10,6 +10,7 @@ use Bricks\AssetService\LessStrategy\LessStrategyInterface;
 use Bricks\AssetService\ScssStrategy\ScssStrategyInterface;
 use Bricks\AssetService\MinifyCssStrategy\MinifyCssStrategyInterface;
 use Bricks\AssetService\MinifyJsStrategy\MinifyJsStrategyInterface;
+
 /**
  * Service which allow us to control each module
  */
@@ -192,12 +193,10 @@ class AssetService {
 				$moduleName					
 			);
 			$module = $classLoader->get($assetModuleClass,$params);
-			$this->setModule($module);			
+			$this->setModule($module);						
 		}
 				
 	}
-	
-	
 	
 	/**
 	 * @return array
@@ -268,7 +267,7 @@ class AssetService {
 	/**
 	 * Publish if it's configured as publish automaticly
 	 */
-	public function autoPublish(){
+	public function autoPublish(){		
 		foreach($this->getModules() AS $module){
 			$module->autoPublish();
 		}
@@ -294,7 +293,7 @@ class AssetService {
 	 */
 	public function autoOptimize(){
 		foreach($this->getModules() AS $module){
-			$module->autoPublish();
+			$module->autoOptimize();
 		}
 	}
 	
