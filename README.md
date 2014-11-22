@@ -39,7 +39,11 @@ Add one important line
 	'Bricks' => array(
 		// ...
 		'BricksAsset' => array(
-			'moduleAssetsPath' => dirname(__DIR__).'/public',			
+			'moduleAssetsPath' => dirname(__DIR__).'/public',
+			// activate auto publish
+			'autoPublish' => true,
+			// activate optimization
+			'autoOptimize' => true,
 		),
 		// ...
 	),
