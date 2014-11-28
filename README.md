@@ -33,23 +33,7 @@ Add the modules in your application.config.php:
 
 ## Configuration
 ### what you've to do
-Add one important line
-
-	// ...
-	'Bricks' => array(
-		// ...
-		'BricksAsset' => array(
-			'moduleAssetsPath' => dirname(__DIR__).'/public',
-			// activate auto publish
-			'autoPublish' => true,
-			// activate optimization
-			'autoOptimize' => true,
-		),
-		// ...
-	),
-	// ...
-
-After this you've to add the configuration for your module:
+Add the configuration for your module:
 
 	// ...
 	'Bricks' => array(
