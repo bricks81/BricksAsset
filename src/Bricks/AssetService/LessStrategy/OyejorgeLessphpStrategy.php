@@ -7,7 +7,7 @@ use Bricks\AssetService\AssetModule;
 use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
 use Bricks\AssetService\LessStrategy\LessStrategyInterface;
 
-class NeilimeLessphpStrategy implements LessStrategyInterface {
+class OyejorgeLessphpStrategy implements LessStrategyInterface {
 	
 	/**
 	 * (non-PHPdoc)
@@ -19,13 +19,49 @@ class NeilimeLessphpStrategy implements LessStrategyInterface {
 		if(false==$path){
 			return;
 		}
+		$lessc = new lessc();
+		
+		$imports = $this->getLessImports($adapter,$path);
 		$update = $this->getLessUpdate($adapter,$path,$path);
+		foreach($imports AS $s => $files){
+			foreach($files AS $f){
+				$lessc->addImportDir(dirname($f));
+				if(isset($update[$f])){
+					unset($update[$f]);
+				}
+			}			
+		}				
+		
 		foreach($update AS $source => $target){
 			$content = $adapter->readSourceFile($source);
-			$lessc = new lessc();
 			$content = $lessc->compile($content);
 			$adapter->writeTargetFile($target,$content);
 		}		
+	}
+	
+	protected function getLessImports(AssetAdapterInterface $adapter,$source){
+		$imports = array();
+		$filelist = $adapter->getSourceDirList($source);
+		foreach($filelist AS $filename){
+			if('.'==$filename[0]){
+				continue;
+			}
+			$_source = $source.'/'.$filename;
+			if($adapter->isSourceDir($_source)){
+				$imports += $this->getLessImports($adapter,$_source);
+			} elseif($adapter->isSourceFile($_source)){
+				if(substr($_source,-5)!='.less'||substr($_source,-9)=='.less.css'){
+					continue;
+				}
+				$content = $adapter->readSourceFile($_source);
+				if(preg_match_all('#@import(.*?)\n#i',$content,$matches)){
+					foreach($matches[1] AS $string){
+						$imports[$_source][] = dirname($_source).'/'.trim($string,' ";\'');
+					}					
+				}
+			}			
+		}
+		return $imports;
 	}
 	
 	/**
@@ -50,9 +86,9 @@ class NeilimeLessphpStrategy implements LessStrategyInterface {
 					continue;
 				}
 				$_target .= '.css';
-				if(!$adapter->isTargetFile($_target)||$adapter->isOlderThan($_source,$_target)){
+				//if(!$adapter->isTargetFile($_target)||$adapter->isOlderThan($_source,$_target)){
 					$update[$_source] = $_target;
-				}
+				//}
 			}
 		}
 		return $update;

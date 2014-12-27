@@ -55,12 +55,13 @@ class AssetController extends AbstractActionController {
 	
 	public function getPublishForm(){
 		$modules = array();
-		$appcfg = $this->getServiceLocator()->get('ApplicationConfig');		
-		if(isset($appcfg['modules'])){
-			foreach($appcfg['modules'] AS $module){
-				$modules[$module] = $module;
-			}			
-		}
+		
+		$as = $this->getServiceLocator()->get('Bricks\AssetService');
+		$loadedModules = $as->getLoadedModules();
+		$modules = array();
+		foreach($loadedModules AS $moduleName){
+			$modules[$moduleName] = $moduleName;
+		}		
 		
 		$t = $this->getServiceLocator()->get('MvcTranslator');
 		

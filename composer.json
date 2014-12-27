@@ -13,7 +13,7 @@
     	"php": ">=5.3.3",
         "zendframework/zendframework": "2.*@stable",
         "leafo/scssphp": "0.*@stable",
-        "neilime/lessphp": "0.*@stable",
+        "oyejorge/less.php": "v1.7.0.2",
         "mrclay/minify": "2.*@stable",
         "bricks81/bricks-file": "0.*@stable"
     },

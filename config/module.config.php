@@ -69,7 +69,7 @@ return array(
 			'assetModule' => 'Bricks\AssetService\AssetModule',
 			'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
 			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
-			'lessStrategy' => 'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',
+			'lessStrategy' => 'Bricks\AssetService\LessStrategy\OyejorgeLessphpStrategy',
 			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
 			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
 			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy',
