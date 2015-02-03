@@ -110,7 +110,7 @@ Meaning of this parts
 
 	'httpAssetsPath' 		is the relative subpath to the folder where the 						files will be copied or linked.
 
-### Graficaly
+### Grafically
 	application dir			current working directory
 	|
 	|- Modules
