@@ -50,7 +50,7 @@ Add the configuration for your module:
 	// ...
 
 ### Example of all Features
-This ist the default configuration of BricksAsset and has not to be defined extra.
+This is the default configuration of BricksAsset and has not to be defined extra.
  
 	// ...
 	'Bricks' => array(
@@ -110,7 +110,7 @@ Meaning of this parts
 
 	'httpAssetsPath' 		is the relative subpath to the folder where the 						files will be copied or linked.
 
-### Graficaly
+### Grafically
 	application dir			current working directory
 	|
 	|- Modules
