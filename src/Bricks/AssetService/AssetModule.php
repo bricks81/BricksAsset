@@ -41,6 +41,12 @@ class AssetModule {
 	
 	protected $moduleAssetsPath;
 	
+	/**
+	 * An array containing regular expressions to excluded files
+	 * @var array
+	 */
+	protected $exclude = array();
+	
 	protected $isDefault = array();
 	
 	/**
@@ -108,6 +114,7 @@ class AssetModule {
 			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
 			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
 			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy',
+			'exclude' => array(),
 		);		
 		
 		$prepared = array();
@@ -136,11 +143,11 @@ class AssetModule {
 			if('classLoader'==$key){
 				continue;
 			}
-			if(is_bool($default) || is_null($default)){
+			if(is_bool($defaults[$key]) || is_null($defaults[$key]) || 'exclude' == $key){
 				$var = $prepared[$key];				
 			} else {
 				$var = $solved['classLoader']->get($prepared[$key]);				
-			}
+			}			
 			$this->{'set'.ucfirst($key)}($var,$this->isDefault[$key]);			
 		}		
 	}
@@ -272,6 +279,22 @@ class AssetModule {
 	 */
 	public function setModuleAssetsPath($absolutePath){
 		$this->moduleAssetsPath = $absolutePath;				
+	}
+	
+	/**
+	 * @param array $exclude containing an array of regular expressions
+	 * @param bool $isDefault
+	 */
+	public function setExclude(array $exclude,$isDefault=false){
+		$this->exclude = $exclude;
+		$this->isDefault['exclude'] = $isDefault?true:false;
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function getExclude(){
+		return $this->exclude;
 	}
 	
 	public function remove(){
@@ -450,7 +473,7 @@ class AssetModule {
 	/**
 	 * @return boolean
 	 */
-	public function getMinifyJsSupport(){
+	public function getMinifyJsSupport(){		
 		return $this->minifyJsSupport;
 	}
 	
@@ -475,7 +498,7 @@ class AssetModule {
 			$var = $as->{'get'.ucfirst($key)}();
 			if(null===$var){
 				continue;
-			}
+			}			
 			$this->{'set'.ucfirst($key)}($var,true);			
 		}
 	}

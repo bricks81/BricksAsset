@@ -3,13 +3,13 @@
 namespace Bricks\View\Helper;
 
 use Zend\ServiceManager\ServiceManager;
-use Zend\View\Helper\HeadScript AS ZFHeadScript;
+use Zend\View\Helper\InlineScript AS ZFInlineScript;
 use \stdClass;
 use Zend\ServiceManager\DelegatorFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Bricks\AssetService\AssetService;
 
-class HeadScriptDelegator extends ZFHeadScript implements DelegatorFactoryInterface {
+class InlineScriptDelegator extends ZFInlineScript implements DelegatorFactoryInterface {
 
 	protected $as;
 	
@@ -36,7 +36,7 @@ class HeadScriptDelegator extends ZFHeadScript implements DelegatorFactoryInterf
 			return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
 		}
 		$moduleName = '';
-		foreach($this->getAssetService()->getLoadedModules() AS $name){
+		foreach($this->getAssetService()->getLoadedModules() AS $name){		
 			if(substr($item->attributes['src'],0,strlen($name))==$name){
 				$moduleName = $name;
 				break;

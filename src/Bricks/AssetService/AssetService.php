@@ -101,6 +101,12 @@ class AssetService {
 	protected $moduleAssetsPath;
 	
 	/**
+	 * Excludes files by given regular expression
+	 * @var array
+	 */
+	protected $exclude = array();
+	
+	/**
 	 * @param array $config
 	 * @param array $loadedModules
 	 */
@@ -124,6 +130,7 @@ class AssetService {
 			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
 			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
 			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy',
+			'exclude' => array(),			
 		);		
 		
 		$prepared = array();
@@ -150,13 +157,13 @@ class AssetService {
 			if('classLoader'==$key){
 				continue;
 			}
-			if(is_bool($default) || is_null($default) || 'assetModule' == $key){
+			if(is_bool($default) || is_null($default) || 'exclude' == $key || 'assetModule' == $key){
 				$var = $prepared[$key];				
 			} else {
-				$var = $solved['classLoader']->get($prepared[$key]);				
+				$var = $solved['classLoader']->get($prepared[$key]);												
 			}
 			$solved[$key] = $var;			
-		}
+		}		
 		
 		// set the list
 		foreach($solved AS $key => $var){
@@ -192,6 +199,7 @@ class AssetService {
 				$mConfig[$moduleName],
 				$moduleName					
 			);
+			
 			$module = $classLoader->get($assetModuleClass,$params);
 			$this->setModule($module);						
 		}
@@ -497,6 +505,21 @@ class AssetService {
 	 */
 	public function getHttpAssetsPath(){
 		return $this->httpAssetsPath;
+	}
+	
+	/**
+	 * @param array $exclude containing regular expressions
+	 */
+	public function setExclude(array $exclude){
+		$this->exclude = $exclude;
+		$this->updateModules();
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function getExclude(){
+		return $this->exclude;
 	}
 	
 	/**

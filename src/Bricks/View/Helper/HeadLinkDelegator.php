@@ -43,8 +43,8 @@ class HeadLinkDelegator extends ZFHeadLink implements DelegatorFactoryInterface 
 			return parent::itemToString($item);
 		}
 		
-		$lessSupport = $this->getAssetService()->getLessSupport($moduleName);
-		$scssSupport = $this->getAssetService()->getScssSupport($moduleName);
+		$lessSupport = $this->getAssetService()->getModule($moduleName)->getLessSupport();
+		$scssSupport = $this->getAssetService()->getModule($moduleName)->getScssSupport();
 		$minifyCssSupport = $this->getAssetService()->getMinifyCssSupport($moduleName);		
 
 		$http_assets_path = $this->getAssetService()->getHttpAssetsPath($moduleName);

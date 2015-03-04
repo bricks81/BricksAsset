@@ -7,7 +7,7 @@ return array(
 			'assetModule' => 'Bricks\AssetService\AssetModule',
 			'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
 			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
-			'lessStrategy' => 'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',
+			'lessStrategy' => 'Bricks\AssetService\LessStrategy\OyejorgeLessphpStrategy',
 			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
 			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
 			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy',
@@ -20,7 +20,7 @@ return array(
 			'httpAssetsPath' => 'module',			
 			'wwwRootPath' => dirname(__DIR__).'/httpdocs',
 			'autoPublish' => false,
-			'autoOptimize' => false,
+			'autoOptimize' => false,			
 			'moduleSpecific' => array(
 				'BricksAsset' => array(
 					'moduleAssetsPath' => dirname(__DIR__).'/public',					

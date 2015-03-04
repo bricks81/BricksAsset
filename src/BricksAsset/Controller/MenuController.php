@@ -27,13 +27,13 @@ class MenuController extends AbstractActionController {
 		
 		$menu = new Menu('default',1);
 		$menuItem = new MenuItem('menuit-admin',1);
-		$menuItem->setTitle($translator->translate('menuit-admin'));
+		$menuItem->setTitle($translator->translate('Administration'));
 		$toolbarSet = new ToolbarSet('tbset-admin');
 		$toolbarGroup = new ToolbarGroup('tbgrp-admin-assets',2);
-		$toolbarGroup->setSubtitle($translator->translate('tbgrp-admin-assets'));
+		$toolbarGroup->setSubtitle($translator->translate('Assets'));
 		
 		$toolbarItem = new ToolbarItem('tbitem-admin-general-publish',1);
-		$toolbarItem->setTitle($translator->translate('tbitem-admin-assets-publish'));
+		$toolbarItem->setTitle($translator->translate('Publish assets'));
 		$toolbarItem->setUrl($router->assemble(array(),array('name'=>'bricksasset-publish')));
 		$menuIcon = new MenuIcon();
 		$menuIcon->setIconString('<i class="fa fa-2x fa-photo"></i>');

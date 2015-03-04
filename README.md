@@ -1,6 +1,8 @@
 ## About
+
 Bricks Asset is just another Asset Service to publish
 the http reachable files of a module. Simple, flexible and extendable.
+
 ## Features
 - Less support
 - SCSS/SASS Support
@@ -16,11 +18,16 @@ the http reachable files of a module. Simple, flexible and extendable.
 - leafo/scssphp 
 
 ### Installation
+
 #### Using Composer
+
     php composer.phar require bricks81/bricks-asset
+
 #### Activate Modules
+
 Add the modules in your application.config.php:
 
+```php
 	// ...    
 	'modules' => array(
     	// ...
@@ -30,11 +37,15 @@ Add the modules in your application.config.php:
     	// ...	
     ),
 	// ...
+```
 
 ## Configuration
+
 ### what you've to do
+
 Add the configuration for your module:
 
+```php
 	// ...
 	'Bricks' => array(
 		// ...
@@ -48,10 +59,13 @@ Add the configuration for your module:
 		// ...
 	),
 	// ...
+```
 
 ### Example of all Features
+
 This is the default configuration of BricksAsset and has not to be defined extra.
- 
+
+```php
 	// ...
 	'Bricks' => array(
 		// ...
@@ -73,6 +87,7 @@ This is the default configuration of BricksAsset and has not to be defined extra
 			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
 			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
 			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy/MrclayMinifyStrategy',
+			'exclude' => array(),
 			'moduleSpecific' => array(
 				'YourModule' => array(
 					'wwwRootPath' => './public',
@@ -92,12 +107,18 @@ This is the default configuration of BricksAsset and has not to be defined extra
 					'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
 					'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy/MrclayMinifyStrategy',
 					'moduleAssetsPath' => dirname(__DIR__).'/public',
+					'exclude' => array(
+						'.*?test.css$'						
+					),			
+					// excludes is an array of expressions that
+					// will neither be published nor deleted
 				),
 			),
 		),
 		// ...
 	),
 	// ...   
+```
 
 Meaning of this parts
 	
@@ -111,6 +132,7 @@ Meaning of this parts
 	'httpAssetsPath' 		is the relative subpath to the folder where the 						files will be copied or linked.
 
 ### Grafically
+
 	application dir			current working directory
 	|
 	|- Modules
@@ -127,22 +149,29 @@ Meaning of this parts
 
 You can use your HeadLink and HeadScript as it is. And you could use .less, .scss and .sass files, too.
 
+```php
 	echo $this->headLink()->appendStylsheet('ModuleName/css/my.less');
 	echo $this->headScript()->appendFile('ModuleName/js/my.js');
+```
 
 The example above will output:
 
+```html
 	<link href="module/ModuleName/css/my.less.css" media="screen" rel="stylesheet" type="text/css">
 	<script type="text/javascript" src="module/ModuleName/js/my.js"></script>
+```
 
 This works without optimization. After optimization it will be:
 
+```html
 	<link href="module/ModuleName/css/my.less.min.css" media="screen" rel="stylesheet" type="text/css">
 	<script type="text/javascript" src="module/ModuleName/js/my.min.js"></script>
+```
 
 ## Note
 
 Hope you will enjoy it.
 
 ### More see at
+
 [https://github.com/bricks81/BricksAsset/wiki](https://github.com/bricks81/BricksAsset/wiki "BricksAsset Wiki")

@@ -100,7 +100,7 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf('\BricksAssetTest\Mock\LessStrategy',$module->getLessStrategy());
 		$module->setLessStrategy($lessStrategy);
 		$as->setLessStrategy($oldLessStrategy);
-		$this->assertInstanceOf('\Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',$as->getLessStrategy());
+		$this->assertInstanceOf('\Bricks\AssetService\LessStrategy\OyejorgeLessphpStrategy',$as->getLessStrategy());
 		$this->assertInstanceOf('\BricksAssetTest\Mock\LessStrategy',$module->getLessStrategy());
 		$module->setLessStrategy($oldLessStrategy,true);
 		$as->setLessStrategy($oldLessStrategy);
@@ -304,6 +304,23 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$as->setMinifyJsSupport($oldMinifyJsSupport);
 	}
 	
+	public function testConfigExclude(){
+		$as = Bootstrap::getServiceManager()->get('Bricks\AssetService');
+		$this->assertInstanceOf('\Bricks\AssetService\AssetService',$as);
+		$exclude = array('^*.css$');
+		$module = $as->getModule('BricksAsset');
+		$oldExclude = $as->getExclude();		
+		$as->setExclude($exclude);
+		$this->assertEquals($exclude,$as->getExclude());
+		$this->assertEquals($exclude,$module->getExclude());
+		$module->setExclude(array('test'));
+		$as->setExclude(array());
+		$this->assertEquals(array(),$as->getExclude());		
+		$this->assertEquals(array('test'),$module->getExclude());
+		$module->setExclude($oldExclude,true);
+		$as->setExclude($oldExclude);
+	}
+	
 	public function testPublish(){
 		$as = Bootstrap::getServiceManager()->get('Bricks\AssetService');
 		$module = $as->getModule('BricksAsset');		
@@ -326,6 +343,27 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$this->assertFileExists($httpdir.'/js/test.js');
 	}
 	
+	/*
+	 * @depends testPublish
+	 * @depends testRemove
+	 */
+	public function testPublishExclude(){
+		$as = Bootstrap::getServiceManager()->get('Bricks\AssetService');
+		$module = $as->getModule('BricksAsset');
+		$httpdir = realpath($module->getWwwRootPath().'/'.$module->getHttpAssetsPath()).'/'.$module->getModuleName();
+	
+		$as->remove('BricksAsset');
+		
+		$module->setExclude(array('*/js/*'));
+		
+		$as->publish('BricksAsset');
+	
+		$module->setExclude(array());
+		
+		$this->assertFileExists($httpdir);		
+		$this->assertEquals(false,file_exists($httpdir.'/js/test.js'));
+	}
+	
 	/**
 	 * @depends testPublish
 	 */
@@ -337,6 +375,7 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 		$module->setMinifyCssSupport(true);
 		$module->setMinifyJsSupport(true);
 		
+		$as->publish('BricksAsset');		
 		$as->optimize('BricksAsset');				
 		
 		$this->assertFileExists($httpdir.'/css/test.less.min.css');		
@@ -346,14 +385,19 @@ class AssetServiceTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	/**
+	 * @depends testPublish
 	 * @depends testOptimize
 	 */
 	public function testRemove(){
 		$as = Bootstrap::getServiceManager()->get('Bricks\AssetService');
-		$module = $as->getModule('BricksAsset');
-		$path = realpath($module->getWwwRootPath().'/'.$module->getHttpAssetsPath().'/'.$module->getModuleName());
+		$as->publish('BricksAsset');
+		$module = $as->getModule('BricksAsset');				
+		$httpdir = realpath($module->getWwwRootPath().'/'.$module->getHttpAssetsPath().'/BricksAsset');
+		$module->setExclude(array('/js\/test.js$/'));		
 		$as->remove('BricksAsset');
-		$this->assertEquals(false,file_exists($path));
+		$this->assertFileExists($httpdir.'/js/test.js');
+		$this->assertEquals(false,file_exists($httpdir.'/css'));
+		$module->setExclude(array(),true);
 	}
 	
 }

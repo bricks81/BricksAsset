@@ -25,7 +25,7 @@ class ClassLoader implements ClassLoaderInterface {
 	}
 	
 	public function get($class,array $params=array()){
-		return $this->di->get($class,$params);
+		return $this->di->get($class,$params);		
 	}
 	
 }

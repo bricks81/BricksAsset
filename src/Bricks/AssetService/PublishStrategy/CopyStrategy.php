@@ -23,6 +23,19 @@ class CopyStrategy implements PublishStrategyInterface {
 			return;
 		}			
 		$update = $this->getPublishUpdate($adapter,$modulePath,$path);
+		
+		// exclude patterns
+		$exclude = $module->getExclude();
+		if(0<count($exclude)){
+			foreach($update AS $source => $target){
+				foreach($exclude AS $expression){
+					if(preg_match($expression,$source)){
+						unset($update[$source]);
+					}
+				}
+			}
+		}
+		
 		foreach($update AS $source => $target){
 			$adapter->copy($source,$target);
 		}		
@@ -40,8 +53,8 @@ class CopyStrategy implements PublishStrategyInterface {
 			if('.'==$filename[0]){
 				continue;
 			}
+			$_source = $source.'/'.$filename;			
 			$_target = $target.'/'.$filename;
-			$_source = $source.'/'.$filename;
 			if($adapter->isSourceDir($_source)){
 				$update += $this->getPublishUpdate($adapter,$_source,$_target);
 			} elseif($adapter->isSourceFile($_source)){
@@ -49,7 +62,7 @@ class CopyStrategy implements PublishStrategyInterface {
 					$update[$_source] = $_target;
 				}
 			}
-		}
+		}		
 		return $update;
 	}
 	

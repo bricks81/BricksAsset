@@ -26,7 +26,7 @@ class AssetServiceFactory implements FactoryInterface {
 			}
 		}
 		
-		// return the service
+		// return the service		
 		$as = new AssetService($cfg,$loadedModules);
 		return $as;
 	}

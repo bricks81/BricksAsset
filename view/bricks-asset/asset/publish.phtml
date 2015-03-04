@@ -1,8 +1,21 @@
-<form name="publish" action="<?php echo $this->Url('bricksasset-publish-do'); ?>" method="post" class="grid_12 grid_12_pad10 box">
-	<h1>Öffentliche Dateien schreiben</h1>
-	<p>
-		Bevor die Resourcen-Dateien aus den Modulen verwendet werden können, müssen
-		diese über den Browser erreichbar gemacht werden.		
-	</p>
-	<?php echo $this->Form($this->publishForm); ?>	
-</form>
+<div class="container">
+	<div class="row">
+		<div class="col-md-7 col-sm-7 col-sx-12 box">
+			<form name="publish" action="<?php echo $this->Url('bricksasset-publish-do'); ?>" method="post">
+				<h1><?php echo $this->translate('Write public files'); ?></h1>				
+				<?php echo $this->Form($this->publishForm); ?>	
+			</form>	
+		</div>
+		<div class="col-md-4 col-sm-4 col-sx-12 box fitbox">
+			<p>
+				<?php echo $this->translate('Before you can use the public files of a module they have to be published in a public reachable directory.'); ?>				
+			</p>
+			<p>
+				<?php echo $this->translate('To use the published resources you\'ve to begin with the modules name followed by the path as it is stored in your modules public dir.'); ?>
+			</p>
+			<pre>&lt;?php 
+    $this-&gt;HeadLink()-&gt;appendStylesheet('MyModuleName/path/to/css.css');
+?&gt;</pre>
+		</div>
+	</div>
+</div>
