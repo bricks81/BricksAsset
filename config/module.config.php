@@ -60,7 +60,10 @@ return array(
 			),
 			'HeadScript' => array(
 				'Bricks\View\Helper\HeadScriptDelegator',
-			),
+			),			
+		),
+		'invokables' => array(
+			'Resource' => 'Bricks\View\Helper\Resource',
 		),
 	),
 	'Bricks' => array(
