@@ -18,4 +18,9 @@ interface ClassLoaderInterface {
 	 */
 	public function get($class,array $params=array());
 	
+	/**
+	 * @return ServiceLocatorInterface
+	 */
+	public function getServiceLocator();
+	
 }
