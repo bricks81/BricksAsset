@@ -1,9 +1,9 @@
 <?php
 
-namespace Bricks\AssetService\AssetAdapter;
+namespace Bricks\Asset\AssetAdapter;
 
-use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
-use Bricks\AssetService\AssetModule;
+use Bricks\Asset\AssetAdapter\AssetAdapterInterface;
+use Bricks\Asset\AssetModule;
 use Bricks\File\Directory;
 use Bricks\File\File;
 
@@ -14,7 +14,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::getSourceDirList()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::getSourceDirList()
 	 */
 	public function getSourceDirList($dir){
 		$files = array();
@@ -32,7 +32,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::isSourceDir()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::isSourceDir()
 	 */
 	public function isSourceDir($dir){
 		return is_dir($dir);
@@ -40,7 +40,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::isSourceFile()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::isSourceFile()
 	 */
 	public function isSourceFile($file){
 		return is_file($file);
@@ -59,7 +59,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::isTargetDir()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::isTargetDir()
 	 */
 	public function isTargetDir($dir){
 		return is_dir($dir);
@@ -67,7 +67,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::removeTargetDir()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::removeTargetDir()
 	 */
 	public function removeTargetDir($dir){
 		if(is_dir($dir)){
@@ -77,7 +77,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::makeTargetDir()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::makeTargetDir()
 	 */
 	public function makeTargetDir($dir,$mode=0750){
 		return Directory::mkdir($dir,$mode);		
@@ -85,7 +85,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::isTargetFile()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::isTargetFile()
 	 */
 	public function isTargetFile($file){
 		return is_file($file);
@@ -93,7 +93,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::unlinkTargetFile()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::unlinkTargetFile()
 	 */
 	public function unlinkTargetFile($file){
 		File::unlink($file);		
@@ -101,7 +101,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::touchTargetFile()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::touchTargetFile()
 	 */
 	public function touchTargetFile($file,$mode=0644,$dmode=0750){
 		return File::touch($file,$mode,$dmode);
@@ -109,7 +109,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::isOlderThan()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::isOlderThan()
 	 */
 	public function isOlderThan($source,$target){
 		return filectime($source)>filectime($target);
@@ -117,7 +117,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::copy()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::copy()
 	 */
 	public function copy($source,$target){
 		if($this->isSourceDir($source)){
@@ -131,7 +131,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::readSourceFile()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::readSourceFile()
 	 */
 	public function readSourceFile($source){
 		return file_get_contents($source);
@@ -139,7 +139,7 @@ class FilesystemAdapter implements AssetAdapterInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\AssetAdapter\AssetAdapterInterface::writeTargetFile()
+	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::writeTargetFile()
 	 */
 	public function writeTargetFile($target,$content){
 		if(!is_dir(dirname($target))){

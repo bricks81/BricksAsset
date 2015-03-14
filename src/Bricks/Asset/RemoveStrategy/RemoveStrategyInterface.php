@@ -1,8 +1,8 @@
 <?php
 
-namespace Bricks\AssetService\RemoveStrategy;
+namespace Bricks\Asset\RemoveStrategy;
 
-use Bricks\AssetService\AssetModule;
+use Bricks\Asset\AssetModule;
 
 interface RemoveStrategyInterface {
 	

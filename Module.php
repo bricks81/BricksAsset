@@ -27,7 +27,7 @@ class Module {
     	$e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_DISPATCH,function(MvcEvent $e){
     		$sm = $e->getApplication()->getServiceManager();
     		$appcfg = $sm->get('ApplicationConfig');
-    		$as = $sm->get('Bricks\AssetService');    		
+    		$as = $sm->get('Bricks\Asset');    		
     		$as->autoPublish();
     		$as->autoOptimize();    										
     	});

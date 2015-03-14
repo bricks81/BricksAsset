@@ -1,17 +1,17 @@
 <?php
 
-namespace Bricks\AssetService\ScssStrategy;
+namespace Bricks\Asset\ScssStrategy;
 
 use Leafo\ScssPhp\Compiler;
-use Bricks\AssetService\AssetModule;
-use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
-use Bricks\AssetService\ScssStrategy\ScssStrategyInterface;
+use Bricks\Asset\AssetModule;
+use Bricks\Asset\AssetAdapter\AssetAdapterInterface;
+use Bricks\Asset\ScssStrategy\ScssStrategyInterface;
 
 class LeafoScssphpStrategy implements ScssStrategyInterface {
 
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\ScssStrategy\ScssStrategyInterface::scss()
+	 * @see \Bricks\Asset\ScssStrategy\ScssStrategyInterface::scss()
 	 */
 	public function scss(AssetModule $module){
 		$adapter = $module->getAssetAdapter();

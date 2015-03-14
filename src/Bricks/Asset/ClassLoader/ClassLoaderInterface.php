@@ -1,8 +1,9 @@
 <?php
 
-namespace Bricks\AssetService\ClassLoader;
+namespace Bricks\Asset\ClassLoader;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
+
 interface ClassLoaderInterface {
 
 	/**

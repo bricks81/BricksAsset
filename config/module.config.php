@@ -5,13 +5,13 @@ use Bricks\Di\Di;
 return array(	
 	'service_manager' => array(
 		'factories' => array(
-			'Bricks\AssetService' => 'Bricks\AssetService\ServiceManager\AssetServiceFactory',
+			'Bricks\Asset' => 'Bricks\Asset\ServiceManager\AssetServiceFactory',
 		),				
 	),
 	'di' => array(		
 		'definition' => array(
 			'class' => array(
-				'Bricks\AssetService\AssetModule' => array(					
+				'Bricks\Asset\AssetModule' => array(					
 					'methods' => array(
 						'__construct' => array(
 							array(
@@ -68,16 +68,16 @@ return array(
 	),
 	'Bricks' => array(
 		'BricksAsset' => array(
-			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
-			'assetModule' => 'Bricks\AssetService\AssetModule',
-			'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
-			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
-			'lessStrategy' => 'Bricks\AssetService\LessStrategy\OyejorgeLessphpStrategy',
-			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
-			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
-			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy',
-			'publishStrategy' => 'Bricks\AssetService\PublishStrategy\CopyStrategy',
-			'removeStrategy' => 'Bricks\AssetService\RemoveStrategy\RemoveStrategy',
+			'classLoader' => 'Bricks\Asset\ClassLoader\ClassLoader',
+			'assetModule' => 'Bricks\Asset\AssetModule',
+			'assetAdapter' => 'Bricks\Asset\AssetAdapter\FilesystemAdapter',
+			'classLoader' => 'Bricks\Asset\ClassLoader\ClassLoader',
+			'lessStrategy' => 'Bricks\Asset\LessStrategy\OyejorgeLessphpStrategy',
+			'scssStrategy' => 'Bricks\Asset\ScssStrategy\LeafoScssphpStrategy',
+			'minifyCssStrategy' => 'Bricks\Asset\MinifyCssStrategy\MrclayMinifyStrategy',
+			'minifyJsStrategy' => 'Bricks\Asset\MinifyJsStrategy\MrclayMinifyStrategy',
+			'publishStrategy' => 'Bricks\Asset\PublishStrategy\CopyStrategy',
+			'removeStrategy' => 'Bricks\Asset\RemoveStrategy\RemoveStrategy',
 			'minifyCssSupport' => true,
 			'minifyJsSupport' => true,
 			'lessSupport' => true,
@@ -85,11 +85,9 @@ return array(
 			'wwwRootPath' => './public',
 			'httpAssetsPath' => 'module',
 			'moduleSpecific' => array(
-				/*
 				'BricksAsset' => array(
-					'moduleAssetsPath' => dirname(__DIR__).'/public',
-				),
-				*/								
+					'moduleAssetsPath' => dirname(__DIR__).'/public',					
+				),												
 			),			
 		),
 	),	

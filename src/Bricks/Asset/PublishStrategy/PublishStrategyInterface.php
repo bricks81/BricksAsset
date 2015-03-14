@@ -1,8 +1,9 @@
 <?php
 
-namespace Bricks\AssetService\PublishStrategy;
+namespace Bricks\Asset\PublishStrategy;
 
-use Bricks\AssetService\AssetModule;
+use Bricks\Asset\AssetModule;
+
 interface PublishStrategyInterface {
 	
 	/**

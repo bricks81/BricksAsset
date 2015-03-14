@@ -1,17 +1,17 @@
 <?php
 
-namespace Bricks\AssetService\LessStrategy;
+namespace Bricks\Asset\LessStrategy;
 
 use \lessc;
-use Bricks\AssetService\AssetModule;
-use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
-use Bricks\AssetService\LessStrategy\LessStrategyInterface;
+use Bricks\Asset\AssetModule;
+use Bricks\Asset\AssetAdapter\AssetAdapterInterface;
+use Bricks\Asset\LessStrategy\LessStrategyInterface;
 
 class OyejorgeLessphpStrategy implements LessStrategyInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\LessStrategy\LessStrategyInterface::less()
+	 * @see \Bricks\Asset\LessStrategy\LessStrategyInterface::less()
 	 */
 	public function less(AssetModule $module){
 		$adapter = $module->getAssetAdapter();

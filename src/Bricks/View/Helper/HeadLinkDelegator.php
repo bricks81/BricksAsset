@@ -15,7 +15,7 @@ class HeadLinkDelegator extends ZFHeadLink implements DelegatorFactoryInterface 
 	
 	public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator,$name,$requestedName,$callback){
 		$headLink = new self();		
-		$headLink->setAssetService($serviceLocator->getServiceLocator()->get('Bricks\AssetService'));
+		$headLink->setAssetService($serviceLocator->getServiceLocator()->get('Bricks\Asset'));
 		return $headLink;	 		
 	}
 	

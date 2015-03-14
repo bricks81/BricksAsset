@@ -2,7 +2,6 @@
 
 namespace BricksAssetTest\Mock;
 
-use Bricks\AssetService\AssetModule;
-use Bricks\AssetService\AssetAdapter\FilesystemAdapter;
+use Bricks\Asset\AssetAdapter\FilesystemAdapter;
 
 class AssetAdapter extends FilesystemAdapter {}

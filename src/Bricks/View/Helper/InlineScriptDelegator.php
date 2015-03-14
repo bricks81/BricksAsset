@@ -15,7 +15,7 @@ class InlineScriptDelegator extends ZFInlineScript implements DelegatorFactoryIn
 	
 	public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator,$name,$requestedName,$callback){
 		$headScript = new self();
-		$headScript->setAssetService($serviceLocator->getServiceLocator()->get('Bricks\AssetService'));
+		$headScript->setAssetService($serviceLocator->getServiceLocator()->get('Bricks\Asset'));
 		return $headScript;
 	}
 	

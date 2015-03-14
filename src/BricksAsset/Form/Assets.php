@@ -6,12 +6,6 @@ use Zend\Form\Form;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
 
-if(!function_exists('_')){
-	function _($string){
-		return $string;
-	}
-}
-
 class Assets extends Form {
 	
 	public function setupElements($loadedModules){		
@@ -19,6 +13,9 @@ class Assets extends Form {
 		foreach($loadedModules AS $moduleName){
 			$modules[$moduleName] = $moduleName;
 		}
+
+		// poedit translation
+		function _($str){return $str;}
 		
 		$element = new Element\MultiCheckbox();
 		$element->setName('modules');

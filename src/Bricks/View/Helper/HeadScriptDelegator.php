@@ -15,7 +15,7 @@ class HeadScriptDelegator extends ZFHeadScript implements DelegatorFactoryInterf
 	
 	public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator,$name,$requestedName,$callback){
 		$headScript = new self();
-		$headScript->setAssetService($serviceLocator->getServiceLocator()->get('Bricks\AssetService'));
+		$headScript->setAssetService($serviceLocator->getServiceLocator()->get('Bricks\Asset'));
 		return $headScript;
 	}
 	

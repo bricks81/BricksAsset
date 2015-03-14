@@ -2,6 +2,6 @@
 
 namespace BricksAssetTest\Mock;
 
-use Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy;
+use Bricks\Asset\ScssStrategy\LeafoScssphpStrategy;
 
 class ScssStrategy extends LeafoScssphpStrategy {}

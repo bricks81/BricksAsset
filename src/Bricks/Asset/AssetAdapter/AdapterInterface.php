@@ -1,8 +1,8 @@
 <?php
 
-namespace Bricks\AssetService\AssetAdapter;
+namespace Bricks\Asset\AssetAdapter;
 
-use Bricks\AssetService\AssetModule;
+use Bricks\Asset\AssetModule;
 use Bricks\File\Directory;
 use Bricks\File\File;
 

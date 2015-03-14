@@ -1,8 +1,8 @@
 <?php
 
-namespace Bricks\AssetService\ScssStrategy;
+namespace Bricks\Asset\ScssStrategy;
 
-use Bricks\AssetService\AssetModule;
+use Bricks\Asset\AssetModule;
 
 interface ScssStrategyInterface {
 	

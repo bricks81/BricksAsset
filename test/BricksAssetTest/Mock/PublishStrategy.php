@@ -2,6 +2,6 @@
 
 namespace BricksAssetTest\Mock;
 
-use Bricks\AssetService\PublishStrategy\CopyStrategy;
+use Bricks\Asset\PublishStrategy\CopyStrategy;
 
 class PublishStrategy extends CopyStrategy {}

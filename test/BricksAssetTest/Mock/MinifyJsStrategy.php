@@ -2,6 +2,6 @@
 
 namespace BricksAssetTest\Mock;
 
-use Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy;
+use Bricks\Asset\MinifyJsStrategy\MrclayMinifyStrategy;
 
 class MinifyJsStrategy extends MrclayMinifyStrategy {}

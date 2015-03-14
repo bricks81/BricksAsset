@@ -1,8 +1,8 @@
 <?php
 
-namespace Bricks\AssetService\MinifyJsStrategy;
+namespace Bricks\Asset\MinifyJsStrategy;
 
-use Bricks\AssetService\AssetModule;
+use Bricks\Asset\AssetModule;
 
 interface MinifyJsStrategyInterface {
 	

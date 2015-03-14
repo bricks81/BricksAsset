@@ -18,7 +18,7 @@ class AssetController extends AbstractActionController {
 	public function publishAction(){
 		$form = $this->getPublishForm();
 		$form->setAttribute('action',$this->Url()->fromRoute('bricksasset-publish-do'));
-		$as = $this->getServiceLocator()->get('Bricks\AssetService');
+		$as = $this->getServiceLocator()->get('Bricks\Asset');
 		$loadedModules = $as->getLoadedModules();
 		$form->setupElements($loadedModules);
 		return array('publishForm'=>$form);
@@ -51,7 +51,7 @@ class AssetController extends AbstractActionController {
 		$minifyCssSupport = $this->getRequest()->getPost('minifyCssSupport')?:'default';
 		$minifyJsSupport = $this->getRequest()->getPost('minifyJsSupport')?:'default';
 		
-		$as = $this->getServiceLocator()->get('Bricks\AssetService');
+		$as = $this->getServiceLocator()->get('Bricks\Asset');
 		foreach($modules AS $moduleName){
 			$module = $as->getModule($moduleName);
 			$origLessSupport = $module->getLessSupport();

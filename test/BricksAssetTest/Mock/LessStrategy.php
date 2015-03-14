@@ -2,6 +2,6 @@
 
 namespace BricksAssetTest\Mock;
 
-use Bricks\AssetService\LessStrategy\OyejorgeLessphpStrategy;
+use Bricks\Asset\LessStrategy\OyejorgeLessphpStrategy;
 
 class LessStrategy extends OyejorgeLessphpStrategy {}

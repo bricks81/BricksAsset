@@ -1,16 +1,16 @@
 <?php
 
-namespace Bricks\AssetService\MinifyJsStrategy;
+namespace Bricks\Asset\MinifyJsStrategy;
 
 use \JSMin;
-use Bricks\AssetService\AssetModule;
-use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
+use Bricks\Asset\AssetModule;
+use Bricks\Asset\AssetAdapter\AssetAdapterInterface;
 
 class MrclayMinifyStrategy implements MinifyJsStrategyInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\MinifyJsStrategy\MinifyStrategyInterface::minify()
+	 * @see \Bricks\Asset\MinifyJsStrategy\MinifyStrategyInterface::minify()
 	 */
 	public function minify(AssetModule $module){
 		$adapter = $module->getAssetAdapter();

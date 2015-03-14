@@ -1,10 +1,10 @@
 <?php
 
-namespace Bricks\AssetService\PublishStrategy;
+namespace Bricks\Asset\PublishStrategy;
 
-use Bricks\AssetService\PublishStrategy\PublishStrategyInterface;
-use Bricks\AssetService\AssetModule;
-use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
+use Bricks\Asset\PublishStrategy\PublishStrategyInterface;
+use Bricks\Asset\AssetModule;
+use Bricks\Asset\AssetAdapter\AssetAdapterInterface;
 
 /**
  * This adapter copies a file to the public resource directory
@@ -13,7 +13,7 @@ class CopyStrategy implements PublishStrategyInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\PublishStrategy\PublishStrategyInterface::publish()
+	 * @see \Bricks\Asset\PublishStrategy\PublishStrategyInterface::publish()
 	 */
 	public function publish(AssetModule $module){
 		$adapter = $module->getAssetAdapter();		

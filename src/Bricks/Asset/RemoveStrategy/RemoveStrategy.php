@@ -1,16 +1,16 @@
 <?php
 
-namespace Bricks\AssetService\RemoveStrategy;
+namespace Bricks\Asset\RemoveStrategy;
 
-use Bricks\AssetService\AssetModule;
-use Bricks\AssetService\RemoveStrategy\RemoveStrategyInterface;
-use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
+use Bricks\Asset\AssetModule;
+use Bricks\Asset\RemoveStrategy\RemoveStrategyInterface;
+use Bricks\Asset\AssetAdapter\AssetAdapterInterface;
 
 class RemoveStrategy implements RemoveStrategyInterface {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Bricks\AssetService\RemoveStrategy\RemoveStrategyInterface::remove()
+	 * @see \Bricks\Asset\RemoveStrategy\RemoveStrategyInterface::remove()
 	 */
 	public function remove(AssetModule $module){
 		$adapter = $module->getAssetAdapter();

@@ -1,15 +1,15 @@
 <?php
 
-namespace Bricks\AssetService;
+namespace Bricks\Asset;
 
-use Bricks\AssetService\ClassLoader\ClassLoaderInterface;
-use Bricks\AssetService\AssetAdapter\AssetAdapterInterface;
-use Bricks\AssetService\RemoveStrategy\RemoveStrategyInterface;
-use Bricks\AssetService\PublishStrategy\PublishStrategyInterface;
-use Bricks\AssetService\LessStrategy\LessStrategyInterface;
-use Bricks\AssetService\ScssStrategy\ScssStrategyInterface;
-use Bricks\AssetService\MinifyCssStrategy\MinifyCssStrategyInterface;
-use Bricks\AssetService\MinifyJsStrategy\MinifyJsStrategyInterface;
+use Bricks\Asset\ClassLoader\ClassLoaderInterface;
+use Bricks\Asset\AssetAdapter\AssetAdapterInterface;
+use Bricks\Asset\RemoveStrategy\RemoveStrategyInterface;
+use Bricks\Asset\PublishStrategy\PublishStrategyInterface;
+use Bricks\Asset\LessStrategy\LessStrategyInterface;
+use Bricks\Asset\ScssStrategy\ScssStrategyInterface;
+use Bricks\Asset\MinifyCssStrategy\MinifyCssStrategyInterface;
+use Bricks\Asset\MinifyJsStrategy\MinifyJsStrategyInterface;
 
 /**
  * Represents a module
@@ -50,42 +50,42 @@ class AssetModule {
 	protected $isDefault = array();
 	
 	/**
-	 * @var \Bricks\AssetService\ClassLoader\ClassLoaderInterface
+	 * @var \Bricks\Asset\ClassLoader\ClassLoaderInterface
 	 */
 	protected $classLoader;
 	
 	/**
-	 * @var \Bricks\AssetService\AssetAdapter\AssetAdapterInterface
+	 * @var \Bricks\Asset\AssetAdapter\AssetAdapterInterface
 	 */
 	protected $assetAdapter;
 	
 	/**
-	 * @var \Bricks\AssetService\PublishStrategy\PublishStrategyInterface
+	 * @var \Bricks\Asset\PublishStrategy\PublishStrategyInterface
 	 */
 	protected $publishStrategy;
 	
 	/**
-	 * @var \Bricks\AssetService\RemoveStrategy\RemoveStrategyInterface
+	 * @var \Bricks\Asset\RemoveStrategy\RemoveStrategyInterface
 	 */
 	protected $removeStrategy;
 	
 	/**
-	 * @var \Bricks\AssetService\LessStrategy\LessStrategyInterface
+	 * @var \Bricks\Asset\LessStrategy\LessStrategyInterface
 	 */
 	protected $lessStrategy;
 	
 	/**
-	 * @var \Bricks\AssetService\ScssStrategy\ScssStrategyInterface
+	 * @var \Bricks\Asset\ScssStrategy\ScssStrategyInterface
 	 */
 	protected $scssStrategy;
 	
 	/**
-	 * @var \Bricks\AssetService\MinifyCssStrategy\MinifyCssStrategyInterface
+	 * @var \Bricks\Asset\MinifyCssStrategy\MinifyCssStrategyInterface
 	 */
 	protected $minifyCssStrategy;
 	
 	/**
-	 * @var \Bricks\AssetService\MinifyJsStrategy\MinifyJsStrategyInterface
+	 * @var \Bricks\Asset\MinifyJsStrategy\MinifyJsStrategyInterface
 	 */
 	protected $minifyJsStrategy;
 	
@@ -106,14 +106,14 @@ class AssetModule {
 			'wwwRootPath' => null,
 			'httpAssetsPath' => null,
 			'moduleAssetsPath' => null,
-			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
-			'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
-			'publishStrategy' => 'Bricks\AssetService\PublishStrategy\CopyStrategy',
-			'removeStrategy' => 'Bricks\AssetService\RemoveStrategy\RemoveStrategy',
-			'lessStrategy' => 'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',
-			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
-			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
-			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy\MrclayMinifyStrategy',
+			'classLoader' => 'Bricks\Asset\ClassLoader\ClassLoader',
+			'assetAdapter' => 'Bricks\Asset\AssetAdapter\FilesystemAdapter',
+			'publishStrategy' => 'Bricks\Asset\PublishStrategy\CopyStrategy',
+			'removeStrategy' => 'Bricks\Asset\RemoveStrategy\RemoveStrategy',
+			'lessStrategy' => 'Bricks\Asset\LessStrategy\NeilimeLessphpStrategy',
+			'scssStrategy' => 'Bricks\Asset\ScssStrategy\LeafoScssphpStrategy',
+			'minifyCssStrategy' => 'Bricks\Asset\MinifyCssStrategy\MrclayMinifyStrategy',
+			'minifyJsStrategy' => 'Bricks\Asset\MinifyJsStrategy\MrclayMinifyStrategy',
 			'exclude' => array(),
 		);		
 		
@@ -160,7 +160,7 @@ class AssetModule {
 	}
 	
 	/**
-	 * @return \Bricks\AssetService\ClassLoader\ClassLoaderInterface
+	 * @return \Bricks\Asset\ClassLoader\ClassLoaderInterface
 	 */
 	public function getClassLoader(){		
 		return $this->classLoader;
@@ -229,7 +229,7 @@ class AssetModule {
 	}
 	
 	/**
-	 * @return \Bricks\AssetService\AssetServiceAwareInterface
+	 * @return \Bricks\Asset\AssetServiceAwareInterface
 	 */
 	public function getAssetAdapter(){
 		return $this->assetAdapter;
@@ -303,7 +303,7 @@ class AssetModule {
 	}
 	
 	/**
-	 * @return \Bricks\AssetService\RemoveStrategy\RemoveStrategyInterface
+	 * @return \Bricks\Asset\RemoveStrategy\RemoveStrategyInterface
 	 */
 	public function getRemoveStrategy(){
 		return $this->removeStrategy;		
@@ -319,7 +319,7 @@ class AssetModule {
 	}
 	
 	/**
-	 * @return \Bricks\AssetService\PublishStrategy\PublishStrategyInterface
+	 * @return \Bricks\Asset\PublishStrategy\PublishStrategyInterface
 	 */
 	public function getPublishStrategy(){
 		return $this->publishStrategy;		
@@ -364,7 +364,7 @@ class AssetModule {
 	}
 	
 	/**
-	 * @return \Bricks\AssetService\LessStrategy\LessStrategyInterface
+	 * @return \Bricks\Asset\LessStrategy\LessStrategyInterface
 	 */
 	public function getLessStrategy(){
 		return $this->lessStrategy;
@@ -380,7 +380,7 @@ class AssetModule {
 	}
 	
 	/**
-	 * @return \Bricks\AssetService\ScssStrategy\ScssStrategyInterface
+	 * @return \Bricks\Asset\ScssStrategy\ScssStrategyInterface
 	 */
 	public function getScssStrategy(){
 		return $this->scssStrategy;
@@ -423,7 +423,7 @@ class AssetModule {
 	}
 	
 	/**
-	 * @return \Bricks\AssetService\MinifyCssStrategy\MinifyCssStrategyInterface
+	 * @return \Bricks\Asset\MinifyCssStrategy\MinifyCssStrategyInterface
 	 */
 	public function getMinifyCssStrategy(){
 		return $this->minifyCssStrategy;
@@ -455,7 +455,7 @@ class AssetModule {
 	}	
 	
 	/**
-	 * @return \Bricks\AssetService\MinifyJsStrategy\MinifyJsStrategyInterface
+	 * @return \Bricks\Asset\MinifyJsStrategy\MinifyJsStrategyInterface
 	 */
 	public function getMinifyJsStrategy(){
 		return $this->minifyJsStrategy;

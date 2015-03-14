@@ -1,12 +1,12 @@
 <?php
 
-namespace Bricks\AssetService\ServiceManager;
+namespace Bricks\Asset\ServiceManager;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Bricks\AssetService\AssetConfig;
-use Bricks\AssetService\AssetService;
-use Bricks\AssetService\ClassLoader\ClassLoader;
+use Bricks\Asset\AssetConfig;
+use Bricks\Asset\AssetService;
+use Bricks\Asset\ClassLoader\ClassLoader;
 
 class AssetServiceFactory implements FactoryInterface {
 	

@@ -1,8 +1,8 @@
 <?php
 
-namespace Bricks\AssetService\LessStrategy;
+namespace Bricks\Asset\LessStrategy;
 
-use Bricks\AssetService\AssetModule;
+use Bricks\Asset\AssetModule;
 
 interface LessStrategyInterface {
 
