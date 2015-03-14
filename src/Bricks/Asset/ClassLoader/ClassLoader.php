@@ -13,10 +13,7 @@ class ClassLoader implements ClassLoaderInterface {
 	
 	protected $sl;
 	
-	protected $di;
-	
 	protected function __construct(ServiceLocatorInterface $sl){
-		$this->di = $sl->get('Di');
 		$this->sl = $sl;
 	}
 	
@@ -25,10 +22,6 @@ class ClassLoader implements ClassLoaderInterface {
 			self::$instance = new self($sl);
 		}
 		return self::$instance;
-	}
-	
-	public function get($class,array $params=array()){
-		return $this->di->get($class,$params);		
 	}
 	
 	public function getServiceLocator(){

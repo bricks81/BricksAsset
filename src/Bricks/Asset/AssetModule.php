@@ -146,7 +146,7 @@ class AssetModule {
 			if(is_bool($defaults[$key]) || is_null($defaults[$key]) || 'exclude' == $key){
 				$var = $prepared[$key];				
 			} else {
-				$var = $solved['classLoader']->get($prepared[$key]);				
+				$var = $solved['classLoader']->getServiceLocator()->get('Di')->get($prepared[$key]);				
 			}			
 			$this->{'set'.ucfirst($key)}($var,$this->isDefault[$key]);			
 		}		

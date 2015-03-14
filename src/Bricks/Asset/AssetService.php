@@ -160,7 +160,7 @@ class AssetService {
 			if(is_bool($default) || is_null($default) || 'exclude' == $key || 'assetModule' == $key){
 				$var = $prepared[$key];				
 			} else {
-				$var = $solved['classLoader']->get($prepared[$key]);												
+				$var = $solved['classLoader']->getServiceLocator()->get('Di')->get($prepared[$key]);												
 			}
 			$solved[$key] = $var;			
 		}		
@@ -200,7 +200,7 @@ class AssetService {
 				$moduleName					
 			);
 			
-			$module = $classLoader->get($assetModuleClass,$params);
+			$module = $classLoader->getServiceLocator()->get('Di')->get($assetModuleClass,$params);
 			$this->setModule($module);						
 		}
 				
