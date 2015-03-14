@@ -7,7 +7,7 @@ use Zend\View\Helper\HeadLink AS ZFHeadLink;
 use \stdClass;
 use Zend\ServiceManager\DelegatorFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Bricks\AssetService\AssetService;
+use Bricks\Asset\AssetService;
 
 class HeadLinkDelegator extends ZFHeadLink implements DelegatorFactoryInterface {
 

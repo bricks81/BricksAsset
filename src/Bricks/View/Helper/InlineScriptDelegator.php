@@ -7,7 +7,7 @@ use Zend\View\Helper\InlineScript AS ZFInlineScript;
 use \stdClass;
 use Zend\ServiceManager\DelegatorFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Bricks\AssetService\AssetService;
+use Bricks\Asset\AssetService;
 
 class InlineScriptDelegator extends ZFInlineScript implements DelegatorFactoryInterface {
 

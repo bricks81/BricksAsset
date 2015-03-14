@@ -7,7 +7,7 @@ use Zend\View\Helper\HeadScript AS ZFHeadScript;
 use \stdClass;
 use Zend\ServiceManager\DelegatorFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Bricks\AssetService\AssetService;
+use Bricks\Asset\AssetService;
 
 class HeadScriptDelegator extends ZFHeadScript implements DelegatorFactoryInterface {
 
