@@ -1,13 +1,48 @@
 <?php
-
 use Bricks\Di\Di;
 
 return array(	
 	'service_manager' => array(
 		'factories' => array(
-			'Bricks\Asset' => 'Bricks\Asset\ServiceManager\AssetServiceFactory',
+			'Bricks.Asset.AssetService' => 'Bricks\Asset\ServiceManager\AssetServiceFactory',
 		),				
 	),
+	'router' => array(
+		'router_class' => 'Zend\Mvc\Router\Http\TranslatorAwareTreeRouteStack',
+		'routes' => array(				
+			'bricks.asset.publish' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route'    => '/{Assets/Write}',
+					'defaults' => array(
+						'controller' => 'BricksAsset\Controller\AssetController',
+						'action'     => 'publish',
+					),	
+				),
+			),
+			'bricks.asset.publish.do' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route'    => '/{Assets/Write/Execute}',
+					'defaults' => array(
+						'controller' => 'BricksAsset\Controller\AssetController',
+						'action'     => 'publishDo',
+					),
+				),
+			),
+			'bricks.asset.publish.success' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route'    => '/{Assets/Write/Success}',
+					'defaults' => array(
+						'controller' => 'BricksAsset\Controller\AssetController',
+						'action'     => 'publishSuccess',
+					),
+				),
+			),		
+		),
+	),
+	
 	'di' => array(		
 		'definition' => array(
 			'class' => array(
@@ -91,4 +126,8 @@ return array(
 			),			
 		),
 	),	
-);
+)
+
+
+
+;

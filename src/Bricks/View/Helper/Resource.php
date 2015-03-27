@@ -19,7 +19,7 @@ class Resource extends AbstractHelper implements ServiceLocatorAwareInterface {
 	}
 	
 	public function __invoke($path){
-		$as = $this->getServiceLocator()->getServiceLocator()->get('Bricks\Asset');
+		$as = $this->getServiceLocator()->getServiceLocator()->get('Bricks.Asset.AssetService');
 		$parts = explode('/',$path);
 		if($as->hasModule($parts[0])){
 			$module = $as->getModule($parts[0]);

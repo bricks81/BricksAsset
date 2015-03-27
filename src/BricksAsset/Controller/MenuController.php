@@ -12,6 +12,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 
 class MenuController extends AbstractActionController {
 	
+	/*
 	public function addDefaultMenu(){
 		if(!$this->getServiceLocator()->has('Bricks\MenuService')){
 			return;
@@ -45,5 +46,6 @@ class MenuController extends AbstractActionController {
 		$menu->addItem($menuItem);
 		$menus->mergeMenu($menu);			
 	}
+	*/
 	
 }
