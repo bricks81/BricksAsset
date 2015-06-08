@@ -1,34 +1,124 @@
 <?php
-
+/**
+ * Bricks Framework & Bricks CMS
+ *
+ * @link https://github.com/bricks81/BricksAsset
+ * @license http://www.gnu.org/licenses/ (GPLv3)
+ */
 namespace Bricks\Asset\MinifyCssStrategy;
 
 use \CSSmin;
-use Bricks\Asset\AssetModule;
 use Bricks\Asset\MinifyCssStrategy\MinifyCssStrategyInterface;
-use Bricks\Asset\AssetAdapter\AssetAdapterInterface;
+use Bricks\Asset\StorageAdapter\StorageAdapterInterface;
+use Bricks\Asset\Module;
 
 class MrclayMinifyStrategy implements MinifyCssStrategyInterface {
+	
+	/**
+	 * @var \Bricks\Asset\Module
+	 */
+	protected $module;
+	
+	/**
+	 * @var \Bricks\Asset\StorageAdapter\StorageAdapterInterface
+	 */
+	protected $storageAdapter;
+	
+	/**
+	 * @var \CSSmin
+	 */
+	protected $minify;
+	
+	/**
+	 * @param Module $module
+	 */
+	public function __construct(Module $module){
+		$this->setModule($module);
+	}
+	
+	/**
+	 * @param Module $module
+	 */
+	public function setModule(Module $module){
+		$this->module = $module;
+	}
+	
+	/**
+	 * @return \Bricks\Asset\Module
+	 */
+	public function getModule(){
+		return $this->module;
+	}
+	
+	/**
+	 * @param StorageAdapterInterface $adapter
+	 */
+	public function setStorageAdapter(StorageAdapterInterface $adapter){
+		$this->storageAdapter = $adapter;
+	}
+	
+	/**
+	 * @return \Bricks\Asset\StorageAdapter\StorageAdapterInterface
+	 */
+	public function getStorageAdapter(){
+		if(!$this->storageAdapter){
+			$module = $this->getModule();
+			$moduleName = $module->getModuleName();
+			$asset = $module->getAsset();
+			$classLoader = $asset->getClassLoader();
+			$this->storageAdapter = $classLoader->newInstance(__CLASS__,__METHOD__,'storageAdapterClass',$moduleName,array(
+				'Asset' => $asset
+			));			
+		}
+		return $this->storageAdapter;
+	}
+	
+	/**
+	 * @param CSSmin $minify
+	 */
+	public function setMinify(CSSmin $minify){
+		$this->minify = $minify;
+	}
+	
+	/**
+	 * @return CSSmin
+	 */
+	public function getMinify(){
+		if(!$this->minify){
+			$this->minify = new CSSmin();
+		}
+		return $this->minify;
+	}
 	
 	/**
 	 * (non-PHPdoc)
 	 * @see \Bricks\Asset\MinifyCssStrategy\MinifyStrategyInterface::minify()
 	 */
-	public function minify(AssetModule $module){
-		$adapter = $module->getAssetAdapter();
-		$path = realpath($module->getWwwRootPath().'/'.$module->getHttpAssetsPath().'/'.$module->getModuleName());
+	public function minify(){
+		$adapter = $this->getStorageAdapter();
+		$module = $this->getModule();
+		$moduleName = $module->getModuleName();
+		$asset = $module->getAsset();
+		$config = $asset->getConfig()->getArray($moduleName);
+		
+		$path = realpath(
+			$config['wwwRootPath'].'/'.
+			$config['httpAssetsPath'].'/'.
+			$moduleName
+		);
 		if(false==$path){
 			return;
 		} 
 		$update = $this->getMinifyUpdate($adapter,$path,$path);
 		foreach($update AS $source => $target){
 			$content = $adapter->readSourceFile($source);
-			$min = new CSSmin();
+			$min = $this->getMinify();
 			$content = $min->run($content);
 			$adapter->writeTargetFile($target,$content);	
 		}
 	}
 	
-	protected function getMinifyUpdate(AssetAdapterInterface $adapter,$source,$target){
+	protected function getMinifyUpdate(StorageAdapterInterface $adapter,$source,$target){
 		$update = array();
 		$filelist = $adapter->getSourceDirList($source);
 		foreach($filelist AS $filename){
