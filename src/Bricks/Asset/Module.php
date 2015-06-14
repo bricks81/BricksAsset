@@ -103,7 +103,7 @@ class Module {
 			$this->storageAdapter = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__FUNCTION__,'storageAdapterClass',$this->getModuleName(),array(
 				'Module' => $this
 			));
-			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) use($this){
+			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) {
 				$params = $e->getParams();
 				if('BricksAsset' != $params['module'] || $this->getModuleName() != $params['namespace']){
 					return;
@@ -126,7 +126,7 @@ class Module {
 			$this->publishStrategy = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__METHOD__,'publishStrategyClass',$this->getModuleName(),array(
 				'Module' => $this
 			));
-			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) use($this){
+			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) {
 				$params = $e->getParams();
 				if('BricksAsset' != $params['module'] || $this->getModuleName() != $params['namespace']){
 					return;
@@ -149,7 +149,7 @@ class Module {
 			$this->lessStrategy = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__METHOD__,'lessStrategyClass',$this->getModuleName(),array(
 				'Module' => $this
 			));
-			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) use($this){
+			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) {
 				$params = $e->getParams();
 				if('BricksAsset' != $params['module'] || $this->getModuleName() != $params['namespace']){
 					return;
@@ -172,7 +172,7 @@ class Module {
 			$this->scssStrategy = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__METHOD__,'scssStrategyClass',$this->getModuleName(),array(
 				'Module' => $this
 			));
-			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) use($this){
+			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) {
 				$params = $e->getParams();
 				if('BricksAsset' != $params['module'] || $this->getModuleName() != $params['namespace']){
 					return;
@@ -207,7 +207,7 @@ class Module {
 			$this->minifyJsStrategy = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__METHOD__,'minifyJsStrategyClass',$this->getModuleName(),array(
 				'Module' => $this
 			));
-			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) use($this){
+			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) {
 				$params = $e->getParams();
 				if('BricksAsset' != $params['module'] || $this->getModuleName() != $params['namespace']){
 					return;
@@ -230,7 +230,7 @@ class Module {
 			$this->removeStrategy = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__METHOD__,'removeStrategyClass',$this->getModuleName(),array(
 				'Module' => $this
 			));
-			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) use($this){
+			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) {
 				$params = $e->getParams();
 				if('BricksAsset' != $params['module'] || $this->getModuleName() != $params['namespace']){
 					return;
