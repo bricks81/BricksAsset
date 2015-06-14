@@ -1,11 +1,15 @@
 <?php
-
+/**
+ * Bricks Framework & Bricks CMS
+ * http://bricks-cms.org
+ *  
+ * @link https://github.com/bricks81/BricksAsset
+ * @license http://www.gnu.org/licenses/ (GPLv3)
+ */
 namespace Bricks\Asset\LessStrategy;
-
-use Bricks\Asset\AssetModule;
 
 interface LessStrategyInterface {
 
-	public function less(AssetModule $module);
+	public function less();
 	
 }

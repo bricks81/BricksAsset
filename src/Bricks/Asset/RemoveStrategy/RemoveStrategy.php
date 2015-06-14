@@ -1,26 +1,86 @@
 <?php
-
+/**
+ * Bricks Framework & Bricks CMS
+ * http://bricks-cms.org
+ *  
+ * @link https://github.com/bricks81/BricksAsset
+ * @license http://www.gnu.org/licenses/ (GPLv3)
+ */
 namespace Bricks\Asset\RemoveStrategy;
 
-use Bricks\Asset\AssetModule;
+use Bricks\Asset\Module;
 use Bricks\Asset\RemoveStrategy\RemoveStrategyInterface;
-use Bricks\Asset\AssetAdapter\AssetAdapterInterface;
+use Bricks\Asset\StorageAdapter\StorageAdapterInterface;
 
 class RemoveStrategy implements RemoveStrategyInterface {
+	
+	/**
+	 * @var Module
+	 */
+	protected $module;
+	
+	/**
+	 * @var \Bricks\Asset\StorageAdapter\StorageAdapterInterface
+	 */
+	protected $storageAdapter;
+	
+	/**
+	 * @param Module $module
+	 */
+	public function __construct(Module $module){
+		$this->setModule($module);
+	}
+	
+	/**
+	 * @param Module $module
+	 */
+	public function setModule(Module $module){
+		$this->module = $module;
+	}
+	
+	/**
+	 * @return \Bricks\Asset\Module
+	 */
+	public function getModule(){
+		return $this->module;
+	}
+	
+	/**
+	 * @param StorageAdapterInterface $adapter
+	 */
+	public function setStorageAdapter(StorageAdapterInterface $adapter){
+		$this->storageAdapter = $adapter;
+	}
+	
+	/**
+	 * @return \Bricks\Asset\StorageAdapter\StorageAdapterInterface
+	 */
+	public function getStorageAdapter(){
+		return $this->storageAdapter;
+	}
 	
 	/**
 	 * (non-PHPdoc)
 	 * @see \Bricks\Asset\RemoveStrategy\RemoveStrategyInterface::remove()
 	 */
-	public function remove(AssetModule $module){
-		$adapter = $module->getAssetAdapter();
-		$path = realpath($module->getWwwRootPath().'/'.$module->getHttpAssetsPath().'/'.$module->getModuleName());
+	public function remove($moduleName){
+		$adapter = $this->getStorageAdapter();
+		$module = $this->getModule();
+		$moduleName = $module->getModuleName();
+		$asset = $module->getAsset();
+		$config = $asset->getConfig()->getArray($moduleName);
+		
+		$path = realpath(
+			$config['wwwRootPath'].'/'.
+			$config['httpAssetsPath'].'/'.
+			$moduleName
+		);
 		if(false==$path){
 			return;
 		}
 		
 		$files = $this->getRemoveFiles($adapter,$path);		
-		$exclude = $module->getExclude();		
+		$exclude = $config['removeExclude'];		
 		$nodir = array();
 		if(0<count($exclude)){			
 			foreach($files AS $i => $target){
@@ -53,11 +113,11 @@ class RemoveStrategy implements RemoveStrategyInterface {
 	}
 	
 	/**
-	 * @param AssetAdapterInterface $adapter
+	 * @param StorageAdapterInterface $adapter
 	 * @param string $path
 	 * @return array
 	 */
-	protected function getRemoveFiles(AssetAdapterInterface $adapter,$path){
+	protected function getRemoveFiles(StorageAdapterInterface $adapter,$path){
 		$files = array();
 		$filelist = $adapter->getTargetDirList($path);		
 		foreach($filelist AS $filename){

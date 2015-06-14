@@ -1,38 +1,48 @@
 <?php
-
 use Bricks\Di\Di;
 
 return array(	
 	'service_manager' => array(
 		'factories' => array(
-			'Bricks\Asset' => 'Bricks\Asset\ServiceManager\AssetServiceFactory',
+			'BricksAsset' => 'Bricks\Asset\ServiceManager\AssetFactory',
 		),				
 	),
-	'di' => array(		
-		'definition' => array(
-			'class' => array(
-				'Bricks\Asset\AssetModule' => array(					
-					'methods' => array(
-						'__construct' => array(
-							array(
-								'type' => false,
-								'required' => true,
-							),
-							array(								
-								'type' => false,
-								'required' => true,								
-							),
-							array(								
-								'type' => false,
-								'required' => true,
-							),	
-							'required' => true,
-						),
+	'router' => array(
+		'router_class' => 'Zend\Mvc\Router\Http\TranslatorAwareTreeRouteStack',
+		'routes' => array(				
+			'bricks.asset.publish' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route'    => '/{Assets/Write}',
+					'defaults' => array(
+						'controller' => 'BricksAsset\Controller\AssetController',
+						'action'     => 'publish',
+					),	
+				),
+			),
+			'bricks.asset.publish.do' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route'    => '/{Assets/Write/Execute}',
+					'defaults' => array(
+						'controller' => 'BricksAsset\Controller\AssetController',
+						'action'     => 'publishDo',
 					),
-				),				
-	       	),
-	    ),	    
-	),	
+				),
+			),
+			'bricks.asset.publish.success' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route'    => '/{Assets/Write/Success}',
+					'defaults' => array(
+						'controller' => 'BricksAsset\Controller\AssetController',
+						'action'     => 'publishSuccess',
+					),
+				),
+			),		
+		),
+	),
+	
 	'controllers' => array(
 		'invokables' => array(
 			'BricksAsset\Controller\AssetController' => 'BricksAsset\Controller\AssetController',
@@ -64,31 +74,40 @@ return array(
 		),
 		'invokables' => array(
 			'Resource' => 'Bricks\View\Helper\Resource',
+		),		
+	),
+	'BricksClassLoader' => array(
+		'BricksAsset' => array(
+			'BricksAsset' => array(
+				'assetClass' => 'Bricks\Asset\Asset',
+				'assetModule' => 'Bricks\Asset\Module',
+				'assetAdapter' => 'Bricks\Asset\AssetAdapter\FilesystemAdapter',
+				'lessStrategy' => 'Bricks\Asset\LessStrategy\OyejorgeLessphpStrategy',
+				'scssStrategy' => 'Bricks\Asset\ScssStrategy\LeafoScssphpStrategy',
+				'minifyCssStrategy' => 'Bricks\Asset\MinifyCssStrategy\MrclayMinifyStrategy',
+				'minifyJsStrategy' => 'Bricks\Asset\MinifyJsStrategy\MrclayMinifyStrategy',
+				'publishStrategy' => 'Bricks\Asset\PublishStrategy\CopyStrategy',
+				'removeStrategy' => 'Bricks\Asset\RemoveStrategy\RemoveStrategy',
+			),
 		),
 	),
-	'Bricks' => array(
+	'BricksConfig' => array(
 		'BricksAsset' => array(
-			'classLoader' => 'Bricks\Asset\ClassLoader\ClassLoader',
-			'assetModule' => 'Bricks\Asset\AssetModule',
-			'assetAdapter' => 'Bricks\Asset\AssetAdapter\FilesystemAdapter',
-			'classLoader' => 'Bricks\Asset\ClassLoader\ClassLoader',
-			'lessStrategy' => 'Bricks\Asset\LessStrategy\OyejorgeLessphpStrategy',
-			'scssStrategy' => 'Bricks\Asset\ScssStrategy\LeafoScssphpStrategy',
-			'minifyCssStrategy' => 'Bricks\Asset\MinifyCssStrategy\MrclayMinifyStrategy',
-			'minifyJsStrategy' => 'Bricks\Asset\MinifyJsStrategy\MrclayMinifyStrategy',
-			'publishStrategy' => 'Bricks\Asset\PublishStrategy\CopyStrategy',
-			'removeStrategy' => 'Bricks\Asset\RemoveStrategy\RemoveStrategy',
-			'minifyCssSupport' => true,
-			'minifyJsSupport' => true,
-			'lessSupport' => true,
-			'scssSupport' => true,
-			'wwwRootPath' => './public',
-			'httpAssetsPath' => 'module',
-			'moduleSpecific' => array(
-				'BricksAsset' => array(
-					'moduleAssetsPath' => dirname(__DIR__).'/public',					
-				),												
-			),			
+			'BricksAsset' => array(				
+				'minifyCssSupport' => false,
+				'minifyJsSupport' => false,
+				'lessSupport' => false,
+				'scssSupport' => false,
+				'httpAssetsPath' => 'module',
+				'wwwRootPath' => dirname(__DIR__).'/httpdocs',
+				'autoPublish' => false,
+				'autoOptimize' => false,
+				'moduleAssetsPath' => dirname(__DIR__).'/public',				
+			),
 		),
 	),	
-);
+)
+
+
+
+;

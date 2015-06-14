@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Bricks Framework & Bricks CMS
+ * http://bricks-cms.org
+ *
+ * @link https://github.com/bricks81/BricksAsset
+ * @license http://www.gnu.org/licenses/ (GPLv3)
+ */
 namespace BricksAsset;
 
 use Bricks\View\Helper\HeadLink;
@@ -25,9 +31,8 @@ class Module {
     public function onBootstrap(MvcEvent $e){
     	
     	$e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_DISPATCH,function(MvcEvent $e){
-    		$sm = $e->getApplication()->getServiceManager();
-    		$appcfg = $sm->get('ApplicationConfig');
-    		$as = $sm->get('Bricks\Asset');    		
+    		$sm = $e->getApplication()->getServiceManager();    		
+    		$as = $sm->get('BricksAsset');
     		$as->autoPublish();
     		$as->autoOptimize();    										
     	});

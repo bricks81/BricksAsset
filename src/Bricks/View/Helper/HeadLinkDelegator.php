@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Bricks Framework & Bricks CMS
+ * http://bricks-cms.org
+ *
+ * @link https://github.com/bricks81/BricksAsset
+ * @license http://www.gnu.org/licenses/ (GPLv3)
+ */
 namespace Bricks\View\Helper;
 
 use Zend\ServiceManager\ServiceManager;
@@ -7,23 +13,36 @@ use Zend\View\Helper\HeadLink AS ZFHeadLink;
 use \stdClass;
 use Zend\ServiceManager\DelegatorFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Bricks\Asset\AssetService;
+use Bricks\Asset\Asset;
 
 class HeadLinkDelegator extends ZFHeadLink implements DelegatorFactoryInterface {
 
+	/**
+	 * @var Asset
+	 */
 	protected $as;
 	
+	/**
+	 * (non-PHPdoc)
+	 * @see \Zend\ServiceManager\DelegatorFactoryInterface::createDelegatorWithName()
+	 */
 	public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator,$name,$requestedName,$callback){
-		$headLink = new self();		
-		$headLink->setAssetService($serviceLocator->getServiceLocator()->get('Bricks\Asset'));
+		$headLink = new self();
+		$headLink->setAsset($serviceLocator->getServiceLocator()->get('BricksAsset'));
 		return $headLink;	 		
 	}
 	
-	public function setAssetService(AssetService $as){
+	/**
+	 * @param Asset $as
+	 */
+	public function setAsset(Asset $as){
 		$this->as = $as;
 	}
 	
-	public function getAssetService(){
+	/**
+	 * @return \Bricks\Asset\Asset
+	 */
+	public function getAsset(){
 		return $this->as;
 	}
 	
@@ -33,7 +52,7 @@ class HeadLinkDelegator extends ZFHeadLink implements DelegatorFactoryInterface 
 	 */
 	public function itemToString(stdClass $item){
 		$moduleName = '';
-		foreach($this->getAssetService()->getLoadedModules() AS $name){		
+		foreach($this->getAsset()->getLoadedModules() AS $name){		
 			if(substr($item->href,0,strlen($name))==$name){
 				$moduleName = $name;
 				break;
@@ -43,12 +62,12 @@ class HeadLinkDelegator extends ZFHeadLink implements DelegatorFactoryInterface 
 			return parent::itemToString($item);
 		}
 		
-		$lessSupport = $this->getAssetService()->getModule($moduleName)->getLessSupport();
-		$scssSupport = $this->getAssetService()->getModule($moduleName)->getScssSupport();
-		$minifyCssSupport = $this->getAssetService()->getMinifyCssSupport($moduleName);		
+		$lessSupport = $this->getAsset()->getAsset($moduleName)->getConfig()->get('lessSupport');
+		$scssSupport = $this->getAsset()->getAsset($moduleName)->getConfig()->get('scssSupport');
+		$minifyCssSupport = $this->getAsset()->getAsset($moduleName)->getConfig()->get('minifyCssSupport');		
 
-		$http_assets_path = $this->getAssetService()->getHttpAssetsPath($moduleName);
-		$wwwroot_path = $this->getAssetService()->getWwwrootPath($moduleName);
+		$http_assets_path = $this->getAsset()->getAsset($moduleName)->getConfig()->get('httpAssetsPath');
+		$wwwroot_path = $this->getAsset()->getAsset($moduleName)->getConfig()->get('wwwrootPath');
 		
 		// we add the assets path if it's missing and the file exists
 		if(substr($item->href,0,strlen($http_assets_path))!=$http_assets_path){

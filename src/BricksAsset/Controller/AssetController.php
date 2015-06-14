@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Bricks Framework & Bricks CMS
+ * http://bricks-cms.org
+ *  
+ * @link https://github.com/bricks81/BricksAsset
+ * @license http://www.gnu.org/licenses/ (GPLv3)
+ */
 namespace BricksAsset\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
@@ -17,8 +23,8 @@ class AssetController extends AbstractActionController {
 	
 	public function publishAction(){
 		$form = $this->getPublishForm();
-		$form->setAttribute('action',$this->Url()->fromRoute('bricksasset-publish-do'));
-		$as = $this->getServiceLocator()->get('Bricks\Asset');
+		$form->setAttribute('action',$this->Url()->fromRoute('bricks.asset.publish.do'));
+		$as = $this->getServiceLocator()->get('BricksAsset');
 		$loadedModules = $as->getLoadedModules();
 		$form->setupElements($loadedModules);
 		return array('publishForm'=>$form);
@@ -51,7 +57,7 @@ class AssetController extends AbstractActionController {
 		$minifyCssSupport = $this->getRequest()->getPost('minifyCssSupport')?:'default';
 		$minifyJsSupport = $this->getRequest()->getPost('minifyJsSupport')?:'default';
 		
-		$as = $this->getServiceLocator()->get('Bricks\Asset');
+		$as = $this->getServiceLocator()->get('BricksAsset');
 		foreach($modules AS $moduleName){
 			$module = $as->getModule($moduleName);
 			$origLessSupport = $module->getLessSupport();
@@ -85,7 +91,7 @@ class AssetController extends AbstractActionController {
 			$module->setMinifyJsSupport($origMinifyJsSupport);
 		}
 		
-		$this->redirect()->toRoute('bricksasset-publish-success');		
+		$this->redirect()->toRoute('bricks.asset.publish.success');		
 	}
 	
 	public function publishSuccessAction(){		

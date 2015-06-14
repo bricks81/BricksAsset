@@ -13,6 +13,8 @@ the http reachable files of a module. Simple, flexible and extendable.
 
 ## Requires
 - bricks81/BricksFile
+- bricks81/BricksConfig
+- bricks81/BricksClassLoader
 - neilime/lessphp
 - mrclay/minify
 - leafo/scssphp 
@@ -32,6 +34,8 @@ Add the modules in your application.config.php:
 	'modules' => array(
     	// ...
     	'BricksFile',	
+    	'BricksConfig',
+    	'BricksClassLoader',
     	'BricksAsset',
     	'Application',
     	// ...	
@@ -47,13 +51,11 @@ Add the configuration for your module:
 
 ```php
 	// ...
-	'Bricks' => array(
+	'BricksConfig' => array(
 		// ...
 		'BricksAsset' => array(
-			'moduleSpecific' => array(
-				'YourModule => array(
-					'moduleAssetsPath' => dirname(__DIR__).'/public';
-				),
+			'YourModule' => array(
+				'moduleAssetsPath' => dirname(__DIR__).'/public';				
 			),
 		),
 		// ...
@@ -67,53 +69,23 @@ This is the default configuration of BricksAsset and has not to be defined extra
 
 ```php
 	// ...
-	'Bricks' => array(
+	'BricksConfig' => array(
 		// ...
 		'BricksAsset' => array(
-			'wwwRootPath' => './public',
-			'httpAssetsPath' => 'module',
-			'autoPublish' => false,
-			'autoOptimize' => false,			
-			'minifyCssSupport' => false, // false for faster development
-			'lessSupport' => true, // if you got a scss webserver module you could deactivate this
-			'scssSupport' => true, // if you got a scss webserver module you could deactivate this
-			'minifyJsSupport' => false, // false for faster development
-			'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
-			'assetModule' => 'Bricks\AssetService\AssetModule',
-			'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
-			'publishStrategy' => 'Bricks\AssetService\PublishStrategy\CopyStrategy',	
-			'removeStrategy' => 'Bricks\AssetService\RemoveStrategy\RemoveStrategy',
-			'lessStrategy' => 'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',
-			'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
-			'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
-			'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy/MrclayMinifyStrategy',
-			'exclude' => array(),
-			'moduleSpecific' => array(
-				'YourModule' => array(
-					'wwwRootPath' => './public',
-					'httpAssetsPath' => 'module',
-					'autoPublish' => false,
-					'autoOptimize' => false,			
-					'minifyCssSupport' => false, // false for faster development
-					'lessSupport' => true, // if you got a scss webserver module you could deactivate this
-					'scssSupport' => true, // if you got a scss webserver module you could deactivate this
-					'minifyJsSupport' => false, // false for faster development
-					'classLoader' => 'Bricks\AssetService\ClassLoader\ClassLoader',
-					'assetAdapter' => 'Bricks\AssetService\AssetAdapter\FilesystemAdapter',
-					'publishStrategy' => 'Bricks\AssetService\PublishStrategy\CopyStrategy',	
-					'removeStrategy' => 'Bricks\AssetService\RemoveStrategy\RemoveStrategy',
-					'lessStrategy' => 'Bricks\AssetService\LessStrategy\NeilimeLessphpStrategy',
-					'scssStrategy' => 'Bricks\AssetService\ScssStrategy\LeafoScssphpStrategy',
-					'minifyCssStrategy' => 'Bricks\AssetService\MinifyCssStrategy\MrclayMinifyStrategy',
-					'minifyJsStrategy' => 'Bricks\AssetService\MinifyJsStrategy/MrclayMinifyStrategy',
-					'moduleAssetsPath' => dirname(__DIR__).'/public',
-					'exclude' => array(
-						'.*?test.css$'						
-					),			
-					// excludes is an array of expressions that
-					// will neither be published nor deleted
-				),
-			),
+			'YourModule' => array(
+				'wwwRootPath' => './public',
+				'httpAssetsPath' => 'module',
+				'autoPublish' => false,
+				'autoOptimize' => false,			
+				'minifyCssSupport' => false, // false for faster development
+				'lessSupport' => true, // if you got a scss webserver module you could deactivate this
+				'scssSupport' => true, // if you got a scss webserver module you could deactivate this
+				'minifyJsSupport' => false, // false for faster development								
+				'excludePublish' => array(),
+				'excludeOptimize' => array(),
+				'excludeRemove' => array(),
+				'moduleAssetsPath' => dirname(__DIR__).'/public',
+			),			
 		),
 		// ...
 	),

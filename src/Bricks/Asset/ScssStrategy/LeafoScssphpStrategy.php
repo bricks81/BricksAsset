@@ -1,26 +1,108 @@
 <?php
-
+/**
+ * Bricks Framework & Bricks CMS
+ * http://bricks-cms.org
+ *  
+ * @link https://github.com/bricks81/BricksAsset
+ * @license http://www.gnu.org/licenses/ (GPLv3)
+ */
 namespace Bricks\Asset\ScssStrategy;
 
 use Leafo\ScssPhp\Compiler;
-use Bricks\Asset\AssetModule;
-use Bricks\Asset\AssetAdapter\AssetAdapterInterface;
+use Bricks\Asset\Module;
+use Bricks\Asset\StorageAdapter\StorageAdapterInterface;
 use Bricks\Asset\ScssStrategy\ScssStrategyInterface;
 
 class LeafoScssphpStrategy implements ScssStrategyInterface {
 
 	/**
+	 * @var Module
+	 */
+	protected $module;
+	
+	/**
+	 * @var StorageAdapterInterface
+	 */
+	protected $storageAdapter;
+	
+	/**
+	 * @var Compiler
+	 */
+	protected $scss;
+	
+	/**
+	 * @param Module $module
+	 */
+	public function __construct(Module $module){
+		$this->setModule($module);
+	}
+	
+	/**
+	 * @param Module $module
+	 */
+	public function setModule(Module $module){
+		$this->module = $module;
+	}
+	
+	/**
+	 * @return \Bricks\Asset\Module
+	 */
+	public function getModule(){
+		return $this->module;
+	}
+	
+	/**
+	 * @param StorageAdapterInterface $adapter
+	 */
+	public function setStorageAdapter(StorageAdapterInterface $adapter){
+		$this->storageAdapter = $adapter;
+	}
+	
+	/**
+	 * @return \Bricks\Asset\StorageAdapter\StorageAdapterInterface
+	 */
+	public function getStorageAdapter(){
+		return $this->storageAdapter;
+	}
+	
+	/**
+	 * @param Compiler $scss
+	 */
+	public function setScss(Compiler $scss){
+		$this->scss = $scss;
+	}
+	
+	/**
+	 * @return \Leafo\ScssPhp\Compiler
+	 */
+	public function getScss(){
+		if(!$this->scss){
+			$this->scss = new Compiler();
+		}
+		return $this->scss;
+	}
+	
+	/**
 	 * (non-PHPdoc)
 	 * @see \Bricks\Asset\ScssStrategy\ScssStrategyInterface::scss()
 	 */
-	public function scss(AssetModule $module){
-		$adapter = $module->getAssetAdapter();
-		$path = realpath($module->getWwwRootPath().'/'.$module->getHttpAssetsPath().'/'.$module->getModuleName());
+	public function scss(){
+		$adapter = $this->getStorageAdapter();
+		$module = $this->getModule();
+		$moduleName = $module->getModuleName();
+		$asset = $this->getAsset();
+		$config = $asset->getConfig()->getArray($moduleName);
+		
+		$path = realpath(
+			$config['wwwRootPath'].'/'.
+			$config['httpAssetsPath'].'/'.
+			$moduleName
+		);
 		if(false==$path){
 			return;
 		}
 		
-		$scss = new Compiler();
+		$scss = $this->getScss();
 		
 		$imports = $this->getScssImports($adapter,$path);
 		$update = $this->getScssUpdate($adapter,$path,$path);
@@ -41,7 +123,12 @@ class LeafoScssphpStrategy implements ScssStrategyInterface {
 		}
 	}
 	
-	protected function getScssImports(AssetAdapterInterface $adapter,$source){
+	/**
+	 * @param StorageAdapterInterface $adapter
+	 * @param string $source
+	 * @return array
+	 */
+	protected function getScssImports(StorageAdapterInterface $adapter,$source){
 		$imports = array();
 		$filelist = $adapter->getSourceDirList($source);
 		foreach($filelist AS $filename){
@@ -71,12 +158,12 @@ class LeafoScssphpStrategy implements ScssStrategyInterface {
 	}
 	
 	/**
-	 * @param AssetAdapterInterface
+	 * @param StorageAdapterInterface
 	 * @param string $source
 	 * @param string $target
 	 * @return array
 	 */
-	protected function getScssUpdate(AssetAdapterInterface $adapter,$source,$target){
+	protected function getScssUpdate(StorageAdapterInterface $adapter,$source,$target){
 		$update = array();
 		$filelist = $adapter->getSourceDirList($source);
 		foreach($filelist AS $filename){
