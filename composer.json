@@ -15,10 +15,16 @@
         "leafo/scssphp": "0.*@stable",
         "oyejorge/less.php": "v1.7.0.2",
         "mrclay/minify": "2.*@stable",
-        "bricks81/bricks-file": "0.*@stable",
-        "components/bootstrap": "3.*@stable"
+        "components/bootstrap": "3.*@stable",
+        "bricks81/BricksFile": "dev-master"
     },
     "autoload": {
     	"classmap": ["Module.php"]
-    }
+    },
+    "repositories": [
+    	{
+    		"type":"VCS",
+    		"url":"https://github.com/bricks81/BricksFile.git"
+    	}
+    ]
 }
