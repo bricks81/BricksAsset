@@ -1,6 +1,6 @@
 {
     "name": "bricks81/bricks-asset",
-    "description": "ZF2 Bricks CMS Asset Managment",
+    "description": "Bricks CMS Framework Asset Managment",
     "license": "GPLv3",
     "authors": [
         {
@@ -8,7 +8,7 @@
             "email": "kontakt@28-n-half.de"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
     	"php": ">=5.3.3",
         "zendframework/zendframework": "2.*@stable",
@@ -16,15 +16,9 @@
         "oyejorge/less.php": "v1.7.0.2",
         "mrclay/minify": "2.*@stable",
         "components/bootstrap": "3.*@stable",
-        "bricks81/BricksFile": "dev-master"
+        "bricks81/bricks-file": "dev-master"
     },
     "autoload": {
     	"classmap": ["Module.php"]
-    },
-    "repositories": [
-    	{
-    		"type":"vcs",
-    		"url":"https://github.com/bricks81/BricksFile.git"
-    	}
-    ]
+    }
 }
