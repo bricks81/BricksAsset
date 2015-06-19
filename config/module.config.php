@@ -9,11 +9,21 @@ return array(
 	),
 	'router' => array(
 		'router_class' => 'Zend\Mvc\Router\Http\TranslatorAwareTreeRouteStack',
-		'routes' => array(				
+		'routes' => array(			
+			'bricks.asset.index' => array(
+				'type' => 'segment',
+				'options' => array(
+					'route'    => '/{Admin}/{Assets}',
+					'defaults' => array(
+						'controller' => 'BricksAsset\Controller\AssetController',
+						'action'     => 'index',
+					),
+				),
+			),
 			'bricks.asset.publish' => array(
 				'type' => 'segment',
 				'options' => array(
-					'route'    => '/{Assets/Write}',
+					'route'    => '/{Admin}/{Assets/Write}',
 					'defaults' => array(
 						'controller' => 'BricksAsset\Controller\AssetController',
 						'action'     => 'publish',
@@ -23,7 +33,7 @@ return array(
 			'bricks.asset.publish.do' => array(
 				'type' => 'segment',
 				'options' => array(
-					'route'    => '/{Assets/Write/Execute}',
+					'route'    => '/{Admin}/{Assets/Write/Execute}',
 					'defaults' => array(
 						'controller' => 'BricksAsset\Controller\AssetController',
 						'action'     => 'publishDo',
@@ -33,7 +43,7 @@ return array(
 			'bricks.asset.publish.success' => array(
 				'type' => 'segment',
 				'options' => array(
-					'route'    => '/{Assets/Write/Success}',
+					'route'    => '/{Admin}/{Assets/Write/Success}',
 					'defaults' => array(
 						'controller' => 'BricksAsset\Controller\AssetController',
 						'action'     => 'publishSuccess',

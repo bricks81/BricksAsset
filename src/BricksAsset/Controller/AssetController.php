@@ -18,7 +18,8 @@ use Zend\Mvc\MvcEvent;
 
 class AssetController extends AbstractActionController {
 	
-	public function indexAction(){		
+	public function indexAction(){
+		$this->redirect()->toRoute('bricks.asset.publish');		
 	}
 	
 	public function publishAction(){
