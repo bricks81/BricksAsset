@@ -1,11 +1,13 @@
-<div class="container">
+<div class="container bricks-assets-publish">
 	<div class="row row-fit-height">
 		<div class="col-md-7 col-md-full-height">
-			<div class="box pad-10">			
-				<form name="publish" action="<?php echo $this->Url('bricks.asset.publish.do'); ?>" method="post">
-					<h1><?php echo $this->translate('Write public files'); ?></h1>				
-					<?php echo $this->Form($this->publishForm); ?>	
-				</form>	
+			<div class="box">
+				<h1><div class="pad-5"><?php echo $this->translate('Write public files'); ?></div></h1>
+				<div class="pad-10">			
+					<form name="publish" action="<?php echo $this->Url('bricks.asset.publish.do'); ?>" method="post">									
+						<?php echo $this->Form($this->publishForm); ?>	
+					</form>
+				</div>	
 			</div>
 		</div>
 		<div class="col-md-4 col-md-full-height">
