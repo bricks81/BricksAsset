@@ -35,14 +35,7 @@ class Module {
     		$as = $sm->get('BricksAsset');
     		$as->autoPublish();
     		$as->autoOptimize();    										
-    	});
-    	
-    	$e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_RENDER,function(MvcEvent $e){
-    		$e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('HeadLink')
-    			->appendStylesheet('bootstrap/css/bootstrap.min.css');    			
-    		$e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('HeadScript')
-    			->appendFile('bootstrap/js/bootstrap.min.js');
-    	});
+    	});    	
 		
     }
     

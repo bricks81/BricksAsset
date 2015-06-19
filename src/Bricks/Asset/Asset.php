@@ -102,7 +102,7 @@ class Asset {
 	 * @param string $moduleName
 	 * @param Module $module
 	 */
-	public function setAsset($moduleName,Module $module){
+	public function setAsset($moduleName,Module $module){		
 		$this->assets[$moduleName] = $module;
 	}
 	
@@ -111,11 +111,13 @@ class Asset {
 	 * @return Module
 	 */
 	public function getAsset($moduleName){
-		if(!$this->hasAsset($moduleName)){						
-			$module = $this->getClassLoader()->newInstance(__CLASS__,__FUNCTION__,'assetModule',$moduleName,array(
-				'Asset' => $this,
-				'moduleName' => $moduleName				
-			));			
+		if(!$this->hasAsset($moduleName)){
+			$module = $this->getClassLoader()->newInstance(
+				__CLASS__,__FUNCTION__,'assetModule',$moduleName,array(
+					'Asset' => $this,
+					'moduleName' => $moduleName				
+				)
+			);						
 			$this->setAsset($moduleName,$module);
 		}
 		return $this->assets[$moduleName];
@@ -127,10 +129,10 @@ class Asset {
 	public function autoPublish(array $modules=array()){
 		if(0==count($modules)){
 			$modules = $this->getLoadedModules();
-		}
+		}		
 		foreach($modules AS $moduleName){
 			$module = $this->getAsset($moduleName);
-			if($this->getConfig()->get('isAutoPublish',$moduleName)){
+			if($this->getConfig()->get('autoPublish',$moduleName)){								
 				$module->publish();
 			}
 		}
@@ -145,7 +147,7 @@ class Asset {
 		}
 		foreach($modules AS $moduleName){
 			$module = $this->getAsset($moduleName);
-			if($this->getConfig()->get('isAutoOptimize',$moduleName)){
+			if($this->getConfig()->get('autoOptimize',$moduleName)){
 				$module->optimize();
 			}
 		}

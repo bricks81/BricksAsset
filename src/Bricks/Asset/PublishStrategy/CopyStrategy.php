@@ -46,33 +46,11 @@ class CopyStrategy implements PublishStrategyInterface {
 	}
 	
 	/**
-	 * @param StorageAdapterInterface $adapter
-	 */
-	public function setStorageAdapter(StorageAdapterInterface $adapter){
-		$this->storageAdapter = $adapter;
-	}
-	
-	/**
-	 * @return \Bricks\Asset\StorageAdapter\StorageAdapterInterface
-	 */
-	public function getStorageAdapter(){
-		if(!isset($this->storageAdapter)){
-			$module = $this->getModule();
-			$moduleName = $module->getModuleName();
-			$asset = $module->getAsset();
-			$this->storageAdapter = $asset->getClassLoader()->newInstance(__CLASS__,__METHOD__,'storageAdapterClass',$moduleName,array(
-				'Asset' => $asset
-			));
-		}
-		return $this->storageAdapter;
-	}
-	
-	/**
 	 * (non-PHPdoc)
 	 * @see \Bricks\Asset\PublishStrategy\PublishStrategyInterface::publish()
 	 */
-	public function publish(){
-		$adapter = $this->getStorageAdapter();
+	public function publish(){		
+		$adapter = $this->getModule()->getStorageAdapter();
 		$module = $this->getModule();
 		$moduleName = $module->getModuleName();
 		$asset = $module->getAsset();
@@ -83,7 +61,7 @@ class CopyStrategy implements PublishStrategyInterface {
 			$config['wwwRootPath'].'/'.
 			$config['httpAssetsPath']
 		).'/'.$moduleName;
-		if(false==$modulePath||false==$path){
+		if(false==$modulePath||false==$path){			
 			return;
 		}			
 		$update = $this->getPublishUpdate($adapter,$modulePath,$path);
@@ -112,8 +90,8 @@ class CopyStrategy implements PublishStrategyInterface {
 	 * @return array
 	 */
 	protected function getPublishUpdate(StorageAdapterInterface $adapter,$source,$target){
-		$update = array();
-		$filelist = $adapter->getSourceDirList($source);				
+		$update = array();		
+		$filelist = $adapter->getSourceDirList($source);						
 		foreach($filelist AS $filename){
 			if('.'==$filename[0]){
 				continue;

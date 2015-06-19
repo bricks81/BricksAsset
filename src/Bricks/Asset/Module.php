@@ -85,7 +85,7 @@ class Module {
 	public function __construct(Asset $asset,$moduleName,$defaultNamespace=null){
 		$this->setAsset($asset);
 		$this->setModuleName($moduleName);		
-		$this->setNamespace($defaultNamespace?:$moduleName);
+		$this->setNamespace($defaultNamespace?:$moduleName);		
 	}
 	
 	/**
@@ -106,7 +106,7 @@ class Module {
 	 * @param string $moduleName
 	 */
 	public function setModuleName($moduleName){
-		$this->moduleName;
+		$this->moduleName = $moduleName;
 	}
 	
 	/**
@@ -157,10 +157,11 @@ class Module {
 	
 	/**
 	 * @param string $namespace
+	 * @return PublishStrategyInterface
 	 */
 	public function getPublishStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
-		if(!isset($this->publishStrategies[$namespace])){
+		if(!isset($this->publishStrategies[$namespace])){			
 			$this->publishStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
 				__CLASS__,__FUNCTION__,'publishStrategy',$namespace,array(
 					'Module' => $this,
@@ -168,6 +169,7 @@ class Module {
 				)
 			);
 		}
+		return $this->publishStrategies[$namespace];
 	}
 	
 	/**
@@ -311,7 +313,7 @@ class Module {
 	
 	public function publish(){
 		$publish = $this->getPublishStrategy();
-		$publish->publish();		
+		$publish->publish();	
 		if($this->getAsset()->getConfig()->get('lessSupport',$this->getModuleName())){
 			$strategy = $this->getLessStrategy();
 			$strategy->less();			

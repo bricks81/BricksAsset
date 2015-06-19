@@ -65,10 +65,11 @@ class InlineScriptDelegator extends ZFInlineScript implements DelegatorFactoryIn
 			return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
 		}
 		
-		$minifyJsSupport = $this->getAsset()->getAsset($moduleName)->getConfig()->get('minifyJsSupport');
+		$cfg = $this->getAsset()->getConfig()->getArray($moduleName);
+		$minifyJsSupport = $cfg['minifyJsSupport'];
 		
-		$http_assets_path = $this->getAsset()->getAsset($moduleName)->getConfig()->get('httpAssetsPath');
-		$wwwroot_path = $this->getAsset()->getAsset($moduleName)->getConfig()->get('wwwrootPath');
+		$http_assets_path = $cfg['httpAssetsPath'];
+		$wwwroot_path = $cfg['wwwrootPath'];
 		
 		// we add the assets path if it's missing and the file exists
 		if(substr($item->attributes['src'],0,strlen($http_assets_path))!=$http_assets_path){
