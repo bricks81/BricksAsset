@@ -66,6 +66,11 @@ return array(
 				'base_dir' => __DIR__.'/../language',
 				'pattern' => '%1$s/%1$s.php',
 			),
+			array(
+				'type' => 'gettext',
+				'base_dir' => __DIR__.'/../language',
+				'pattern' => '%1$s.mo',
+			),
 		),
 	),
 	'view_manager' => array(
