@@ -117,7 +117,7 @@ class FilesystemAdapter implements StorageAdapterInterface {
 	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::isOlderThan()
 	 */
 	public function isOlderThan($source,$target){
-		return filectime($source)>filectime($target);
+		return filemtime($source)>filemtime($target);
 	}
 	
 	/**
