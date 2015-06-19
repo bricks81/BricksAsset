@@ -10,6 +10,13 @@ namespace Bricks\Asset;
 
 use Bricks\Asset\Asset;
 use Zend\EventManager\EventInterface;
+use Bricks\Asset\StorageAdapter\StorageAdapterInterface;
+use Bricks\Asset\PublishStrategy\PublishStrategyInterface;
+use Bricks\Asset\LessStrategy\LessStrategyInterface;
+use Bricks\Asset\ScssStrategy\ScssStrategyInterface;
+use Bricks\Asset\MinifyCssStrategy\MinifyCssStrategyInterface;
+use Bricks\Asset\MinifyJsStrategy\MinifyJsStrategyInterface;
+use Bricks\Asset\RemoveStrategy\RemoveStrategyInterface;
 
 /**
  * Represents a module
@@ -32,42 +39,53 @@ class Module {
 	protected $moduleName;
 	
 	/**
-	 * @var \Bricks\Asset\PublishStrategy\PublishStrategyInterface
+	 * @var string
 	 */
-	protected $publishStrategy;
+	protected $namespace;
 	
 	/**
-	 * @var \Bricks\Asset\LessStrategy\LessStrategyInterface
+	 * @var array
 	 */
-	protected $lessStrategy;
+	protected $storageAdapters = array();
 	
 	/**
-	 * @var \Bricks\Asset\ScssStrategy\ScssStrategyInterface
+	 * @var array
 	 */
-	protected $scssStrategy;
+	protected $publishStrategies = array();
 	
 	/**
-	 * @var \Bricks\Asset\MinifyCssStrategy\MinifyCssStrategyInterface
+	 * @var array
 	 */
-	protected $minifyCssStrategy;
+	protected $lessStrategies = array();
 	
 	/**
-	 * @var \Bricks\Asset\MinifyJsStrategy\MinifyJsStrategyInterface
+	 * @var array
 	 */
-	protected $minifyJsStrategy;
+	protected $scssStrategies;
 	
 	/**
-	 * @var \Bricks\Asset\RemoveStrategy\RemoveStrategyInterface
+	 * @var array
 	 */
-	protected $removeStrategy;
+	protected $minifyCssStrategies;
+	
+	/**
+	 * @var array
+	 */
+	protected $minifyJsStrategies;
+	
+	/**
+	 * @var array
+	 */
+	protected $removeStrategies;
 	
 	/**	
 	 * @param Asset $asset
 	 * @param string $moduleName
 	 */
-	public function __construct(Asset $asset,$moduleName){
+	public function __construct(Asset $asset,$moduleName,$defaultNamespace=null){
 		$this->setAsset($asset);
-		$this->setModuleName($moduleName);
+		$this->setModuleName($moduleName);		
+		$this->setNamespace($defaultNamespace?:$moduleName);
 	}
 	
 	/**
@@ -98,151 +116,197 @@ class Module {
 		return $this->moduleName;
 	}
 	
-	public function getStorageAdapter(){
-		if(!$this->storageAdapter){
-			$this->storageAdapter = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__FUNCTION__,'storageAdapterClass',$this->getModuleName(),array(
-				'Module' => $this
-			));
-			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) {
-				$params = $e->getParams();
-				if('BricksAsset' != $params['module'] || $this->getModuleName() != $params['namespace']){
-					return;
-				}
-				$parts = explode('.',$params['path']);
-				$name = array_pop($parts);
-				if('storageAdapter'==$name){
-					$this->storageAdapter = null;
-				} 
-			});
-		}
-		return $this->storageAdapter;
+	/**
+	 * @param string $namespace
+	 */
+	public function setNamespace($namespace=null){
+		$this->namespace = $namespace;
 	}
 	
 	/**
-	 * @return \Bricks\Asset\PublishStrategy\PublishStrategyInterface
+	 * @return string
 	 */
-	public function getPublishStrategy(){
-		if(!$this->publishStrategy){
-			$this->publishStrategy = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__METHOD__,'publishStrategyClass',$this->getModuleName(),array(
-				'Module' => $this
-			));
-			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) {
-				$params = $e->getParams();
-				if('BricksAsset' != $params['module'] || $this->getModuleName() != $params['namespace']){
-					return;
-				}
-				$parts = explode('.',$params['path']);
-				$name = array_pop($parts);
-				if('publishStrategy'==$name){
-					$this->publishStrategy = null;
-				}
-			});
-		}
-		return $this->publishStrategy;
+	public function getNamespace(){
+		return $this->namespace;
 	}
 	
 	/**
-	 * @return \Bricks\Asset\LessStrategy\LessStrategyInterface
+	 * @param string $namespace
+	 * @return StorageAdapterInterface
 	 */
-	public function getLessStrategy(){
-		if(!$this->lessStrategy){
-			$this->lessStrategy = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__METHOD__,'lessStrategyClass',$this->getModuleName(),array(
-				'Module' => $this
-			));
-			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) {
-				$params = $e->getParams();
-				if('BricksAsset' != $params['module'] || $this->getModuleName() != $params['namespace']){
-					return;
-				}
-				$parts = explode('.',$params['path']);
-				$name = array_pop($parts);
-				if('lessStrategy'==$name){
-					$this->lessStrategy = null;
-				}
-			});
+	public function getStorageAdapter($namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		if(!isset($this->storageAdapters[$namespace])){
+			$this->storageAdapters[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
+				__CLASS__,__FUNCTION__,'storageAdapter',$namespace,array(
+					'Module' => $this,
+					'namespace' => $namespace
+				)
+			);
 		}
-		return $this->lessStrategy;
+		return $this->storageAdapters[$namespace];
 	}
 	
 	/**
-	 * @return \Bricks\Asset\ScssStrategy\ScssStrategyInterface
+	 * @param StorageAdapterInterface $adapter
+	 * @param string $namespace
 	 */
-	public function getScssStrategy(){
-		if(!$this->scssStrategy){
-			$this->scssStrategy = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__METHOD__,'scssStrategyClass',$this->getModuleName(),array(
-				'Module' => $this
-			));
-			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) {
-				$params = $e->getParams();
-				if('BricksAsset' != $params['module'] || $this->getModuleName() != $params['namespace']){
-					return;
-				}
-				$parts = explode('.',$params['path']);
-				$name = array_pop($parts);
-				if('scssStrategy'==$name){
-					$this->scssStrategy = null;
-				}
-			});
-		}
-		return $this->scssStrategy;
+	public function setStorageAdapter(StorageAdapterInterface $adapter,$namespace=null){
+		$this->storageAdapters[$namespace] = $adapter;
 	}
 	
 	/**
-	 * @return \Bricks\Asset\MinifyCssStrategy\MinifyCssStrategyInterface
+	 * @param string $namespace
 	 */
-	public function getMinifyCssStrategy(){
-		if(!$this->minifyCssStrategy){
-			$this->minifyCssStrategy = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__METHOD__,'minifyCssStrategyClass',$this->getModuleName(),array(
-				'Module' => $this
-			));
+	public function getPublishStrategy($namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		if(!isset($this->publishStrategies[$namespace])){
+			$this->publishStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
+				__CLASS__,__FUNCTION__,'publishStrategy',$namespace,array(
+					'Module' => $this,
+					'namespace' => $namespace
+				)
+			);
 		}
-		return $this->minifyCssStrategy;
 	}
 	
 	/**
-	 * @return \Bricks\Asset\MinifyJsStrategy\MinifyJsStrategyInterface
+	 * @param PublishStrategyInterface $strategy
+	 * @param string $namespace
 	 */
-	public function getMinifyJsStrategy(){
-		if(!$this->minifyJsStrategy){
-			$this->minifyJsStrategy = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__METHOD__,'minifyJsStrategyClass',$this->getModuleName(),array(
-				'Module' => $this
-			));
-			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) {
-				$params = $e->getParams();
-				if('BricksAsset' != $params['module'] || $this->getModuleName() != $params['namespace']){
-					return;
-				}
-				$parts = explode('.',$params['path']);
-				$name = array_pop($parts);
-				if('minifyStrategy'==$name){
-					$this->minifyStrategy = null;
-				}
-			});
-		}
-		return $this->minifyJsStrategy;
+	public function setPublishStrategy(PublishStrategyInterface $strategy,$namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		$this->publishStrategies[$namespace] = $strategy;
 	}
 	
 	/**
-	 * @return \Bricks\Asset\RemoveStrategy\RemoveStrategyInterface
+	 * @param string $namespace
+	 * @return LessStrategyInterface
 	 */
-	public function getRemoveStrategy(){
-		if(!$this->removeStrategy){
-			$this->removeStrategy = $this->getAsset()->getClassLoader()->newInstance(__CLASS__,__METHOD__,'removeStrategyClass',$this->getModuleName(),array(
-				'Module' => $this
-			));
-			$this->getAsset()->getClassLoader()->get('EventManager')->attach('BricksConfig::set',function(EventInterface $e) {
-				$params = $e->getParams();
-				if('BricksAsset' != $params['module'] || $this->getModuleName() != $params['namespace']){
-					return;
-				}
-				$parts = explode('.',$params['path']);
-				$name = array_pop($parts);
-				if('removeStrategy'==$name){
-					$this->removeStrategy = null;
-				}
-			});
+	public function getLessStrategy($namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		if(!isset($this->lessStrategies[$namespace])){
+			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
+				__CLASS__,__FUNCTION__,'lessStrategy',$namespace,array(
+					'Module' => $this,
+					'namespace' => $namespace
+				)
+			);
 		}
-		return $this->removeStrategy;
+		return $this->lessStrategies[$namespace];
+	}
+	
+	/**
+	 * @param LessStrategyInterface $strategy
+	 * @param string $namespace
+	 */
+	public function setLessStrategy(LessStrategyInterface $strategy,$namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		$this->lessStrategies[$namespace] = $strategy;
+	}
+	
+	/**
+	 * @param string $namespace
+	 * @return ScssStrategyInterface
+	 */
+	public function getScssStrategy($namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		if(!isset($this->scssStrategies[$namespace])){
+			$this->scssStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
+				__CLASS__,__FUNCTION__,'scssStrategy',$namespace,array(
+					'Module' => $this,
+					'namespace' => $namespace
+				)
+			);
+		}
+		return $this->scssStrategies[$namespace];
+	}
+	
+	/**
+	 * @param ScssStrategyInterface $strategy
+	 * @param string $namespace
+	 */
+	public function setScssStrategy(ScssStrategyInterface $strategy,$namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		$this->scssStrategies[$namespace] = $strategy;
+	}
+	
+	/**
+	 * @param string $namespace
+	 * @return MinifyCssStrategyInterface
+	 */
+	public function getMinifyCssStrategy($namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		if(!isset($this->minifyCssStrategies[$namespace])){
+			$this->minifyCssStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
+				__CLASS__,__FUNCTION__,'minifyCssStrategy',$namespace,array(
+					'Module' => $this,
+					'namespace' => $namespace
+				)
+			);
+		}
+		return $this->minifyCssStrategies[$namespace];
+	}
+	
+	/**
+	 * @param MinifyCssStrategyInterface $strategy
+	 * @param string $namespace
+	 */
+	public function setMinifyCssStrategy(MinifyCssStrategyInterface $strategy,$namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		$this->minifyCssStrategies[$namespace] = $strategy;
+	}
+	
+	/**
+	 * @param string $namespace
+	 * @return MinifyJsStrategyInterface
+	 */
+	public function getMinifyJsStrategy($namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		if(!isset($this->minifyJsStrategies[$namespace])){
+			$this->minifyJsStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
+				__CLASS__,__FUNCTION__,'minifyJsStrategy',$namespace,array(
+					'Module' => $this,
+					'namespace' => $namespace
+				)
+			);
+		}
+		return $this->minifyJsStrategies[$namespace];
+	}
+	
+	/**
+	 * @param MinifyJsStrategyInterface $strategy
+	 * @param string $namespace
+	 */
+	public function setMinifyJsStrategy(MinifyJsStrategyInterface $strategy,$namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		$this->minifyJsStrategies[$namespace] = $strategy;
+	}
+	
+	/**
+	 * @param string $namespace
+	 * @return RemoveStrategyInterface
+	 */
+	public function getRemoveStrategy($namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		if(!isset($this->removeStrategies[$namespace])){
+			$this->removeStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
+				__CLASS__,__FUNCTION__,'removeStrategy',$namespace,array(
+					'Module' => $this,
+					'namespace' => $namespace
+				)
+			);
+		}
+		return $this->removeStrategies[$namespace];
+	}
+	
+	/**
+	 * @param RemoveStrategyInterface $strategy
+	 * @param string $namespace
+	 */
+	public function setRemoveStrategy(RemoveStrategyInterface $strategy,$namespace=null){
+		$namespace = $namespace?:$this->getNamespace();
+		$this->removeStrategies[$namespace] = $strategy;
 	}
 	
 	public function publish(){
