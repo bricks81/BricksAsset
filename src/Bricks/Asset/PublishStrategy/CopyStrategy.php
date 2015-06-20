@@ -55,15 +55,13 @@ class CopyStrategy implements PublishStrategyInterface {
 		$moduleName = $module->getModuleName();
 		$asset = $module->getAsset();
 		$config = $asset->getConfig()->getArray($moduleName);
-				
+		
 		$modulePath = $config['moduleAssetsPath'];
-		$path = realpath(
-			$config['wwwRootPath'].'/'.
-			$config['httpAssetsPath']
-		).'/'.$moduleName;
-		if(false==$modulePath||false==$path){			
+		$root = realpath($config['wwwRootPath']);
+		$path = $root.'/'.$config['httpAssetsPath'].'/'.$moduleName;
+		if(false==$modulePath||false==$root){			
 			return;
-		}			
+		}
 		$update = $this->getPublishUpdate($adapter,$modulePath,$path);
 		
 		// exclude patterns
