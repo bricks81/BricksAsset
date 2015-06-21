@@ -21,11 +21,6 @@ class LeafoScssphpStrategy implements ScssStrategyInterface {
 	protected $module;
 	
 	/**
-	 * @var StorageAdapterInterface
-	 */
-	protected $storageAdapter;
-	
-	/**
 	 * @var Compiler
 	 */
 	protected $scss;
@@ -52,20 +47,6 @@ class LeafoScssphpStrategy implements ScssStrategyInterface {
 	}
 	
 	/**
-	 * @param StorageAdapterInterface $adapter
-	 */
-	public function setStorageAdapter(StorageAdapterInterface $adapter){
-		$this->storageAdapter = $adapter;
-	}
-	
-	/**
-	 * @return \Bricks\Asset\StorageAdapter\StorageAdapterInterface
-	 */
-	public function getStorageAdapter(){
-		return $this->storageAdapter;
-	}
-	
-	/**
 	 * @param Compiler $scss
 	 */
 	public function setScss(Compiler $scss){
@@ -87,10 +68,10 @@ class LeafoScssphpStrategy implements ScssStrategyInterface {
 	 * @see \Bricks\Asset\ScssStrategy\ScssStrategyInterface::scss()
 	 */
 	public function scss(){
-		$adapter = $this->getStorageAdapter();
 		$module = $this->getModule();
+		$adapter = $module->getStorageAdapter();		
 		$moduleName = $module->getModuleName();
-		$asset = $this->getAsset();
+		$asset = $module->getAsset();
 		$config = $asset->getConfig()->getArray($moduleName);
 		
 		$path = realpath(

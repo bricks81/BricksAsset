@@ -121,6 +121,9 @@ return array(
 				'publishExclude' => array(),
 				'removeExclude' => array(),				
 			),
+			'BricksAssetSelf' => array(
+				'scssSupport' => true
+			),
 		),
 	),	
 )

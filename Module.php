@@ -34,9 +34,23 @@ class Module {
     		$sm = $e->getApplication()->getServiceManager();    		
     		$as = $sm->get('BricksAsset');
     		$as->autoPublish();
-    		$as->autoOptimize();    										
+    		$as->autoOptimize();
+
+    		$module = $as->getAsset('BricksAsset','BricksAssetSelf');
+    		/**
+    		 * @todo better solution needed
+    		 * die(var_dump($module->getAsset()->getConfig()->getArray('BricksAssetSelf)));
+    		 */    		
+    		$module->publish();
+    		$module->optimize();
+    		    		
     	});    	
 		
+    	$e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_RENDER,function(MvcEvent $e){
+    		$name = $e->getRouteMatch()->getMatchedRouteName();
+    		$e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('HeadLink')
+    			->appendStylesheet('BricksAsset/sass/'.$name.'.sass');
+    	});
     }
     
 }
