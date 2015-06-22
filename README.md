@@ -143,7 +143,3 @@ This works without optimization. After optimization it will be:
 ## Note
 
 Hope you will enjoy it.
-
-### More see at
-
-[https://github.com/bricks81/BricksAsset/wiki](https://github.com/bricks81/BricksAsset/wiki "BricksAsset Wiki")
