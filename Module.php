@@ -47,9 +47,11 @@ class Module {
     	});    	
 		
     	$e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_RENDER,function(MvcEvent $e){
-    		$name = $e->getRouteMatch()->getMatchedRouteName();
-    		$e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('HeadLink')
-    			->appendStylesheet('BricksAsset/sass/'.$name.'.sass');
+    		if($e->getRouteMatch()){
+    			$name = $e->getRouteMatch()->getMatchedRouteName();
+    			$e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('HeadLink')
+    				->appendStylesheet('BricksAsset/sass/'.$name.'.sass');
+    		}
     	});
     }
     
