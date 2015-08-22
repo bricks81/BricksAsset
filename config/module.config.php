@@ -1,5 +1,4 @@
 <?php
-use Bricks\Di\Di;
 
 return array(	
 	'service_manager' => array(

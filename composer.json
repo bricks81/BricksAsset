@@ -1,7 +1,7 @@
 {
     "name": "bricks81/bricks-asset",
     "description": "Bricks CMS Framework Asset Managment",
-    "license": "GPLv3",
+    "license": "MIT",
     "authors": [
         {
             "name": "Sven Ullmann",
