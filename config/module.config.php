@@ -90,22 +90,26 @@ return array(
 			'Resource' => 'Bricks\View\Helper\Resource',
 		),		
 	),
-	'BricksClassLoader' => array(
-		'BricksAsset' => array(
-			'BricksAsset' => array(
-				'assetClass' => 'Bricks\Asset\Asset',
-				'assetModule' => 'Bricks\Asset\Module',
-				'storageAdapter' => 'Bricks\Asset\AssetAdapter\FilesystemAdapter',				
-				'lessStrategy' => 'Bricks\Asset\LessStrategy\OyejorgeLessphpStrategy',
-				'scssStrategy' => 'Bricks\Asset\ScssStrategy\LeafoScssphpStrategy',
-				'minifyCssStrategy' => 'Bricks\Asset\MinifyCssStrategy\MrclayMinifyStrategy',
-				'minifyJsStrategy' => 'Bricks\Asset\MinifyJsStrategy\MrclayMinifyStrategy',
-				'publishStrategy' => 'Bricks\Asset\PublishStrategy\CopyStrategy',
-				'removeStrategy' => 'Bricks\Asset\RemoveStrategy\RemoveStrategy',				
+	'BricksConfig' => array(
+		'BricksClassLoader' => array(
+			'BricksClassLoader' => array(
+				'classMap' => array(
+					'BricksAsset' => array(
+						'BricksAsset' => array(
+							'assetClass' => 'Bricks\Asset\Asset',
+							'assetModule' => 'Bricks\Asset\Module',
+							'storageAdapter' => 'Bricks\Asset\AssetAdapter\FilesystemAdapter',
+							'lessStrategy' => 'Bricks\Asset\LessStrategy\OyejorgeLessphpStrategy',
+							'scssStrategy' => 'Bricks\Asset\ScssStrategy\LeafoScssphpStrategy',
+							'minifyCssStrategy' => 'Bricks\Asset\MinifyCssStrategy\MrclayMinifyStrategy',
+							'minifyJsStrategy' => 'Bricks\Asset\MinifyJsStrategy\MrclayMinifyStrategy',
+							'publishStrategy' => 'Bricks\Asset\PublishStrategy\CopyStrategy',
+							'removeStrategy' => 'Bricks\Asset\RemoveStrategy\RemoveStrategy',
+						),
+					),					
+				),
 			),
 		),
-	),
-	'BricksConfig' => array(
 		'BricksAsset' => array(
 			'BricksAsset' => array(				
 				'minifyCssSupport' => false,
