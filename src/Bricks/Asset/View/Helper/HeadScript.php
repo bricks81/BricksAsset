@@ -25,51 +25,56 @@
  * THE SOFTWARE.
  */
 
-namespace Bricks\View\Helper;
+namespace Bricks\Asset\View\Helper;
 
-use Zend\ServiceManager\ServiceManager;
-use Zend\View\Helper\HeadScript AS ZFHeadScript;
-use \stdClass;
-use Zend\ServiceManager\DelegatorFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Bricks\Asset\Asset;
+use Zend\EventManager\Event;
+use Bricks\Plugin\Extender;
+use Bricks\Plugin\Extender\VisitorInterface;
 
-class HeadScriptDelegator extends ZFHeadScript implements DelegatorFactoryInterface {
-
-	/**
-	 * @var Asset
-	 */
-	protected $as;
+/**
+ * This class will hold the autoloader with it's classmap
+ * in front of the internal autoloading stack.
+ */
+class HeadScript implements VisitorInterface {
 	
 	/**
-	 * (non-PHPdoc)
-	 * @see \Zend\ServiceManager\DelegatorFactoryInterface::createDelegatorWithName()
+	 * @var Extender
 	 */
-	public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator,$name,$requestedName,$callback){
-		$headScript = new self();
-		$headScript->setAsset($serviceLocator->getServiceLocator()->get('BricksAsset'));
-		return $headScript;
+	protected $extender;
+	
+	/**
+	 * @param Extender $extender
+	 */
+	public function __construct(Extender $extender=null){
+		$this->setExtender($extender);
 	}
 	
 	/**
-	 * @param Asset $as
+	 * @param Extender $extender
 	 */
-	public function setAsset(Asset $as){
-		$this->as = $as;
+	public function setExtender(Extender $extender=null){
+		$this->extender = $extender;
 	}
 	
 	/**
-	 * @return \Bricks\Asset\Asset
+	 * @return \Bricks\Plugin\Extender
 	 */
-	public function getAsset(){
-		return $this->as;
+	public function getExtender(){
+		return $this->extender;
 	}
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Zend\View\Helper\HeadScript::itemToString()
+	 * @see \Bricks\Plugin\Extender\VisitorInterface::extend()
 	 */
-	public function itemToString($item, $indent, $escapeStart, $escapeEnd){
+	public function extend(){
+		$this->getExtender()->eventize('Zend\View\Helper','HeadScript','itemToString');
+	}
+	
+	/**
+	 * @param Event $event
+	 */
+	public function preItemToString(Event $event){
 		if(!isset($item->attributes['src'])){
 			return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
 		}
@@ -111,6 +116,6 @@ class HeadScriptDelegator extends ZFHeadScript implements DelegatorFactoryInterf
 		}
 		
 		return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
-	}	
+	}
 	
 }

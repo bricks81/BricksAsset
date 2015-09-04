@@ -6,90 +6,9 @@ return array(
 			'BricksAsset' => 'Bricks\Asset\ServiceManager\AssetFactory',
 		),				
 	),
-	'router' => array(
-		'router_class' => 'Zend\Mvc\Router\Http\TranslatorAwareTreeRouteStack',
-		'routes' => array(			
-			'bricks.asset.index' => array(
-				'type' => 'segment',
-				'options' => array(
-					'route'    => '/{Admin}/{Assets}',
-					'defaults' => array(
-						'controller' => 'BricksAsset\Controller\AssetController',
-						'action'     => 'index',
-					),
-				),
-			),
-			'bricks.asset.publish' => array(
-				'type' => 'segment',
-				'options' => array(
-					'route'    => '/{Admin}/{Assets/Write}',
-					'defaults' => array(
-						'controller' => 'BricksAsset\Controller\AssetController',
-						'action'     => 'publish',
-					),	
-				),
-			),
-			'bricks.asset.publish.do' => array(
-				'type' => 'segment',
-				'options' => array(
-					'route'    => '/{Admin}/{Assets/Write/Execute}',
-					'defaults' => array(
-						'controller' => 'BricksAsset\Controller\AssetController',
-						'action'     => 'publishDo',
-					),
-				),
-			),
-			'bricks.asset.publish.success' => array(
-				'type' => 'segment',
-				'options' => array(
-					'route'    => '/{Admin}/{Assets/Write/Success}',
-					'defaults' => array(
-						'controller' => 'BricksAsset\Controller\AssetController',
-						'action'     => 'publishSuccess',
-					),
-				),
-			),		
-		),
+	'invokables' => array(
+		'Resource' => 'Bricks\View\Helper\Resource',
 	),
-	
-	'controllers' => array(
-		'invokables' => array(
-			'BricksAsset\Controller\AssetController' => 'BricksAsset\Controller\AssetController',
-			'BricksAsset\Controller\MenuController' => 'BricksAsset\Controller\MenuController',
-		),
-	),
-	'translator' => array(
-		'translation_file_patterns' => array(
-			array(
-				'type' => 'phparray',
-				'base_dir' => __DIR__.'/../language',
-				'pattern' => '%1$s/%1$s.php',
-			),
-			array(
-				'type' => 'gettext',
-				'base_dir' => __DIR__.'/../language',
-				'pattern' => '%1$s.mo',
-			),
-		),
-	),
-	'view_manager' => array(
-		'template_path_stack' => array(
-			__DIR__ . '/../view',
-		),
-	),
-	'view_helpers' => array(
-		'delegators' => array(
-			'HeadLink' => array(
-				'Bricks\View\Helper\HeadLinkDelegator',
-			),
-			'HeadScript' => array(
-				'Bricks\View\Helper\HeadScriptDelegator',
-			),			
-		),
-		'invokables' => array(
-			'Resource' => 'Bricks\View\Helper\Resource',
-		),		
-	),	
 	'BricksConfig' => array(
 		'BricksClassLoader' => array(
 			'BricksClassLoader' => array(
@@ -125,9 +44,22 @@ return array(
 				'removeExclude' => array(),				
 			),
 		),
+		'BricksPlugin' => array(
+			'BricksPlugin' => array(
+				'extend' => array(
+					'Zend\View\Helper\HeadLink' => array(
+						'Bricks\Asset\View\Helper\HeadLink',
+					),
+					'Zend\View\Helper\HeadScript' => array(
+						'Bricks\Asset\View\Helper\HeadScript',
+					),
+				),
+				'listeners' => array(
+					'Zend\View\Helper\HeadLink::itemToString.pre' => array(
+						'Bricks\Asset\View\Helper\HeadLink::preItemToString' => -100000
+					),					
+				)
+			),
+		),
 	),	
-)
-
-
-
-;
+);

@@ -25,7 +25,7 @@
  * THE SOFTWARE.
  */
 
-namespace Bricks\View\Helper;
+namespace Bricks\Asset\View\Helper;
 
 use Zend\Form\View\Helper\AbstractHelper;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;

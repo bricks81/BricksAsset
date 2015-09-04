@@ -16,7 +16,8 @@
         "oyejorge/less.php": "v1.7.0.2",
         "mrclay/minify": "2.*@stable",
         "components/bootstrap": "3.*@stable",
-        "bricks81/bricks-file": "dev-master"
+        "bricks81/bricks-file": "dev-master",
+        "bricks81/bricks-plugin": "dev-master"
     },
     "autoload": {
     	"classmap": ["Module.php"]
