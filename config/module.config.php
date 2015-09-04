@@ -7,7 +7,7 @@ return array(
 		),				
 	),
 	'invokables' => array(
-		'Resource' => 'Bricks\View\Helper\Resource',
+		'Resource' => 'Bricks\Asset\View\Helper\Resource',
 	),
 	'BricksConfig' => array(
 		'BricksClassLoader' => array(
@@ -45,7 +45,7 @@ return array(
 			),
 		),
 		'BricksPlugin' => array(
-			'BricksPlugin' => array(
+			'BricksAsset' => array(
 				'extend' => array(
 					'Zend\View\Helper\HeadLink' => array(
 						'Bricks\Asset\View\Helper\HeadLink',
@@ -53,11 +53,20 @@ return array(
 					'Zend\View\Helper\HeadScript' => array(
 						'Bricks\Asset\View\Helper\HeadScript',
 					),
+					'Zend\View\Helper\InlineScript' => array(
+						'Bricks\Asset\View\Helper\InlineScript',						
+					),
 				),
 				'listeners' => array(
 					'Zend\View\Helper\HeadLink::itemToString.pre' => array(
 						'Bricks\Asset\View\Helper\HeadLink::preItemToString' => -100000
 					),					
+					'Zend\View\Helper\HeadScript::itemToString.pre' => array(
+						'Bricks\Asset\View\Helper\HeadScript::preItemToString' => -100000
+					),
+					'Zend\View\Helper\InlineScript::itemToString.pre' => array(
+						'Bricks\Asset\View\Helper\InlineScript::preItemToString' => -100000
+					),
 				)
 			),
 		),
