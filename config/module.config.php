@@ -7,7 +7,7 @@ return array(
 		),				
 	),
 	'invokables' => array(
-		'Resource' => 'Bricks\View\Helper\Resource',
+		'Resource' => 'Bricks\Asset\View\Helper\Resource',
 	),
 	'BricksConfig' => array(
 		'BricksClassLoader' => array(
