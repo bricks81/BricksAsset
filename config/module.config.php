@@ -79,9 +79,11 @@ return array(
 	),
 	'view_helpers' => array(
 		'delegators' => array(
+			/*
 			'HeadLink' => array(
 				'Bricks\View\Helper\HeadLinkDelegator',
 			),
+			*/
 			'HeadScript' => array(
 				'Bricks\View\Helper\HeadScriptDelegator',
 			),			
@@ -125,9 +127,22 @@ return array(
 				'removeExclude' => array(),				
 			),
 		),
+		'BricksPlugin' => array(
+			'BricksPlugin' => array(
+				'extend' => array(
+					'Zend\View\Helper\HeadLink' => array(
+						'Bricks\Asset\View\Helper\HeadLink',
+					),
+					'Zend\View\Helper\HeadScript' => array(
+						'Bricks\Asset\View\Helper\HeadScript',
+					),
+				),
+				'listeners' => array(
+					'Zend\View\Helper\HeadLink::itemToString.pre' => array(
+						'Bricks\Asset\View\Helper\HeadLink::preItemToString' => -100000
+					),					
+				)
+			),
+		),
 	),	
-)
-
-
-
-;
+);

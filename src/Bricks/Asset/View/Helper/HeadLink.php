@@ -25,58 +25,65 @@
  * THE SOFTWARE.
  */
 
-namespace Bricks\View\Helper;
+namespace Bricks\Asset\View\Helper;
 
-use Zend\ServiceManager\ServiceManager;
-use Zend\View\Helper\HeadLink AS ZFHeadLink;
-use \stdClass;
-use Zend\ServiceManager\DelegatorFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Bricks\Asset\Asset;
+use Zend\EventManager\Event;
+use Bricks\Plugin\Extender;
+use Bricks\Plugin\Extender\VisitorInterface;
+//use Bricks\Plugin\ClassMapAutoloader AS MainClassLoader;
 
-class HeadLinkDelegator extends ZFHeadLink implements DelegatorFactoryInterface {
-
+/**
+ * This class will hold the autoloader with it's classmap
+ * in front of the internal autoloading stack.
+ */
+class HeadLink implements VisitorInterface {
+	
 	/**
-	 * @var Asset
+	 * @var Extender
 	 */
-	protected $as;
+	protected $extender;
+	
+	/**
+	 * @param Extender $extender
+	 */
+	public function __construct(Extender $extender=null){
+		$this->setExtender($extender);
+	}
+	
+	/**
+	 * @param Extender $extender
+	 */
+	public function setExtender(Extender $extender=null){
+		$this->extender = $extender;
+	}
+	
+	/**
+	 * @return \Bricks\Plugin\Extender
+	 */
+	public function getExtender(){
+		return $this->extender;
+	}
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Zend\ServiceManager\DelegatorFactoryInterface::createDelegatorWithName()
+	 * @see \Bricks\Plugin\Extender\VisitorInterface::extend()
 	 */
-	public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator,$name,$requestedName,$callback){
-		$headLink = new self();
-		$headLink->setAsset($serviceLocator->getServiceLocator()->get('BricksAsset'));
-		return $headLink;	 		
+	public function extend(){
+		$this->getExtender()->eventize('Zend\View\Helper','HeadLink','itemToString');
 	}
 	
 	/**
-	 * @param Asset $as
+	 * @param Event $event
 	 */
-	public function setAsset(Asset $as){
-		$this->as = $as;
-	}
-	
-	/**
-	 * @return \Bricks\Asset\Asset
-	 */
-	public function getAsset(){
-		return $this->as;
-	}
-	
-	/**
-	 * (non-PHPdoc)
-	 * @see \Zend\View\Helper\HeadLink::itemToString()
-	 */
-	public function itemToString(stdClass $item){
+	public function preItemToString(Event $event){
+		die(var_dump(get_class_methods($event)));
 		$moduleName = '';
-		foreach($this->getAsset()->getLoadedModules() AS $name){		
+		foreach($this->getAsset()->getLoadedModules() AS $name){
 			if(substr($item->href,0,strlen($name))==$name){
 				$moduleName = $name;
 				break;
 			}
-		}		
+		}
 		if(empty($moduleName)){
 			return parent::itemToString($item);
 		}
@@ -84,8 +91,8 @@ class HeadLinkDelegator extends ZFHeadLink implements DelegatorFactoryInterface 
 		$cfg = $this->getAsset()->getConfig()->getArray($moduleName);
 		$lessSupport = $cfg['lessSupport'];
 		$scssSupport = $cfg['scssSupport'];
-		$minifyCssSupport = $cfg['minifyCssSupport'];		
-
+		$minifyCssSupport = $cfg['minifyCssSupport'];
+		
 		$http_assets_path = $cfg['httpAssetsPath'];
 		$wwwroot_path = $cfg['wwwRootPath'];
 		
@@ -114,17 +121,17 @@ class HeadLinkDelegator extends ZFHeadLink implements DelegatorFactoryInterface 
 		}
 		
 		$href = $item->href;
-		if(true==$minifyCssSupport){			
+		if(true==$minifyCssSupport){
 			if(substr($href,-4)=='.css'&&substr($href,-7)!=='.min.css'){
-				$href = substr($href,0,strlen($href)-4).'.min.css';								
+				$href = substr($href,0,strlen($href)-4).'.min.css';
 			}
 		}
 		$file = $wwwroot_path.'/'.$href;
 		if(file_exists($file)){
 			$item->href = $href;
-		}		
+		}
 		
 		return parent::itemToString($item);
-	}	
+	}
 	
 }

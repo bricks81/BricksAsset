@@ -25,52 +25,57 @@
  * THE SOFTWARE.
  */
 
-namespace Bricks\View\Helper;
+namespace Bricks\Asset\View\Helper;
 
-use Zend\ServiceManager\ServiceManager;
-use Zend\View\Helper\InlineScript AS ZFInlineScript;
-use \stdClass;
-use Zend\ServiceManager\DelegatorFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Bricks\Asset\Asset;
+use Zend\EventManager\Event;
+use Bricks\Plugin\Extender;
+use Bricks\Plugin\Extender\VisitorInterface;
 
-class InlineScriptDelegator extends ZFInlineScript implements DelegatorFactoryInterface {
-
-	/**
-	 * @var Asset
-	 */
-	protected $as;
+/**
+ * This class will hold the autoloader with it's classmap
+ * in front of the internal autoloading stack.
+ */
+class InlineScript implements VisitorInterface {
 	
 	/**
-	 * (non-PHPdoc)
-	 * @see \Zend\ServiceManager\DelegatorFactoryInterface::createDelegatorWithName()
+	 * @var Extender
 	 */
-	public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator,$name,$requestedName,$callback){
-		$headScript = new self();
-		$headScript->setAsset($serviceLocator->getServiceLocator()->get('BricksAsset'));
-		return $headScript;
-	}
-
+	protected $extender;
+	
 	/**
-	 * @param Asset $as
+	 * @param Extender $extender
 	 */
-	public function setAsset(Asset $as){
-		$this->as = $as;
+	public function __construct(Extender $extender=null){
+		$this->setExtender($extender);
 	}
 	
 	/**
-	 * @return \Bricks\Asset\Asset
+	 * @param Extender $extender
 	 */
-	public function getAsset(){
-		return $this->as;
+	public function setExtender(Extender $extender=null){
+		$this->extender = $extender;
+	}
+	
+	/**
+	 * @return \Bricks\Plugin\Extender
+	 */
+	public function getExtender(){
+		return $this->extender;
 	}
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \Zend\View\Helper\HeadScript::itemToString()
+	 * @see \Bricks\Plugin\Extender\VisitorInterface::extend()
 	 */
-	public function itemToString($item, $indent, $escapeStart, $escapeEnd){
-		if(!isset($item->attributes['src'])){
+	public function extend(){
+		$this->getExtender()->eventize('Zend\View\Helper','InlandScript','itemToString');
+	}
+	
+	/**
+	 * @param Event $event
+	 */
+	public function preItemToString(Event $event){
+			if(!isset($item->attributes['src'])){
 			return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
 		}
 		$moduleName = '';
@@ -110,6 +115,6 @@ class InlineScriptDelegator extends ZFInlineScript implements DelegatorFactoryIn
 		}
 		
 		return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
-	}	
+	}
 	
 }
