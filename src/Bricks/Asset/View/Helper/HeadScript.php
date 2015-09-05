@@ -30,6 +30,7 @@ namespace Bricks\Asset\View\Helper;
 use Zend\EventManager\Event;
 use Bricks\Plugin\Extender;
 use Bricks\Plugin\Extender\VisitorInterface;
+use Bricks\ClassLoader\ClassLoader;
 
 /**
  * This class will hold the autoloader with it's classmap
@@ -43,10 +44,15 @@ class HeadScript implements VisitorInterface {
 	protected $extender;
 	
 	/**
+	 * @var \Bricks\ClassLoader\ClassLoader
+	 */
+	protected $classLoader;
+	
+	/**
 	 * @param Extender $extender
 	 */
 	public function __construct(Extender $extender=null){
-		$this->setExtender($extender);
+		$this->setExtender($extender);		
 	}
 	
 	/**
@@ -64,6 +70,20 @@ class HeadScript implements VisitorInterface {
 	}
 	
 	/**
+	 * @param ClassLoader $classLoader
+	 */
+	public function setClassLoader(ClassLoader $classLoader){
+		$this->classLoader = $classLoader;
+	}
+	
+	/**
+	 * @param \Bricks\ClassLoader\ClassLoader
+	 */
+	public function getClassLoader(){
+		return $this->classLoader;
+	}
+	
+	/**
 	 * (non-PHPdoc)
 	 * @see \Bricks\Plugin\Extender\VisitorInterface::extend()
 	 */
@@ -74,23 +94,26 @@ class HeadScript implements VisitorInterface {
 	/**
 	 * @param Event $event
 	 */
-	public function preItemToString(Event $event){
+	public function postItemToString(Event $event){
+		$item = $event->getParam('item');		
 		if(!isset($item->attributes['src'])){
-			return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
+			return;
 		}
 		
+		$asset = $this->getClassLoader()->getServiceLocator()->get('BricksAsset');
+		
 		$moduleName = '';
-		foreach($this->getAsset()->getLoadedModules() AS $name){			
+		foreach($asset->getLoadedModules() AS $name){			
 			if(substr($item->attributes['src'],0,strlen($name))==$name){
 				$moduleName = $name;
 				break;
 			}
 		}		
 		if(empty($moduleName)){
-			return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
+			return;
 		}
 		
-		$cfg = $this->getAsset()->getConfig()->getArray($moduleName);
+		$cfg = $asset->getConfig()->getArray($moduleName);
 		$minifyJsSupport = $cfg['minifyJsSupport'];
 		
 		$http_assets_path = $cfg['httpAssetsPath'];
@@ -115,7 +138,7 @@ class HeadScript implements VisitorInterface {
 			$item->attributes['src'] = $href;
 		}
 		
-		return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
+		//return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
 	}
 	
 }

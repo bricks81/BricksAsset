@@ -56,10 +56,6 @@ class Module {
     		$as->autoOptimize();
 
     		$module = $as->getAsset('BricksAsset','BricksAssetSelf');
-    		/**
-    		 * @todo better solution needed
-    		 * die(var_dump($module->getAsset()->getConfig()->getArray('BricksAssetSelf)));
-    		 */    		
     		$module->publish();
     		$module->optimize();
     		    		

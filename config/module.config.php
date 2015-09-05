@@ -58,14 +58,14 @@ return array(
 					),
 				),
 				'listeners' => array(
-					'Zend\View\Helper\HeadLink::itemToString.pre' => array(
-						'Bricks\Asset\View\Helper\HeadLink::preItemToString' => -100000
+					'Zend\View\Helper\HeadLink::itemToString.post' => array(
+						'Bricks\Asset\View\Helper\HeadLink::postItemToString' => -100000
 					),					
-					'Zend\View\Helper\HeadScript::itemToString.pre' => array(
-						'Bricks\Asset\View\Helper\HeadScript::preItemToString' => -100000
+					'Zend\View\Helper\HeadScript::itemToString.post' => array(
+						'Bricks\Asset\View\Helper\HeadScript::postItemToString' => -100000
 					),
-					'Zend\View\Helper\InlineScript::itemToString.pre' => array(
-						'Bricks\Asset\View\Helper\InlineScript::preItemToString' => -100000
+					'Zend\View\Helper\InlineScript::itemToString.post' => array(
+						'Bricks\Asset\View\Helper\InlineScript::postItemToString' => -100000
 					),
 				)
 			),

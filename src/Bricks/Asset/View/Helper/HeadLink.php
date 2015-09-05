@@ -30,7 +30,8 @@ namespace Bricks\Asset\View\Helper;
 use Zend\EventManager\Event;
 use Bricks\Plugin\Extender;
 use Bricks\Plugin\Extender\VisitorInterface;
-//use Bricks\Plugin\ClassMapAutoloader AS MainClassLoader;
+use Bricks\ClassLoader\ClassLoader;
+
 
 /**
  * This class will hold the autoloader with it's classmap
@@ -42,6 +43,11 @@ class HeadLink implements VisitorInterface {
 	 * @var Extender
 	 */
 	protected $extender;
+	
+	/**
+	 * @var \Bricks\ClassLoader\ClassLoader
+	 */
+	protected $classLoader;
 	
 	/**
 	 * @param Extender $extender
@@ -65,6 +71,20 @@ class HeadLink implements VisitorInterface {
 	}
 	
 	/**
+	 * @param ClassLoader $classLoader
+	 */
+	public function setClassLoader(ClassLoader $classLoader){
+		$this->classLoader = $classLoader;
+	}
+	
+	/**
+	 * @return \Bricks\ClassLoader\ClassLoader
+	 */
+	public function getClassLoader(){
+		return $this->classLoader;
+	}
+	
+	/**
 	 * (non-PHPdoc)
 	 * @see \Bricks\Plugin\Extender\VisitorInterface::extend()
 	 */
@@ -75,20 +95,21 @@ class HeadLink implements VisitorInterface {
 	/**
 	 * @param Event $event
 	 */
-	public function preItemToString(Event $event){
-		die(var_dump(get_class_methods($event)));
+	public function postItemToString(Event $event){
+		$asset = $this->getClassLoader()->getServiceLocator()->get('BricksAsset');
+		$item = $event->getParam('item');		
 		$moduleName = '';
-		foreach($this->getAsset()->getLoadedModules() AS $name){
+		foreach($asset->getLoadedModules() AS $name){
 			if(substr($item->href,0,strlen($name))==$name){
 				$moduleName = $name;
 				break;
 			}
 		}
 		if(empty($moduleName)){
-			return parent::itemToString($item);
+			return;
 		}
 		
-		$cfg = $this->getAsset()->getConfig()->getArray($moduleName);
+		$cfg = $asset->getConfig()->getArray($moduleName);
 		$lessSupport = $cfg['lessSupport'];
 		$scssSupport = $cfg['scssSupport'];
 		$minifyCssSupport = $cfg['minifyCssSupport'];
@@ -131,7 +152,6 @@ class HeadLink implements VisitorInterface {
 			$item->href = $href;
 		}
 		
-		return parent::itemToString($item);
 	}
 	
 }
