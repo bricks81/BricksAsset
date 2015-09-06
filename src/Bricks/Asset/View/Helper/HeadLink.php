@@ -152,6 +152,7 @@ class HeadLink implements VisitorInterface {
 			$item->href = $href;
 		}
 		
+		return $event->getTarget()->itemToString($item);
 	}
 	
 }

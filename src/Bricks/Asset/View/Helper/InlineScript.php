@@ -135,6 +135,8 @@ class InlineScript implements VisitorInterface {
 		if(file_exists($file)){
 			$item->attributes['src'] = $href;
 		}
+		
+		return $event->getTarget()->itemToString($item);
 	}
 	
 }

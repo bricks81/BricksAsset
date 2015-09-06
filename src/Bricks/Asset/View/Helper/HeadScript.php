@@ -137,8 +137,10 @@ class HeadScript implements VisitorInterface {
 		if(file_exists($file)){
 			$item->attributes['src'] = $href;
 		}
-		
-		//return parent::itemToString($item,$indent,$escapeStart,$escapeEnd);
+		$indent = $event->getParam('indent');
+		$escapeStart = $event->getParam('escapeStart');
+		$escapeEnd = $event->getParam('escapeEnd');
+		return $event->getTarget()->itemToString($item,$indent,$escapeStart,$escapeEnd);
 	}
 	
 }
