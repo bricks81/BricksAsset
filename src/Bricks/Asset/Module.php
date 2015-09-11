@@ -156,8 +156,9 @@ class Module {
 	public function getStorageAdapter($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
 		if(!isset($this->storageAdapters[$namespace])){
-			$this->storageAdapters[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
-				__CLASS__,__FUNCTION__,'storageAdapter',$namespace,array(
+			$class = $this->getAsset()->getClassLoader()->aliasToClass('storageAdapter',$namespace);
+			$this->storageAdapters[$namespace] = $this->getAsset()->getClassLoader()->get(
+				$class,$namespace,array(
 					'Module' => $this,
 					'namespace' => $namespace
 				)
@@ -180,9 +181,10 @@ class Module {
 	 */
 	public function getPublishStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
-		if(!isset($this->publishStrategies[$namespace])){			
-			$this->publishStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
-				__CLASS__,__FUNCTION__,'publishStrategy',$namespace,array(
+		if(!isset($this->publishStrategies[$namespace])){
+			$class = $this->getAsset()->getClassLoader()->aliasToClass('publishStrategy',$namespace);
+			$this->publishStrategies[$namespace] = $this->getAsset()->getClassLoader()->get(
+				$class,$namespace,array(
 					'Module' => $this,
 					'namespace' => $namespace
 				)
@@ -207,8 +209,9 @@ class Module {
 	public function getLessStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
 		if(!isset($this->lessStrategies[$namespace])){
-			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
-				__CLASS__,__FUNCTION__,'lessStrategy',$namespace,array(
+			$class = $this->getAsset()->getClassLoader()->aliasToClass('lessStrategy',$namespace);
+			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->get(
+				$class,$namespace,array(
 					'Module' => $this,
 					'namespace' => $namespace
 				)
@@ -233,8 +236,9 @@ class Module {
 	public function getScssStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
 		if(!isset($this->scssStrategies[$namespace])){
-			$this->scssStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
-				__CLASS__,__FUNCTION__,'scssStrategy',$namespace,array(
+			$class = $this->getAsset()->getClassLoader()->aliasToClass('scssStrategy',$namespace);
+			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->get(
+				$class,$namespace,array(
 					'Module' => $this,
 					'namespace' => $namespace
 				)
@@ -259,8 +263,9 @@ class Module {
 	public function getMinifyCssStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
 		if(!isset($this->minifyCssStrategies[$namespace])){
-			$this->minifyCssStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
-				__CLASS__,__FUNCTION__,'minifyCssStrategy',$namespace,array(
+			$class = $this->getAsset()->getClassLoader()->aliasToClass('minifyCssStrategy',$namespace);
+			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->get(
+				$class,$namespace,array(
 					'Module' => $this,
 					'namespace' => $namespace
 				)
@@ -285,8 +290,9 @@ class Module {
 	public function getMinifyJsStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
 		if(!isset($this->minifyJsStrategies[$namespace])){
-			$this->minifyJsStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
-				__CLASS__,__FUNCTION__,'minifyJsStrategy',$namespace,array(
+			$class = $this->getAsset()->getClassLoader()->aliasToClass('minifyJsStrategy',$namespace);
+			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->get(
+				$class,$namespace,array(
 					'Module' => $this,
 					'namespace' => $namespace
 				)
@@ -311,8 +317,9 @@ class Module {
 	public function getRemoveStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
 		if(!isset($this->removeStrategies[$namespace])){
-			$this->removeStrategies[$namespace] = $this->getAsset()->getClassLoader()->newInstance(
-				__CLASS__,__FUNCTION__,'removeStrategy',$namespace,array(
+			$class = $this->getAsset()->getClassLoader()->aliasToClass('removeStrategy',$namespace);
+			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->get(
+				$class,$namespace,array(
 					'Module' => $this,
 					'namespace' => $namespace
 				)

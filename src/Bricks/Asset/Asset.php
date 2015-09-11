@@ -28,7 +28,7 @@
 namespace Bricks\Asset;
 
 use Bricks\Config\ConfigInterface;
-use Bricks\ClassLoader\ClassLoaderInterface;
+use Bricks\ClassLoader\ClassLoader;
 
 class Asset {
 	
@@ -44,7 +44,7 @@ class Asset {
 	protected $config = array();
 	
 	/**
-	 * @var \Bricks\ClassLoader\ClassLoaderInterface
+	 * @var \Bricks\ClassLoader\ClassLoader
 	 */
 	protected $classLoader;
 	
@@ -55,17 +55,16 @@ class Asset {
 	
 	/**
 	 * @param ConfigInterface $config
-	 * @param ClassLoaderInterface $classLoader
+	 * @param ClassLoader $classLoader
 	 * @param array $loadedModules
 	 */
 	public function __construct(
-		ConfigInterface $config,
-		ClassLoaderInterface $classLoader,
+		ClassLoader $classLoader,
 		array $loadedModules=array()
 	){		
-		$this->loadedModules = $loadedModules;
-		$this->config = $config;
-		$this->classLoader = $classLoader;				
+		$this->setClassLoader($classLoader);
+		$this->setConfig($classLoader->getConfig('BricksAsset'));
+		$this->setLoadedModeuls($loadedModules);						
 	}	
 	
 	/**
@@ -83,14 +82,14 @@ class Asset {
 	}
 	
 	/**
-	 * @param ClassLoaderInterface $classLoader
+	 * @param ClassLoader $classLoader
 	 */
-	public function setClassLoader(ClassLoaderInterface $classLoader){
+	public function setClassLoader(ClassLoader $classLoader){
 		$this->classLoader = $classLoader;
 	}
 	
 	/**
-	 * @return \Bricks\ClassLoader\ClassLoaderInterface
+	 * @return \Bricks\ClassLoader\ClassLoader
 	 */
 	public function getClassLoader(){
 		return $this->classLoader;
@@ -131,8 +130,9 @@ class Asset {
 	 */
 	public function getAsset($moduleName){
 		if(!$this->hasAsset($moduleName)){
-			$module = $this->getClassLoader()->newInstance(
-				__CLASS__,__FUNCTION__,'assetModule',$moduleName,array(
+			$class = $this->getClassLoader()->aliasToClass('assetModule',$moduleName);
+			$module = $this->getClassLoader()->get(
+				$class,$moduleName,array(
 					'Asset' => $this,
 					'moduleName' => $moduleName				
 				)

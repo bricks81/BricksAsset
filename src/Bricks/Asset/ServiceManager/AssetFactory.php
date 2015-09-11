@@ -33,14 +33,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class AssetFactory implements FactoryInterface {
 	
 	public function createService(ServiceLocatorInterface $sl){
-		$config = $sl->get('BricksConfig')->getConfig('BricksAsset');
-		$classLoader = $sl->get('BricksClassLoader')->getClassLoader('BricksAsset');
-		$loadedModules = array_keys($config->getConfig()->getArray('BricksAsset'));
-		$service = $classLoader->getSingleton(__CLASS__,__FUNCTION__,'assetClass','BricksAsset',array(
-			'BricksConfig' => $config,
+		$classLoader = $sl->get('BricksClassLoader');
+		$loadedModules = array_keys($classLoader->getConfig('BricksAsset')->getArray('BricksAsset'));
+		$class = $classLoader->aliasToClass('assetClass');
+		$service = $classLoader->get($class,'BricksAsset',array(
 			'BricksClassLoader' => $classLoader,
-			'loadedModules' => $loadedModules,
-			'ServiceLocator' => $sl			
+			'loadedModules' => $loadedModules						
 		));
 		return $service;
 	}
