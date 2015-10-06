@@ -130,7 +130,7 @@ class Asset {
 	 */
 	public function getAsset($moduleName){
 		if(!$this->hasAsset($moduleName)){
-			$class = $this->getClassLoader()->aliasToClass('assetModule',$moduleName);
+			$class = $this->getClassLoader()->aliasToClass('BricksAsset.assetModule',$moduleName);
 			$module = $this->getClassLoader()->get(
 				$class,$moduleName,array(
 					'Asset' => $this,

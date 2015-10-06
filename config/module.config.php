@@ -10,21 +10,19 @@ return array(
 		'Resource' => 'Bricks\Asset\View\Helper\Resource',
 	),
 	'BricksConfig' => array(
-		'BricksClassLoader' => array(
-			'BricksClassLoader' => array(
-				'classMap' => array(
-					'BricksAsset' => array(
-						'BricksAsset' => array(
-							'assetClass' => 'Bricks\Asset\Asset',
-							'assetModule' => 'Bricks\Asset\Module',
-							'storageAdapter' => 'Bricks\Asset\AssetAdapter\FilesystemAdapter',
-							'lessStrategy' => 'Bricks\Asset\LessStrategy\OyejorgeLessphpStrategy',
-							'scssStrategy' => 'Bricks\Asset\ScssStrategy\LeafoScssphpStrategy',
-							'minifyCssStrategy' => 'Bricks\Asset\MinifyCssStrategy\MrclayMinifyStrategy',
-							'minifyJsStrategy' => 'Bricks\Asset\MinifyJsStrategy\MrclayMinifyStrategy',
-							'publishStrategy' => 'Bricks\Asset\PublishStrategy\CopyStrategy',
-							'removeStrategy' => 'Bricks\Asset\RemoveStrategy\RemoveStrategy',
-						),
+		'BricksClassLoader' => array( // module to configure
+			'BricksClassLoader' => array( // namespace of module
+				'aliasMap' => array( 
+					'BricksAsset' => array( // aliasmap namespace
+						'assetClass' => 'Bricks\Asset\Asset',
+						'assetModule' => 'Bricks\Asset\Module',
+						'storageAdapter' => 'Bricks\Asset\AssetAdapter\FilesystemAdapter',
+						'lessStrategy' => 'Bricks\Asset\LessStrategy\OyejorgeLessphpStrategy',
+						'scssStrategy' => 'Bricks\Asset\ScssStrategy\LeafoScssphpStrategy',
+						'minifyCssStrategy' => 'Bricks\Asset\MinifyCssStrategy\MrclayMinifyStrategy',
+						'minifyJsStrategy' => 'Bricks\Asset\MinifyJsStrategy\MrclayMinifyStrategy',
+						'publishStrategy' => 'Bricks\Asset\PublishStrategy\CopyStrategy',
+						'removeStrategy' => 'Bricks\Asset\RemoveStrategy\RemoveStrategy',						
 					),					
 				),
 			),
