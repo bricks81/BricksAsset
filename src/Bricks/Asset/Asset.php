@@ -64,7 +64,7 @@ class Asset {
 	){		
 		$this->setClassLoader($classLoader);
 		$this->setConfig($classLoader->getConfig('BricksAsset'));
-		$this->setLoadedModeuls($loadedModules);						
+		$this->setLoadedModules($loadedModules);						
 	}	
 	
 	/**
