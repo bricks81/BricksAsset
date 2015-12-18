@@ -94,7 +94,7 @@ class InlineScript implements VisitorInterface {
 	/**
 	 * @param Event $event
 	 */
-	public function postItemToString(Event $event){
+	public function postItemToString(Event $event){		
 		$item = $event->getParam('item');
 		if(!isset($item->attributes['src'])){
 			return;

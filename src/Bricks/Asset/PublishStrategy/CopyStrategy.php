@@ -81,6 +81,7 @@ class CopyStrategy implements PublishStrategyInterface {
 		if(false==$modulePath||false==$root){			
 			return;
 		}
+		
 		$update = $this->getPublishUpdate($adapter,$modulePath,$path);
 		
 		// exclude patterns
@@ -95,7 +96,7 @@ class CopyStrategy implements PublishStrategyInterface {
 			}
 		}
 		
-		foreach($update AS $source => $target){
+		foreach($update AS $source => $target){			
 			$adapter->copy($source,$target);
 		}		
 	}
@@ -109,20 +110,20 @@ class CopyStrategy implements PublishStrategyInterface {
 	protected function getPublishUpdate(StorageAdapterInterface $adapter,$source,$target){
 		$update = array();		
 		$filelist = $adapter->getSourceDirList($source);						
-		foreach($filelist AS $filename){
+		foreach($filelist AS $filename){		
 			if('.'==$filename[0]){
 				continue;
 			}
-			$_source = $source.'/'.$filename;			
-			$_target = $target.'/'.$filename;
+			$_source = $source.'/'.$filename;
+			$_target = $target.'/'.$filename;			
 			if($adapter->isSourceDir($_source)){
 				$update += $this->getPublishUpdate($adapter,$_source,$_target);
-			} elseif($adapter->isSourceFile($_source)){
-				if(!$adapter->isTargetFile($_target)||$adapter->isOlderThan($_source,$_target)){
+			} elseif($adapter->isSourceFile($_source)){				
+				if(!$adapter->isTargetFile($_target)||$adapter->isOlderThan($_source,$_target)){					
 					$update[$_source] = $_target;
 				}
 			}
-		}		
+		}
 		return $update;
 	}
 	

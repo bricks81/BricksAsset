@@ -182,13 +182,10 @@ class Module {
 	public function getPublishStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
 		if(!isset($this->publishStrategies[$namespace])){
-			$class = $this->getAsset()->getClassLoader()->aliasToClass('BricksAsset.publishStrategy',$namespace);
-			$this->publishStrategies[$namespace] = $this->getAsset()->getClassLoader()->get(
-				$class,$namespace,array(
-					'Module' => $this,
-					'namespace' => $namespace
-				)
-			);
+			$this->publishStrategies[$namespace] = $this->getAsset()->getClassLoader()->get('BricksAsset.publishStrategy',$namespace,array(
+				'Module' => $this,
+				'namespace' => $namespace
+			));
 		}
 		return $this->publishStrategies[$namespace];
 	}
@@ -209,13 +206,10 @@ class Module {
 	public function getLessStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
 		if(!isset($this->lessStrategies[$namespace])){
-			$class = $this->getAsset()->getClassLoader()->aliasToClass('BricksAsset.lessStrategy',$namespace);
-			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->get(
-				$class,$namespace,array(
-					'Module' => $this,
-					'namespace' => $namespace
-				)
-			);
+			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->get('BricksAsset.lessStrategy',$namespace,array(
+				'Module' => $this,
+				'namespace' => $namespace
+			));			
 		}
 		return $this->lessStrategies[$namespace];
 	}
@@ -236,13 +230,10 @@ class Module {
 	public function getScssStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
 		if(!isset($this->scssStrategies[$namespace])){
-			$class = $this->getAsset()->getClassLoader()->aliasToClass('BricksAsset.scssStrategy',$namespace);
-			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->get(
-				$class,$namespace,array(
-					'Module' => $this,
-					'namespace' => $namespace
-				)
-			);
+			$this->scssStrategies[$namespace] = $this->getAsset()->getClassLoader()->get('BricksAsset.scssStrategy',$namespace,array(
+				'Module' => $this,
+				'namespace' => $namespace
+			));			
 		}
 		return $this->scssStrategies[$namespace];
 	}
@@ -263,14 +254,11 @@ class Module {
 	public function getMinifyCssStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
 		if(!isset($this->minifyCssStrategies[$namespace])){
-			$class = $this->getAsset()->getClassLoader()->aliasToClass('BricksAsset.minifyCssStrategy',$namespace);
-			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->get(
-				$class,$namespace,array(
-					'Module' => $this,
-					'namespace' => $namespace
-				)
-			);
-		}
+			$this->minifyCssStrategies[$namespace] = $this->getAsset()->getClassLoader()->get('BricksAsset.minifyCssStrategy',$namespace,array(
+				'Module' => $this,
+				'namespace' => $namespace
+			));
+		}		
 		return $this->minifyCssStrategies[$namespace];
 	}
 	
@@ -290,13 +278,10 @@ class Module {
 	public function getMinifyJsStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
 		if(!isset($this->minifyJsStrategies[$namespace])){
-			$class = $this->getAsset()->getClassLoader()->aliasToClass('BricksAsset.minifyJsStrategy',$namespace);
-			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->get(
-				$class,$namespace,array(
-					'Module' => $this,
-					'namespace' => $namespace
-				)
-			);
+			$this->minifyJsStrategies[$namespace] = $this->getAsset()->getClassLOader()->get('BricksAsset.minifyJsStrategy',$namespace,array(
+				'Module' => $this,
+				'namespace' => $namespace
+			));			
 		}
 		return $this->minifyJsStrategies[$namespace];
 	}
@@ -317,13 +302,10 @@ class Module {
 	public function getRemoveStrategy($namespace=null){
 		$namespace = $namespace?:$this->getNamespace();
 		if(!isset($this->removeStrategies[$namespace])){
-			$class = $this->getAsset()->getClassLoader()->aliasToClass('BricksAsset.removeStrategy',$namespace);
-			$this->lessStrategies[$namespace] = $this->getAsset()->getClassLoader()->get(
-				$class,$namespace,array(
-					'Module' => $this,
-					'namespace' => $namespace
-				)
-			);
+			$this->removeStrategies[$namespace] = $this->getAsset()->getClassLoader()->get('BricksAsset.removeStrategy',$namespace,array(
+				'Module' => $this,
+				'namespace' => $namespace
+			));			
 		}
 		return $this->removeStrategies[$namespace];
 	}
@@ -339,22 +321,22 @@ class Module {
 	
 	public function publish(){
 		$publish = $this->getPublishStrategy();
-		$publish->publish();	
+		$publish->publish();		
 		if($this->getAsset()->getConfig()->get('lessSupport',$this->getModuleName())){
-			$strategy = $this->getLessStrategy();
+			$strategy = $this->getLessStrategy();			
 			$strategy->less();			
 		}
 		if($this->getAsset()->getConfig()->get('scssSupport',$this->getModuleName())){
-			$strategy = $this->getScssStrategy();
-			$strategy->scss();
+			$strategy = $this->getScssStrategy();			
+			$strategy->scss();			
 		}
 	}
 	
 	public function optimize(){
 		if($this->getAsset()->getConfig()->get('minifyCssSupport',$this->getModuleName())){
-			$strategy = $this->getMinifyCssStrategy();
+			$strategy = $this->getMinifyCssStrategy();			
 			$strategy->minify();			
-		}
+		}		
 		if($this->getAsset()->getConfig()->get('minifyJsSupport',$this->getModuleName())){
 			$strategy = $this->getMinifyJsStrategy();
 			$strategy->minify();			

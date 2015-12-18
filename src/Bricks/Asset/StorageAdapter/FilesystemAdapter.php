@@ -40,7 +40,7 @@ class FilesystemAdapter implements StorageAdapterInterface {
 	 * (non-PHPdoc)
 	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::getSourceDirList()
 	 */
-	public function getSourceDirList($dir){
+	public function getSourceDirList($dir){		
 		$files = array();
 		if(!is_dir($dir)){
 			return $files;
@@ -50,7 +50,7 @@ class FilesystemAdapter implements StorageAdapterInterface {
 				continue;
 			}
 			$files[] = $filename;
-		}
+		}		
 		return $files;
 	}
 	
@@ -135,7 +135,7 @@ class FilesystemAdapter implements StorageAdapterInterface {
 	 * (non-PHPdoc)
 	 * @see \Bricks\Asset\AssetAdapter\AssetAdapterInterface::isOlderThan()
 	 */
-	public function isOlderThan($source,$target){
+	public function isOlderThan($source,$target){		
 		return filemtime($source)>filemtime($target);
 	}
 	

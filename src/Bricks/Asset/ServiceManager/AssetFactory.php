@@ -34,7 +34,7 @@ class AssetFactory implements FactoryInterface {
 	
 	public function createService(ServiceLocatorInterface $sl){
 		$classLoader = $sl->get('BricksClassLoader');
-		$loadedModules = array_keys($classLoader->getConfig('BricksAsset')->getArray('BricksAsset'));
+		$loadedModules = array_keys($classLoader->getConfig('BricksAsset')->getRootArray());		
 		$service = $classLoader->get('BricksAsset.assetClass','BricksAsset',array(
 			'BricksClassLoader' => $classLoader,
 			'loadedModules' => $loadedModules						

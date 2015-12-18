@@ -52,7 +52,7 @@ class HeadLink implements VisitorInterface {
 	/**
 	 * @param Extender $extender
 	 */
-	public function __construct(Extender $extender=null){
+	public function __construct(Extender $extender=null){		
 		$this->setExtender($extender);
 	}
 	
@@ -95,9 +95,9 @@ class HeadLink implements VisitorInterface {
 	/**
 	 * @param Event $event
 	 */
-	public function postItemToString(Event $event){
+	public function postItemToString(Event $event){		
 		$asset = $this->getClassLoader()->getServiceLocator()->get('BricksAsset');
-		$item = $event->getParam('item');		
+		$item = $event->getParam('item');
 		$moduleName = '';
 		foreach($asset->getLoadedModules() AS $name){
 			if(substr($item->href,0,strlen($name))==$name){
@@ -105,6 +105,7 @@ class HeadLink implements VisitorInterface {
 				break;
 			}
 		}
+		
 		if(empty($moduleName)){
 			return;
 		}
@@ -112,15 +113,14 @@ class HeadLink implements VisitorInterface {
 		$cfg = $asset->getConfig()->getArray($moduleName);
 		$lessSupport = $cfg['lessSupport'];
 		$scssSupport = $cfg['scssSupport'];
-		$minifyCssSupport = $cfg['minifyCssSupport'];
-		
+		$minifyCssSupport = $cfg['minifyCssSupport'];		
 		$http_assets_path = $cfg['httpAssetsPath'];
-		$wwwroot_path = $cfg['wwwRootPath'];
+		$wwwroot_path = $cfg['wwwRootPath'];		
 		
 		// we add the assets path if it's missing and the file exists
 		if(substr($item->href,0,strlen($http_assets_path))!=$http_assets_path){
 			$file = realpath($wwwroot_path).'/'.$http_assets_path.'/'.$item->href;
-			if(file_exists($file)){
+			if(file_exists($file)){				
 				$item->href = $http_assets_path.'/'.$item->href;
 			}
 		}
@@ -137,9 +137,10 @@ class HeadLink implements VisitorInterface {
 			}
 		}
 		$file = $wwwroot_path.'/'.$href;
+		
 		if(file_exists($file)){
 			$item->href = $href;
-		}
+		}		
 		
 		$href = $item->href;
 		if(true==$minifyCssSupport){
@@ -147,7 +148,8 @@ class HeadLink implements VisitorInterface {
 				$href = substr($href,0,strlen($href)-4).'.min.css';
 			}
 		}
-		$file = $wwwroot_path.'/'.$href;
+		
+		$file = $wwwroot_path.'/'.$href;		
 		if(file_exists($file)){
 			$item->href = $href;
 		}

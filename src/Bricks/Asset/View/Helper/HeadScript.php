@@ -94,7 +94,7 @@ class HeadScript implements VisitorInterface {
 	/**
 	 * @param Event $event
 	 */
-	public function postItemToString(Event $event){
+	public function postItemToString(Event $event){		
 		$item = $event->getParam('item');		
 		if(!isset($item->attributes['src'])){
 			return;
@@ -133,10 +133,12 @@ class HeadScript implements VisitorInterface {
 				$href = substr($href,0,strlen($href)-3).'.min.js';			
 			}		
 		}
+		
 		$file = $wwwroot_path.'/'.$href;
 		if(file_exists($file)){
 			$item->attributes['src'] = $href;
 		}
+		
 		$indent = $event->getParam('indent');
 		$escapeStart = $event->getParam('escapeStart');
 		$escapeEnd = $event->getParam('escapeEnd');

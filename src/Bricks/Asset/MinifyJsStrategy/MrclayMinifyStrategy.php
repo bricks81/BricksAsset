@@ -75,6 +75,15 @@ class MrclayMinifyStrategy implements MinifyJsStrategyInterface {
 	 * @return \Bricks\Asset\StorageAdapter\StorageAdapterInterface
 	 */
 	public function getStorageAdapter(){
+		if(!$this->storageAdapter){
+			$module = $this->getModule();
+			$moduleName = $module->getModuleName();
+			$asset = $module->getAsset();
+			$classLoader = $asset->getClassLoader();
+			$this->storageAdapter = $classLoader->get('BricksAsset.storageAdapter',$moduleName,array(
+				'Asset' => $asset
+			));
+		}
 		return $this->storageAdapter;
 	}
 	

@@ -52,7 +52,7 @@ class MrclayMinifyStrategy implements MinifyCssStrategyInterface {
 	/**
 	 * @param Module $module
 	 */
-	public function __construct(Module $module){
+	public function __construct(Module $module){		
 		$this->setModule($module);
 	}
 	
@@ -80,13 +80,13 @@ class MrclayMinifyStrategy implements MinifyCssStrategyInterface {
 	/**
 	 * @return \Bricks\Asset\StorageAdapter\StorageAdapterInterface
 	 */
-	public function getStorageAdapter(){
+	public function getStorageAdapter(){		
 		if(!$this->storageAdapter){
 			$module = $this->getModule();
 			$moduleName = $module->getModuleName();
 			$asset = $module->getAsset();
 			$classLoader = $asset->getClassLoader();
-			$this->storageAdapter = $classLoader->newInstance(__CLASS__,__METHOD__,'storageAdapterClass',$moduleName,array(
+			$this->storageAdapter = $classLoader->get('BricksAsset.storageAdapter',$moduleName,array(
 				'Asset' => $asset
 			));			
 		}
@@ -114,7 +114,7 @@ class MrclayMinifyStrategy implements MinifyCssStrategyInterface {
 	 * (non-PHPdoc)
 	 * @see \Bricks\Asset\MinifyCssStrategy\MinifyStrategyInterface::minify()
 	 */
-	public function minify(){
+	public function minify(){		
 		$adapter = $this->getStorageAdapter();
 		$module = $this->getModule();
 		$moduleName = $module->getModuleName();

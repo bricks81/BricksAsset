@@ -107,7 +107,7 @@ class OyejorgeLessphpStrategy implements LessStrategyInterface {
 		$moduleName = $module->getModuleName();
 		$asset = $module->getAsset();
 		$classLoader = $asset->getClassLoader();		
-		$adaper = $classLoader->newInstance(__CLASS__,__METHOD__,'storageAdapterClass',$moduleName,array(
+		$adapter = $classLoader->get('BricksAsset.storageAdapter',$moduleName,array(
 			'Asset' => $asset,			
 		));
 		$config = $asset->getConfig()->getArray($moduleName);		
