@@ -10,10 +10,10 @@ return array(
 		'Resource' => 'Bricks\Asset\View\Helper\Resource',
 	),
 	'BricksConfig' => array(
-		'BricksClassLoader' => array( // module to configure
-			'BricksClassLoader' => array( // namespace of module
-				'aliasMap' => array( 
-					'BricksAsset' => array( // aliasmap namespace
+		'__DEFAULT_NAMESPACE__' => array(
+			'BricksClassLoader' => array(
+				'aliasMap' => array(
+					'BricksAsset' => array(
 						'assetClass' => 'Bricks\Asset\Asset',
 						'assetModule' => 'Bricks\Asset\Module',
 						'storageAdapter' => 'Bricks\Asset\AssetAdapter\FilesystemAdapter',
@@ -23,27 +23,23 @@ return array(
 						'minifyJsStrategy' => 'Bricks\Asset\MinifyJsStrategy\MrclayMinifyStrategy',
 						'publishStrategy' => 'Bricks\Asset\PublishStrategy\CopyStrategy',
 						'removeStrategy' => 'Bricks\Asset\RemoveStrategy\RemoveStrategy',						
-					),					
+					), 
 				),
 			),
-		),
-		'BricksAsset' => array(
-			'BricksAsset' => array(				
-				'minifyCssSupport' => true,
-				'minifyJsSupport' => true,
-				'lessSupport' => true,
-				'scssSupport' => true,
+			'BricksAsset' => array(
+				'minifyCssSupport' => false,
+				'minifyJsSupport' => false,
+				'lessSupport' => false,
+				'scssSupport' => false,
 				'httpAssetsPath' => 'module',
 				'wwwRootPath' => './public',
-				'autoPublish' => true,
-				'autoOptimize' => true,
+				'autoPublish' => false,
+				'autoOptimize' => false,
 				'moduleAssetsPath' => dirname(__DIR__).'/public',
 				'publishExclude' => array(),
-				'removeExclude' => array(),				
+				'removeExclude' => array(),
 			),
-		),
-		'BricksPlugin' => array(
-			'BricksAsset' => array(
+			'BricksPlugin' => array(
 				'extend' => array(
 					'Zend\View\Helper\HeadLink' => array(
 						'Bricks\Asset\View\Helper\HeadLink',
@@ -52,13 +48,13 @@ return array(
 						'Bricks\Asset\View\Helper\HeadScript',
 					),
 					'Zend\View\Helper\InlineScript' => array(
-						'Bricks\Asset\View\Helper\InlineScript',						
+						'Bricks\Asset\View\Helper\InlineScript',
 					),
 				),
 				'listeners' => array(
 					'Zend\View\Helper\HeadLink::itemToString.post' => array(
 						'Bricks\Asset\View\Helper\HeadLink::postItemToString' => -100000
-					),					
+					),
 					'Zend\View\Helper\HeadScript::itemToString.post' => array(
 						'Bricks\Asset\View\Helper\HeadScript::postItemToString' => -100000
 					),
