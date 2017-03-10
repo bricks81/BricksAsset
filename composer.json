@@ -1,25 +1,24 @@
 {
     "name": "bricks81/bricks-asset",
-    "description": "Bricks CMS Framework Asset Managment",
+    "description": "Bricks CMS Framework - Asset Managment",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Sven Ullmann",
-            "email": "kontakt@28-n-half.de"
-        }
+    "keywords": [
+        "bricks",
+        "asset"
     ],
-    "minimum-stability": "dev",
-    "require": {
-    	"php": ">=5.3.3",
-        "zendframework/zendframework": "2.*@stable",
-        "leafo/scssphp": "0.*@stable",
-        "oyejorge/less.php": "v1.7.0.2",
-        "mrclay/minify": "2.*@stable",
-        "components/bootstrap": "3.*@stable",
-        "bricks81/bricks-file": "dev-master",
-        "bricks81/bricks-plugin": "dev-master"
-    },
+    "homepage": "https://www.bricks-cms.org",
     "autoload": {
-    	"classmap": ["Module.php"]
-    }
+        "psr-4": {
+            "Bricks\\Asset\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^7.0",
+        "bricks81/bricks-config": "*",
+       	"bricks81/bricks-loader": "*",
+       	"bricks81/bricks-file": "*",
+       	"bricks81/bricks-eventizr": "*"        
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": false    
 }
