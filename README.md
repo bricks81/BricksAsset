@@ -1,4 +1,3 @@
-# BricksAsset
-Bricks CMS &amp; CMS Framework Asset Managment
+Since the Zend Framework has become obsolete, this code is too.
 
-Currently the Asset Managment is disabled. See for public files on http://bricks-cms.org
+More see: https://www.bricks-cms.org
